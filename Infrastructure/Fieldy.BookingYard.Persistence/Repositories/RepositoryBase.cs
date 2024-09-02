@@ -7,45 +7,44 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Fieldy.BookingYard.Persistence.Repositories
 {
-    public class GenericRepository<T> : IGenericRepository<T>
-    where T : class
+    public class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, TKey>
+        where TEntity : class
     {
         private readonly BookingYardDBContext _dbContext;
-        private readonly DbSet<T> _dbSet;
-        public GenericRepository(BookingYardDBContext bookingYardDBContext)
+        private readonly DbSet<TEntity> _dbSet;
+        public RepositoryBase(BookingYardDBContext bookingYardDBContext)
         {
             _dbContext = bookingYardDBContext;
-            _dbSet = _dbContext.Set<T>();
+            _dbSet = _dbContext.Set<TEntity>();
         }
 
-        public IUnitOfWork UnitOfWork => _dbContext;
 
-        public async Task AddAsync(T entity)
+        public async Task AddAsync(TEntity entity)
         {
             await _dbSet.AddAsync(entity);
         }
 
-        public async Task AddRangeAsync(IEnumerable<T> entities)
+        public async Task AddRangeAsync(IEnumerable<TEntity> entities)
         {
             await _dbSet.AddRangeAsync(entities);
         }
 
-        public async Task<bool> AnyAsync(Expression<Func<T, bool>> filterExpression, CancellationToken cancellationToken = default)
+        public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> filterExpression, CancellationToken cancellationToken = default)
         {
             return await _dbSet.AnyAsync(filterExpression, cancellationToken);
         }
 
-        public async Task<int> CountAsync(Expression<Func<T, bool>> filterExpression, CancellationToken cancellationToken = default)
+        public async Task<int> CountAsync(Expression<Func<TEntity, bool>> filterExpression, CancellationToken cancellationToken = default)
         {
             return await _dbSet.CountAsync(filterExpression, cancellationToken);
         }
 
-        public async Task<T?> Get(
-                Expression<Func<T, bool>> expression,
+        public async Task<TEntity?> Find(
+                Expression<Func<TEntity, bool>> expression,
                 List<string>? includes = null,
                 CancellationToken cancellationToken = default)
         {
-            IQueryable<T> query = _dbSet;
+            IQueryable<TEntity> query = _dbSet;
             if (includes != null)
             {
                 foreach (var includeProperty in includes)
@@ -56,13 +55,13 @@ namespace Fieldy.BookingYard.Persistence.Repositories
             return await query.AsNoTracking().FirstOrDefaultAsync(expression, cancellationToken);
         }
 
-        public async Task<IList<T>> GetAll(
-            Expression<Func<T, bool>>? expression = null,
-            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+        public async Task<IList<TEntity>> FindAll(
+            Expression<Func<TEntity, bool>>? expression = null,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
             List<string>? includes = null,
             CancellationToken cancellationToken = default)
         {
-            IQueryable<T> query = _dbSet;
+            IQueryable<TEntity> query = _dbSet;
             if (expression != null)
             {
                 query = query.Where(expression);
@@ -81,14 +80,14 @@ namespace Fieldy.BookingYard.Persistence.Repositories
             return await query.AsNoTracking().ToListAsync(cancellationToken);
         }
 
-        public async Task<IPagingList<T>> GetAllPaging(
+        public async Task<IPagingList<TEntity>> FindAllPaging(
             RequestParams requestParams,
-            Expression<Func<T, bool>>? expression = null,
-            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            Expression<Func<TEntity, bool>>? expression = null,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
             List<string>? includes = null,
             CancellationToken cancellationToken = default)
         {
-            IQueryable<T> query = _dbSet;
+            IQueryable<TEntity> query = _dbSet;
 
             if (expression != null)
             {
@@ -107,21 +106,38 @@ namespace Fieldy.BookingYard.Persistence.Repositories
             {
                 query = orderBy(query);
             }
-            
-            return await PagingList<T>.CreateAsync(query, requestParams.CurrentPage, requestParams.PageSize, cancellationToken);
+
+            return await PagingList<TEntity>.CreateAsync(query, requestParams.CurrentPage, requestParams.PageSize, cancellationToken);
         }
 
-        public void Remove(T entity)
+        public async Task<TEntity?> FindByIdAsync(TKey id, CancellationToken cancellationToken = default, params Expression<Func<TEntity, object>>[] includes)
+        {
+            IQueryable<TEntity> query = _dbSet;
+            if (includes != null)
+            {
+                foreach (var includeProperty in includes)
+                {
+                    query = query.Include(includeProperty);
+                }
+            }
+
+            query = query.Where(e => EF.Property<TKey>(e, "Id")!.Equals(id));
+
+
+            return await query.AsNoTracking().FirstOrDefaultAsync(cancellationToken);
+        }
+
+        public void Remove(TEntity entity)
         {
             _dbSet.Remove(entity);
         }
 
-        public void RemoveRange(IEnumerable<T> entities)
+        public void RemoveRange(IEnumerable<TEntity> entities)
         {
             _dbSet.RemoveRange(entities);
         }
 
-        public void Update(T entity)
+        public void Update(TEntity entity)
         {
             _dbSet.Attach(entity);
             _dbSet.Entry(entity).State = EntityState.Modified;

@@ -1,5 +1,4 @@
-using AutoMapper;
-using Fieldy.BookingYard.Application.Common;
+using Fieldy.BookingYard.Application.Account;
 using Fieldy.BookingYard.Application.Contracts;
 using Fieldy.BookingYard.Application.Contracts.Persistence;
 using Fieldy.BookingYard.Application.Exceptions;
@@ -13,18 +12,18 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.SendVerification
 
         private readonly IUserRepository _userRepository;
         private readonly IAppLogger<SendVerificationCodeCommandHandler> _logger;
-        private readonly ICommonService _commonService;
+        private readonly IAccountService _accountService;
 
         private readonly IEmailSender _emailSender;
 
         public SendVerificationCodeCommandHandler(IUserRepository userRepository,
                                       IAppLogger<SendVerificationCodeCommandHandler> logger,
-                                      ICommonService commonService,
+                                      IAccountService accountService,
                                       IEmailSender emailSender)
         {
             _userRepository = userRepository;
             _logger = logger;
-            _commonService = commonService;
+            _accountService = accountService;
             _emailSender = emailSender;
         }
         public async Task<string> Handle(SendVerificationCodeCommand request, CancellationToken cancellationToken)
@@ -34,8 +33,8 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.SendVerification
             if (user == null)
                 throw new NotFoundException(nameof(user), request.UserID);
 
-            var newVerificationCode = _commonService.GenerationCode();
-            user.VerificationToken = _commonService.Hash(newVerificationCode);
+            var newVerificationCode = _accountService.GenerationCode();
+            user.VerificationToken = _accountService.Hash(newVerificationCode);
             _userRepository.Update(user);
 
             EmailMessage email = new ()

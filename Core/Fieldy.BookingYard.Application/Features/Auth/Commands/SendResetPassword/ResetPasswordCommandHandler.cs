@@ -1,4 +1,5 @@
-using Fieldy.BookingYard.Application.Common;
+
+using Fieldy.BookingYard.Application.Account;
 using Fieldy.BookingYard.Application.Contracts;
 using Fieldy.BookingYard.Application.Contracts.Persistence;
 using Fieldy.BookingYard.Application.Exceptions;
@@ -11,18 +12,18 @@ namespace Fieldy.BookingYard.Application.Features.Auth.SendResetPassword
     {
         private readonly IUserRepository _userRepository;
         private readonly IAppLogger<ResetPasswordCommandHandler> _logger;
-        private readonly ICommonService _commonService;
+        private readonly IAccountService _accountService;
 
         private readonly IEmailSender _emailSender;
 
         public ResetPasswordCommandHandler(IUserRepository userRepository,
                                       IAppLogger<ResetPasswordCommandHandler> logger,
-                                      ICommonService commonService,
+                                      IAccountService accountService,
                                       IEmailSender emailSender)
         {
             _userRepository = userRepository;
             _logger = logger;
-            _commonService = commonService;
+            _accountService = accountService;
             _emailSender = emailSender;
         }
         public async Task<string> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
@@ -34,8 +35,8 @@ namespace Fieldy.BookingYard.Application.Features.Auth.SendResetPassword
 
             _logger.LogInformation($"{user.Email} call reset password");
 
-            var resetToken = _commonService.GenerationCode();
-            user.ResetToken = _commonService.Hash(resetToken);
+            var resetToken = _accountService.GenerationCode();
+            user.ResetToken = _accountService.Hash(resetToken);
             user.ExpirationResetToken = DateTime.Now.AddMinutes(15);
             _userRepository.Update(user);
 

@@ -1,9 +1,7 @@
 using AutoMapper;
-using Fieldy.BookingYard.Application.Common;
-using Fieldy.BookingYard.Application.Contracts;
+using Fieldy.BookingYard.Application.Account;
 using Fieldy.BookingYard.Application.Contracts.Persistence;
 using Fieldy.BookingYard.Application.Exceptions;
-using Fieldy.BookingYard.Application.Features.Auth.Commands.Register;
 using Fieldy.BookingYard.Application.Models.Auth;
 using Fieldy.BookingYard.Domain.Entities;
 using MediatR;
@@ -13,15 +11,15 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Google
     public class GoogleCommandHandler : IRequestHandler<GoogleCommand, AuthResponse>
     {
         private readonly IUserRepository _userRepository;
-        private readonly ICommonService _commonService;
+        private readonly IAccountService _accountService;
         private readonly IMapper _mapper;
         public GoogleCommandHandler(IUserRepository userRepository,
-                                    ICommonService commonService,
+                                    IAccountService accountService,
                                     IMapper mapper)
         {
             _userRepository = userRepository;
             _mapper = mapper;
-            _commonService = commonService;
+            _accountService = accountService;
         }
 
         public async Task<AuthResponse> Handle(GoogleCommand request, CancellationToken cancellationToken)
@@ -38,7 +36,7 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Google
             {
                 //check GoogleID exist in database if exist return AuthResponse else update GoogleID to user
                 if (userExist.GoogleID != null)
-                    return _commonService.CreateTokenJWT(userExist);
+                    return _accountService.CreateTokenJWT(userExist);
 
                 userExist.GoogleID = request.GoogleID;
                 userExist.ImageUrl ??= request.ImageUrl;
@@ -68,7 +66,7 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Google
             if (user == null)
                 throw new NotFoundException(nameof(user), request.GoogleID);
 
-            return _commonService.CreateTokenJWT(user);
+            return _accountService.CreateTokenJWT(user);
         }
     }
 }

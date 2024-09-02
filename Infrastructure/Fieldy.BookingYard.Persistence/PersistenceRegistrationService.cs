@@ -15,9 +15,9 @@ namespace Fieldy.BookingYard.Persistence
             {
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnectString"));
             });
-            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
-            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddTransient<IUnitOfWork, EFUnitOfWork>();
+            services.AddTransient(typeof(IRepositoryBase<,>), typeof(RepositoryBase<,>));
 
             return services;
         }

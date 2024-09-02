@@ -1,4 +1,4 @@
-﻿using Fieldy.BookingYard.Application.Common;
+﻿using Fieldy.BookingYard.Application.Account;
 using Fieldy.BookingYard.Application.Contracts;
 using Fieldy.BookingYard.Application.Contracts.Persistence;
 using Fieldy.BookingYard.Application.Exceptions;
@@ -10,13 +10,13 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.VerificationRese
     {
         private readonly IUserRepository _userRepository;
         private readonly IAppLogger<VerificationResetPasswordCommandHandler> _logger;
-        private readonly ICommonService _commonService;
+        private readonly IAccountService _accountService;
 
-        public VerificationResetPasswordCommandHandler(IUserRepository userRepository, IAppLogger<VerificationResetPasswordCommandHandler> logger, ICommonService commonService)
-        {
+        public VerificationResetPasswordCommandHandler(IUserRepository userRepository, IAppLogger<VerificationResetPasswordCommandHandler> logger, IAccountService accountService)
+        {   
             _userRepository = userRepository;
             _logger = logger;
-            _commonService = commonService;
+            _accountService = accountService;
         }
 
         public async Task<string> Handle(VerificationResetPasswordCommand request, CancellationToken cancellationToken)
@@ -32,7 +32,7 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.VerificationRese
             if (DateTime.Now > user.ExpirationResetToken)
                 throw new BadRequestException($"{user.Email} expiration rest token");
 
-            var result = _commonService.Verify(request.VerificationCode, user.ResetToken!);
+            var result = _accountService.Verify(request.VerificationCode, user.ResetToken!);
 
             if (!result)
                 throw new BadRequestException($"Invalid verification");

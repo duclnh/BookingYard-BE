@@ -1,4 +1,4 @@
-using Fieldy.BookingYard.Application.Common;
+using Fieldy.BookingYard.Application.Account;
 using Fieldy.BookingYard.Application.Contracts;
 using Fieldy.BookingYard.Application.Contracts.Persistence;
 using Fieldy.BookingYard.Application.Exceptions;
@@ -10,16 +10,16 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.UpdatePassword
     {
         private readonly IUserRepository _userRepository;
         private readonly IAppLogger<UpdatePasswordCommand> _logger;
-        private readonly ICommonService _commonService;
+        private readonly IAccountService _accountService;
 
         public UpdatePasswordCommandHandler(
             IUserRepository userRepository, 
             IAppLogger<UpdatePasswordCommand> logger,
-            ICommonService commonService)
+            IAccountService accountService)
         {
             _userRepository = userRepository;
             _logger = logger;
-            _commonService = commonService;
+            _accountService = accountService;
         }
         public async Task<string> Handle(UpdatePasswordCommand request, CancellationToken cancellationToken)
         {
@@ -37,10 +37,10 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.UpdatePassword
             if (user.ResetToken != null || user.ExpirationResetToken != null)
                 throw new BadRequestException("PLease verify reset password token before update password");
 
-            if(_commonService.Verify(request.OldPassword, user.PasswordHash))
+            if(_accountService.Verify(request.OldPassword, user.PasswordHash))
                 throw new BadRequestException("Old password not match");
                 
-            user.PasswordHash = _commonService.Hash(request.NewPassword);
+            user.PasswordHash = _accountService.Hash(request.NewPassword);
             
             _userRepository.Update(user);
             

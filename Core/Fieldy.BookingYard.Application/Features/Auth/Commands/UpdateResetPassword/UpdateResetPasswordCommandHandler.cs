@@ -1,4 +1,4 @@
-using Fieldy.BookingYard.Application.Common;
+using Fieldy.BookingYard.Application.Account;
 using Fieldy.BookingYard.Application.Contracts;
 using Fieldy.BookingYard.Application.Contracts.Persistence;
 using Fieldy.BookingYard.Application.Exceptions;
@@ -10,16 +10,16 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.UpdateResetPassw
     {
         private readonly IUserRepository _userRepository;
         private readonly IAppLogger<UpdateResetPasswordCommandHandler> _logger;
-        private readonly ICommonService _commonService;
+        private readonly IAccountService _accountService;
 
         public UpdateResetPasswordCommandHandler(
             IUserRepository userRepository, 
             IAppLogger<UpdateResetPasswordCommandHandler> logger,
-            ICommonService commonService)
+            IAccountService accountService)
         {
             _userRepository = userRepository;
             _logger = logger;
-            _commonService = commonService;
+            _accountService = accountService;
         }
         public async Task<string> Handle(UpdateResetPasswordCommand request, CancellationToken cancellationToken)
         {
@@ -34,10 +34,10 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.UpdateResetPassw
             if (user == null)
                 throw new NotFoundException(nameof(user), request.Email);
 
-            if(user.ResetToken != null && !_commonService.Verify(request.VerificationCode, user.ResetToken))
+            if(user.ResetToken != null && !_accountService.Verify(request.VerificationCode, user.ResetToken))
                  throw new BadRequestException("Verification code not match");
             
-            user.PasswordHash = _commonService.Hash(request.NewPassword);
+            user.PasswordHash = _accountService.Hash(request.NewPassword);
             user.ResetToken = null;
             user.ExpirationResetToken = null;
             

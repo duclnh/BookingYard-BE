@@ -1,9 +1,11 @@
-namespace Fieldy.BookingYard.Domain.Enum{
-    public enum Role{
+namespace Fieldy.BookingYard.Domain.Enum
+{
+    public enum Role
+    {
         Admin,
-        Manager,
         Staff,
-        YardOwner,
+        CourtOwner,
+        StaffCourt,
         Customer,
     }
 }

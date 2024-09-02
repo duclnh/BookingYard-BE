@@ -1,4 +1,4 @@
-﻿using Fieldy.BookingYard.Application.Common;
+﻿using Fieldy.BookingYard.Application.Account;
 using Fieldy.BookingYard.Application.Contracts;
 using Fieldy.BookingYard.Application.Contracts.Persistence;
 using Fieldy.BookingYard.Application.Exceptions;
@@ -10,13 +10,13 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Verification
     {
         private readonly IUserRepository _userRepository;
         private readonly IAppLogger<VerificationCommandHandler> _logger;
-        private readonly ICommonService _commonService;
+        private readonly IAccountService _accountService;
 
-        public VerificationCommandHandler(IUserRepository userRepository, IAppLogger<VerificationCommandHandler> logger, ICommonService commonService)
+        public VerificationCommandHandler(IUserRepository userRepository, IAppLogger<VerificationCommandHandler> logger, IAccountService accountService)
         {
             _userRepository = userRepository;
             _logger = logger;
-            _commonService = commonService;
+            _accountService = accountService;
         }
 
         public async Task<string> Handle(VerificationCommand request, CancellationToken cancellationToken)
@@ -29,7 +29,7 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Verification
             if (user.IsVerification())
                 throw new BadRequestException($"{user.Email} could not verify a verification code");
 
-            var result = _commonService.Verify(request.VerificationCode, user.VerificationToken!);
+            var result = _accountService.Verify(request.VerificationCode, user.VerificationToken!);
 
             if (!result)
                 throw new BadRequestException($"Invalid verification");

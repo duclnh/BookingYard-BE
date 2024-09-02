@@ -1,4 +1,4 @@
-using Fieldy.BookingYard.Application.Common;
+using Fieldy.BookingYard.Application.Account;
 using Fieldy.BookingYard.Application.Contracts;
 using Fieldy.BookingYard.Application.Contracts.Persistence;
 using Fieldy.BookingYard.Application.Exceptions;
@@ -13,18 +13,18 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Register
     {
         private readonly IUserRepository _userRepository;
         private readonly IAppLogger<RegisterCommandHandler> _logger;
-        private readonly ICommonService _commonService;
+        private readonly IAccountService _accountService;
 
         private readonly IEmailSender _emailSender;
 
         public RegisterCommandHandler(IUserRepository userRepository,
                                       IAppLogger<RegisterCommandHandler> logger,
-                                      ICommonService commonService,
+                                      IAccountService accountService,
                                       IEmailSender emailSender)
         {
             _userRepository = userRepository;
             _logger = logger;
-            _commonService = commonService;
+            _accountService = accountService;
             _emailSender = emailSender;
         }
         public async Task<string> Handle(RegisterCommand request, CancellationToken cancellationToken)
@@ -35,14 +35,14 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Register
             if (validationResult.Errors.Any())
                 throw new BadRequestException("Invalid Register User Request", validationResult);
 
-            string generationCode = _commonService.GenerationCode();
+            string generationCode = _accountService.GenerationCode();
             User user = new ()
             {
                 Name = request.Name.Trim(),
                 Email = request.Email.Trim(),
                 Role = Domain.Enum.Role.Customer,
-                PasswordHash = _commonService.Hash(request.Password),
-                VerificationToken = _commonService.Hash(generationCode),
+                PasswordHash = _accountService.Hash(request.Password),
+                VerificationToken = _accountService.Hash(generationCode),
             };
             user.CreateBy = user.Id;
             user.UpdateBy = user.Id;
