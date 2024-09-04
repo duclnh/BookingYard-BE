@@ -29,7 +29,7 @@ namespace Fiedly.BookingYard.Api.Controllers.User
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetUserById(
-            [FromRoute] string id,
+            [FromRoute] Guid id,
             CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(new GetUserByIdQuery(id), cancellationToken);

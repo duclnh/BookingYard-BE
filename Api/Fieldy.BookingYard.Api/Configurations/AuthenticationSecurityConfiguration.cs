@@ -1,8 +1,6 @@
 using System.Text;
-using Fieldy.BookingYard.Application.Account;
 using Fieldy.BookingYard.Application.Exceptions;
 using Fieldy.BookingYard.Application.Models.Jwt;
-using Fieldy.BookingYard.BookingYard.Api;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -14,7 +12,6 @@ namespace Fiedly.BookingYard.Api.Configurations
         {
 
             services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
-            services.AddTransient<IAccountService, AccountService>();
             services.AddAuthentication(options =>
            {
                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

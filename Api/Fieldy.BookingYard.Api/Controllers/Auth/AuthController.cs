@@ -42,7 +42,7 @@ namespace Fiedly.BookingYard.Api.Controllers.Auth
             var result = await _mediator.Send(query, cancellationToken);
             return Ok(result);
         }
-        
+
         [AllowAnonymous]
         [HttpPost]
         [Route("google")]
@@ -63,7 +63,7 @@ namespace Fiedly.BookingYard.Api.Controllers.Auth
         [HttpPost]
         [Route("register")]
         [Produces(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(Unit), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Register(
@@ -109,7 +109,7 @@ namespace Fiedly.BookingYard.Api.Controllers.Auth
         [AllowAnonymous]
         [HttpPost("send-reset-password")]
         [Produces(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Unit), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
