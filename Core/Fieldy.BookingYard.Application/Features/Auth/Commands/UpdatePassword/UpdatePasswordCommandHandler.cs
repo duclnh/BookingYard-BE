@@ -1,4 +1,3 @@
-using Fieldy.BookingYard.Application.Account;
 using Fieldy.BookingYard.Application.Contracts;
 using Fieldy.BookingYard.Application.Contracts.Persistence;
 using Fieldy.BookingYard.Application.Exceptions;
@@ -10,16 +9,15 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.UpdatePassword
     {
         private readonly IUserRepository _userRepository;
         private readonly IAppLogger<UpdatePasswordCommand> _logger;
-        private readonly IAccountService _accountService;
+        private readonly IUtilityService _utility;
 
-        public UpdatePasswordCommandHandler(
-            IUserRepository userRepository, 
-            IAppLogger<UpdatePasswordCommand> logger,
-            IAccountService accountService)
+        public UpdatePasswordCommandHandler(IUserRepository userRepository,
+                                            IAppLogger<UpdatePasswordCommand> logger,
+                                            IUtilityService utility)
         {
             _userRepository = userRepository;
             _logger = logger;
-            _accountService = accountService;
+            _utility = utility;
         }
         public async Task<string> Handle(UpdatePasswordCommand request, CancellationToken cancellationToken)
         {
@@ -29,7 +27,7 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.UpdatePassword
             if (validationResult.Errors.Any())
                 throw new BadRequestException("Invalid Update Password Request", validationResult);
 
-            var user = await _userRepository.Get(x => x.Id == request.UserID, null, cancellationToken);
+            var user = await _userRepository.Find(x => x.Id == request.UserID && x.IsDeleted == false , cancellationToken);
 
             if (user == null)
                 throw new NotFoundException(nameof(user), request.UserID);
@@ -37,14 +35,19 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.UpdatePassword
             if (user.ResetToken != null || user.ExpirationResetToken != null)
                 throw new BadRequestException("PLease verify reset password token before update password");
 
-            if(_accountService.Verify(request.OldPassword, user.PasswordHash))
+            if (_utility.Verify(request.OldPassword, user.PasswordHash))
                 throw new BadRequestException("Old password not match");
-                
-            user.PasswordHash = _accountService.Hash(request.NewPassword);
-            
+
+            user.PasswordHash = _utility.Hash(request.NewPassword);
+
             _userRepository.Update(user);
-            
-            return await _userRepository.UnitOfWork.SaveChangesAsync(cancellationToken) > 0 ? "Update password successfully" : "Update password fail";
+
+
+            var result = await _userRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
+            if (result < 0)
+                throw new BadRequestException("Update password fail");
+
+            return "Update password successfully";
         }
     }
 }

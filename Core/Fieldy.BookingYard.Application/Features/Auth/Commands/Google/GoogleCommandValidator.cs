@@ -1,6 +1,4 @@
-using Fieldy.BookingYard.Application.Models.Auth;
 using FluentValidation;
-using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Google
 {

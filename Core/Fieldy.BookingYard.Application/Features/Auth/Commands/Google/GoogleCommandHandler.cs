@@ -1,9 +1,8 @@
 using AutoMapper;
-using Fieldy.BookingYard.Application.Account;
+using Fieldy.BookingYard.Application.Contracts.JWT;
 using Fieldy.BookingYard.Application.Contracts.Persistence;
 using Fieldy.BookingYard.Application.Exceptions;
 using Fieldy.BookingYard.Application.Models.Auth;
-using Fieldy.BookingYard.Domain.Entities;
 using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Google
@@ -11,15 +10,15 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Google
     public class GoogleCommandHandler : IRequestHandler<GoogleCommand, AuthResponse>
     {
         private readonly IUserRepository _userRepository;
-        private readonly IAccountService _accountService;
+        private readonly IJWTService _jwtService;
         private readonly IMapper _mapper;
         public GoogleCommandHandler(IUserRepository userRepository,
-                                    IAccountService accountService,
+                                    IJWTService jwtService,
                                     IMapper mapper)
         {
             _userRepository = userRepository;
             _mapper = mapper;
-            _accountService = accountService;
+            _jwtService = jwtService;
         }
 
         public async Task<AuthResponse> Handle(GoogleCommand request, CancellationToken cancellationToken)
@@ -31,12 +30,22 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Google
                 throw new BadRequestException("Invalid register user by Google", validationResult);
 
             //check email in database if have you user response AuthResponse else create new user
-            var userExist = await _userRepository.Get(x => x.Email == request.Email);
+            var userExist = await _userRepository.Find(x => x.Email == request.Email && x.IsBanned == false && x.IsDeleted == false, cancellationToken);
             if (userExist != null)
             {
                 //check GoogleID exist in database if exist return AuthResponse else update GoogleID to user
                 if (userExist.GoogleID != null)
-                    return _accountService.CreateTokenJWT(userExist);
+                    return new AuthResponse()
+                    {
+                        UserID = userExist.Id.ToString(),
+                        ImageUrl = userExist.ImageUrl,
+                        Name = userExist.Name,
+                        Token = _jwtService.CreateTokenJWT(userExist),
+                        Email = userExist.Email,
+                        Gender = userExist.Gender.ToString(),
+                        Role = userExist.Role.ToString(),
+                        IsVerification = userExist.IsVerification(),
+                    };
 
                 userExist.GoogleID = request.GoogleID;
                 userExist.ImageUrl ??= request.ImageUrl;
@@ -45,12 +54,15 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Google
             else
             {
                 //map data GoogleCommand -> User
-                var userCreate = _mapper.Map<User>(request);
+                var userCreate = _mapper.Map<Domain.Entities.User>(request);
                 if (userCreate == null)
                     throw new BadRequestException("Error system register user by Google");
 
                 //add role customer to user    
                 userCreate.Role = Domain.Enum.Role.Customer;
+
+                //add gender other to user
+                userCreate.Gender = Domain.Enum.Gender.Other;
 
                 //create new user
                 await _userRepository.AddAsync(userCreate);
@@ -62,11 +74,21 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Google
                 throw new BadRequestException("Error system register user by Google");
 
             //get user
-            var user = await _userRepository.Get(x => x.GoogleID == request.GoogleID);
+            var user = await _userRepository.Find(x => x.GoogleID == request.GoogleID);
             if (user == null)
                 throw new NotFoundException(nameof(user), request.GoogleID);
 
-            return _accountService.CreateTokenJWT(user);
+            return new AuthResponse()
+            {
+                UserID = user.Id.ToString(),
+                ImageUrl = user.ImageUrl,
+                Name = user.Name,
+                Token = _jwtService.CreateTokenJWT(user),
+                Email = user.Email,
+                Gender = user.Gender.ToString(),
+                Role = user.Role.ToString(),
+                IsVerification = user.IsVerification(),
+            };
         }
     }
 }

@@ -18,6 +18,7 @@ namespace Fieldy.BookingYard.Persistence.Repositories
             _dbSet = _dbContext.Set<TEntity>();
         }
 
+        public IUnitOfWork UnitOfWork => _dbContext;
 
         public async Task AddAsync(TEntity entity)
         {
@@ -41,8 +42,8 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 
         public async Task<TEntity?> Find(
                 Expression<Func<TEntity, bool>> expression,
-                List<string>? includes = null,
-                CancellationToken cancellationToken = default)
+                CancellationToken cancellationToken = default,
+                params Expression<Func<TEntity, object>>[] includes)
         {
             IQueryable<TEntity> query = _dbSet;
             if (includes != null)
@@ -58,8 +59,8 @@ namespace Fieldy.BookingYard.Persistence.Repositories
         public async Task<IList<TEntity>> FindAll(
             Expression<Func<TEntity, bool>>? expression = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
-            List<string>? includes = null,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default,
+            params Expression<Func<TEntity, object>>[] includes)
         {
             IQueryable<TEntity> query = _dbSet;
             if (expression != null)
@@ -84,8 +85,8 @@ namespace Fieldy.BookingYard.Persistence.Repositories
             RequestParams requestParams,
             Expression<Func<TEntity, bool>>? expression = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
-            List<string>? includes = null,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default,
+            params Expression<Func<TEntity, object>>[] includes)
         {
             IQueryable<TEntity> query = _dbSet;
 
@@ -107,12 +108,33 @@ namespace Fieldy.BookingYard.Persistence.Repositories
                 query = orderBy(query);
             }
 
+            // if (!string.IsNullOrEmpty(requestParams.Search) && requestParams.SearchBy != null)
+            // {
+            //     var param = Expression.Parameter(typeof(TEntity), "x");
+            //     var body = (Expression)param;
+
+            //     foreach (var search in requestParams.SearchBy)
+            //     {
+            //         body = Expression.PropertyOrField(body, search);
+            //     }
+            //     body = Expression.Call(body, "ToLower", Type.EmptyTypes);
+            //     body = Expression.Call(typeof(DbFunctionsExtensions), "Like", Type.EmptyTypes,
+            //         Expression.Constant(EF.Functions), body, Expression.Constant($"%{requestParams.Search}%".ToLower()));
+
+            //     var lambda = Expression.Lambda(body, param);
+
+            //     var queryExpr = Expression.Call(typeof(Queryable), "Where", new[] { typeof(TEntity) }, query.Expression, lambda);
+
+            //     query.Provider.CreateQuery<TEntity>(queryExpr);
+            // }
+
             return await PagingList<TEntity>.CreateAsync(query, requestParams.CurrentPage, requestParams.PageSize, cancellationToken);
         }
 
         public async Task<TEntity?> FindByIdAsync(TKey id, CancellationToken cancellationToken = default, params Expression<Func<TEntity, object>>[] includes)
         {
             IQueryable<TEntity> query = _dbSet;
+
             if (includes != null)
             {
                 foreach (var includeProperty in includes)

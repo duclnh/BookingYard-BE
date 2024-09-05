@@ -12,7 +12,7 @@ namespace Fieldy.BookingYard.Application.Models.Auth
         public required string Token { get; set; }
 
         public required string Email { get; set; }
-        public DateTime? ExpirationTime { get; set; }
+        public required string Gender { get; set; } 
         public required string Role { get; set; }
         public required bool IsVerification { get; set; }
     }

@@ -1,7 +1,5 @@
-using System.Reflection.Metadata;
 using Fieldy.BookingYard.Application.Contracts.Persistence;
 using FluentValidation;
-using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Register
 {
@@ -47,7 +45,7 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Register
 
         private async Task<bool> EmailUnique(string email, CancellationToken cancellationToken = default)
         {
-            return !await _userRepository.AnyAsync(x => x.Email.ToLower() == email.ToLower().Trim() && x.DeleteDate == null, cancellationToken);
+            return !await _userRepository.AnyAsync(x => x.Email.ToLower() == email.ToLower().Trim() && x.IsBanned == false, cancellationToken);
         }
     }
 }

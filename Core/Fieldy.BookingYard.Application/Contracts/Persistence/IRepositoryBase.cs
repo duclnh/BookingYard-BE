@@ -6,28 +6,29 @@ namespace Fieldy.BookingYard.Application.Contracts.Persistence
     public interface IRepositoryBase<TEntity, in TKey>
         where TEntity : class
     {
+        IUnitOfWork UnitOfWork { get; }
         Task<TEntity?> FindByIdAsync(
-            TKey id, 
-            CancellationToken cancellationToken= default,
-            params Expression<Func<TEntity,object>>[] includes
+            TKey id,
+            CancellationToken cancellationToken = default,
+            params Expression<Func<TEntity, object>>[] includes
         );
         Task<IList<TEntity>> FindAll(
             Expression<Func<TEntity, bool>>? expression = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
-            List<string>? includes = null,
-            CancellationToken cancellationToken = default
+            CancellationToken cancellationToken = default,
+            params Expression<Func<TEntity, object>>[] includes
         );
         Task<IPagingList<TEntity>> FindAllPaging(
             RequestParams requestParams,
             Expression<Func<TEntity, bool>>? expression = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
-            List<string>? includes = null,
-            CancellationToken cancellationToken = default
+            CancellationToken cancellationToken = default,
+            params Expression<Func<TEntity, object>>[] includes
         );
         Task<TEntity?> Find(
             Expression<Func<TEntity, bool>> expression,
-            List<string>? includes = null,
-            CancellationToken cancellationToken = default
+            CancellationToken cancellationToken = default,
+            params Expression<Func<TEntity, object>>[] includes
         );
         Task<bool> AnyAsync(
             Expression<Func<TEntity, bool>> filterExpression,

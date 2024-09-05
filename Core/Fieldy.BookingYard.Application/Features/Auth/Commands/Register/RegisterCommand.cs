@@ -1,3 +1,4 @@
+using Fieldy.BookingYard.Domain.Enum;
 using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Register{
@@ -5,5 +6,6 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Register{
         public required string Name { get; set; }
         public required string Password { get; set; }
         public required string Email { get; set; }
+        public required Gender gender { get; set; }
     }
 }

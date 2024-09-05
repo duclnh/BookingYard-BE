@@ -1,9 +1,7 @@
-using Fieldy.BookingYard.Application.Account;
 using Fieldy.BookingYard.Application.Contracts;
 using Fieldy.BookingYard.Application.Contracts.Persistence;
 using Fieldy.BookingYard.Application.Exceptions;
 using Fieldy.BookingYard.Application.Models;
-using Fieldy.BookingYard.Domain.Entities;
 using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Register
@@ -13,43 +11,42 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Register
     {
         private readonly IUserRepository _userRepository;
         private readonly IAppLogger<RegisterCommandHandler> _logger;
-        private readonly IAccountService _accountService;
-
         private readonly IEmailSender _emailSender;
+        private readonly IUtilityService _utility;
 
         public RegisterCommandHandler(IUserRepository userRepository,
                                       IAppLogger<RegisterCommandHandler> logger,
-                                      IAccountService accountService,
+                                      IUtilityService utility,
                                       IEmailSender emailSender)
         {
             _userRepository = userRepository;
             _logger = logger;
-            _accountService = accountService;
             _emailSender = emailSender;
+            _utility = utility;
         }
         public async Task<string> Handle(RegisterCommand request, CancellationToken cancellationToken)
         {
             var validator = new RegisterCommandValidator(_userRepository);
-            var validationResult = await validator.ValidateAsync(request,cancellationToken);
+            var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
             if (validationResult.Errors.Any())
                 throw new BadRequestException("Invalid Register User Request", validationResult);
 
-            string generationCode = _accountService.GenerationCode();
-            User user = new ()
+            string generationCode = _utility.GenerationCode();
+            Domain.Entities.User user = new()
             {
+                Id = Guid.NewGuid(),
                 Name = request.Name.Trim(),
                 Email = request.Email.Trim(),
+                Gender = request.gender,
                 Role = Domain.Enum.Role.Customer,
-                PasswordHash = _accountService.Hash(request.Password),
-                VerificationToken = _accountService.Hash(generationCode),
+                PasswordHash = _utility.Hash(request.Password),
+                VerificationToken = _utility.Hash(generationCode),
             };
-            user.CreateBy = user.Id;
-            user.UpdateBy = user.Id;
 
             await _userRepository.AddAsync(user);
-            
-            EmailMessage email = new ()
+
+            EmailMessage email = new()
             {
                 To = user.Email,
                 Subject = "Verification Account",
@@ -57,12 +54,16 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Register
             };
             var resultEmail = await _emailSender.SendEmailAsync(email);
 
-            if(!resultEmail)
+            if (!resultEmail)
                 throw new BadRequestException("Email invalid");
-                
+
             _logger.LogInformation($"Create new account: {user.Email}");
-            
-            return await _userRepository.UnitOfWork.SaveChangesAsync(cancellationToken) > 0 ?"Create account successfully" : "Create account fail";
+
+            var result = await _userRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
+            if (result < 0)
+                throw new BadRequestException("Create new user fail!");
+
+            return "Create new user successfully";
         }
     }
 }
