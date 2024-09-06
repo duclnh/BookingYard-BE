@@ -16,11 +16,17 @@ namespace Fieldy.BookingYard.Persistence.DatabaseContext
         }
         public DbSet<User> Users { get; set; }
         public DbSet<Support> Supports { get; set; }
+        public DbSet<Package> Packages { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(BookingYardDBContext).Assembly);
             base.OnModelCreating(modelBuilder);
-        }
+
+            //set decimal data type
+			modelBuilder.Entity<Package>()
+		    .Property(p => p.PackagePrice)
+		    .HasColumnType("decimal(18,2)");
+		}
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             foreach (var entry in base.ChangeTracker.Entries<IAuditable>()
