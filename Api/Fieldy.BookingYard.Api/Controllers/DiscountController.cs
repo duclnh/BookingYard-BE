@@ -1,7 +1,7 @@
-﻿using Fieldy.BookingYard.Application.Features.Package.Commands.CreatePackage;
-using Fieldy.BookingYard.Application.Features.Package.Commands.UpdatePackage;
-using Fieldy.BookingYard.Application.Features.Package.Queries;
-using Fieldy.BookingYard.Application.Features.Package.Queries.GetAllPackage;
+﻿using Fieldy.BookingYard.Application.Features.Discount.Command.CreateDiscount;
+using Fieldy.BookingYard.Application.Features.Discount.Command.UpdateDiscount;
+using Fieldy.BookingYard.Application.Features.Discount.Queries;
+using Fieldy.BookingYard.Application.Features.Discount.Queries.GetAllDiscount;
 using Fieldy.BookingYard.Application.Models.Query;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -11,11 +11,11 @@ namespace Fieldy.BookingYard.Api.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
-	public class PackageController : ControllerBase
+	public class DiscountController : ControllerBase
 	{
 		private readonly IMediator _mediator;
 
-		public PackageController(IMediator mediator)
+		public DiscountController(IMediator mediator)
 		{
 			_mediator = mediator;
 		}
@@ -26,8 +26,8 @@ namespace Fieldy.BookingYard.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-		public async Task<IActionResult> CreatePackage(
-						[FromBody] CreatePackageCommand command,
+		public async Task<IActionResult> CreateDiscount(
+						[FromBody] CreateDiscountCommand command,
 									CancellationToken cancellationToken = default)
 		{
 			var result = await _mediator.Send(command, cancellationToken);
@@ -40,41 +40,26 @@ namespace Fieldy.BookingYard.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-		public async Task<IActionResult> UpdatePackage(
-						[FromBody] UpdatePackageCommand command,
+		public async Task<IActionResult> UpdateDiscount(
+						[FromBody] UpdateDiscountCommand command,
 									CancellationToken cancellationToken = default)
 		{
 			var result = await _mediator.Send(command, cancellationToken);
 			return Ok(result);
 		}
 
-		/*[HttpPut("{id}")]
-		[Route("Delete")]
-		[Produces(MediaTypeNames.Application.Json)]
-		[ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-		public async Task<IActionResult> DeletePackage(
-						[FromRoute] Guid id,
-							CancellationToken cancellationToken = default)
-		{
-			var result = await _mediator.Send(new UpdatePackageCommand { PackageId = id }, cancellationToken);
-			return Ok(result);
-		}*/
-
 		[HttpPost()]
 		[Route("Paging")]
 		[Produces(MediaTypeNames.Application.Json)]
-		[ProducesResponseType(typeof(PackageDto), StatusCodes.Status200OK)]
+		[ProducesResponseType(typeof(DiscountDto), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-		public async Task<IActionResult> GetAllPackage(
+		public async Task<IActionResult> GetAllDiscount(
 						[FromBody] RequestParams requestParams,
 							CancellationToken cancellationToken = default)
 		{
-			var result = await _mediator.Send(new GetAllPackageQuery(requestParams), cancellationToken);
+			var result = await _mediator.Send(new GetAllDiscountQuery(requestParams), cancellationToken);
 			return Ok(result);
 		}
 	}

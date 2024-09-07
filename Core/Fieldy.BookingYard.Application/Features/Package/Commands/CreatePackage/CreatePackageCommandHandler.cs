@@ -33,7 +33,7 @@ namespace Fieldy.BookingYard.Application.Features.Package.Commands.CreatePackage
 
             package.PackageId = Guid.NewGuid();
             package.IsDeleted = false;
-			package.CreateAt = DateTime.Now;
+			package.CreatedAt = DateTime.Now;
             package.ModifiedAt = DateTime.Now;
 
             await _packageRepository.AddAsync(package);

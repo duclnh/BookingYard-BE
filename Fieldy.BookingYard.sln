@@ -5,27 +5,29 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Api", "Api", "{614D8559-8DCB-4FC2-9AEA-EB6280E815AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fieldy.BookingYard.Api", "Api\Fieldy.BookingYard.Api\Fieldy.BookingYard.Api.csproj", "{818B9DED-CFA8-4BB6-8692-F8F9F27EE373}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fieldy.BookingYard.Api", "Api\Fieldy.BookingYard.Api\Fieldy.BookingYard.Api.csproj", "{818B9DED-CFA8-4BB6-8692-F8F9F27EE373}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{27812B09-09FB-4CD6-9766-41AD0A2FD1C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fieldy.BookingYard.Application", "Core\Fieldy.BookingYard.Application\Fieldy.BookingYard.Application.csproj", "{310D55B2-A07B-4956-9E8D-0A205E4BE101}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fieldy.BookingYard.Application", "Core\Fieldy.BookingYard.Application\Fieldy.BookingYard.Application.csproj", "{310D55B2-A07B-4956-9E8D-0A205E4BE101}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fieldy.BookingYard.Domain", "Core\Fieldy.BookingYard.Domain\Fieldy.BookingYard.Domain.csproj", "{49356ECC-2B4E-4791-8EB7-46C98022838F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fieldy.BookingYard.Domain", "Core\Fieldy.BookingYard.Domain\Fieldy.BookingYard.Domain.csproj", "{49356ECC-2B4E-4791-8EB7-46C98022838F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{507D5B23-5A0B-41E8-A586-AFA867E2D32E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fieldy.BookingYard.Infrastructure", "Infrastructure\Fieldy.BookingYard.Infrastructure\Fieldy.BookingYard.Infrastructure.csproj", "{9C00FBEA-C564-4987-A239-F953B5CDCA11}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fieldy.BookingYard.Infrastructure", "Infrastructure\Fieldy.BookingYard.Infrastructure\Fieldy.BookingYard.Infrastructure.csproj", "{9C00FBEA-C564-4987-A239-F953B5CDCA11}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fieldy.BookingYard.Persistence", "Infrastructure\Fieldy.BookingYard.Persistence\Fieldy.BookingYard.Persistence.csproj", "{34A863F4-55D1-4720-9960-51EAF491B93B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fieldy.BookingYard.Persistence", "Infrastructure\Fieldy.BookingYard.Persistence\Fieldy.BookingYard.Persistence.csproj", "{34A863F4-55D1-4720-9960-51EAF491B93B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{24D2BE2C-07DE-4277-A69D-FAD92FC664FE}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{818B9DED-CFA8-4BB6-8692-F8F9F27EE373}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -48,6 +50,9 @@ Global
 		{34A863F4-55D1-4720-9960-51EAF491B93B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{34A863F4-55D1-4720-9960-51EAF491B93B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{34A863F4-55D1-4720-9960-51EAF491B93B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{818B9DED-CFA8-4BB6-8692-F8F9F27EE373} = {614D8559-8DCB-4FC2-9AEA-EB6280E815AB}
