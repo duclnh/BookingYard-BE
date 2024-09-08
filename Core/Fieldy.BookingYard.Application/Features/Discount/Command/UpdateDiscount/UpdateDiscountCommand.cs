@@ -1,6 +1,8 @@
-﻿namespace Fieldy.BookingYard.Application.Features.Discount.Command.UpdateDiscount
+﻿using MediatR;
+
+namespace Fieldy.BookingYard.Application.Features.Discount.Command.UpdateDiscount
 {
-	public class UpdateDiscountCommand
+	public class UpdateDiscountCommand : IRequest<string>
 	{
 		public Guid DiscountID { get; set; }
 		public string? DiscountName { get; set; }

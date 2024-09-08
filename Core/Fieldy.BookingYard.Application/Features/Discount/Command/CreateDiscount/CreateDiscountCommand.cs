@@ -1,6 +1,8 @@
-﻿namespace Fieldy.BookingYard.Application.Features.Discount.Command.CreateDiscount
+﻿using MediatR;
+
+namespace Fieldy.BookingYard.Application.Features.Discount.Command.CreateDiscount
 {
-	public class CreateDiscountCommand
+	public class CreateDiscountCommand : IRequest<string>
 	{
 		public string? DiscountName { get; set; }
 		public string? Image { get; set; }

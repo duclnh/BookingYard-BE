@@ -19,11 +19,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fieldy.BookingYard.Infrastr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fieldy.BookingYard.Persistence", "Infrastructure\Fieldy.BookingYard.Persistence\Fieldy.BookingYard.Persistence.csproj", "{34A863F4-55D1-4720-9960-51EAF491B93B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{24D2BE2C-07DE-4277-A69D-FAD92FC664FE}"
-	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -60,5 +55,8 @@ Global
 		{49356ECC-2B4E-4791-8EB7-46C98022838F} = {27812B09-09FB-4CD6-9766-41AD0A2FD1C1}
 		{9C00FBEA-C564-4987-A239-F953B5CDCA11} = {507D5B23-5A0B-41E8-A586-AFA867E2D32E}
 		{34A863F4-55D1-4720-9960-51EAF491B93B} = {507D5B23-5A0B-41E8-A586-AFA867E2D32E}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B950467F-FB46-43EE-AE15-E3FB0532CE6A}
 	EndGlobalSection
 EndGlobal

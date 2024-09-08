@@ -34,7 +34,7 @@ namespace Fieldy.BookingYard.Application.Features.RegisterPackage.Commands.Updat
 			registerPackage = _mapper.Map<Domain.Entities.RegisterPackage>(request);
 			registerPackage.ModifiedAt = DateTime.Now;
 
-			await _registerPackageRepository.AddAsync(registerPackage);
+			_registerPackageRepository.Update(registerPackage);
 
 			var result = await _registerPackageRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
 

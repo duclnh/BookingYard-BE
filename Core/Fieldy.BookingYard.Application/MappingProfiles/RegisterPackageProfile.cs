@@ -13,7 +13,8 @@ namespace Fieldy.BookingYard.Application.MappingProfiles
 			CreateMap<RegisterPackage, RegisterPackageDto>()
 				.ForMember(dest => dest.RegisterPackageID, opt => opt.MapFrom(src => src.Id));
 			CreateMap<CreateRegisterPackageCommand, RegisterPackage>();
-			CreateMap<UpdateRegisterPackageCommand, RegisterPackage>();
+			CreateMap<UpdateRegisterPackageCommand, RegisterPackage>()
+				.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.RegisterPackageID));
 		}
 	}
 }

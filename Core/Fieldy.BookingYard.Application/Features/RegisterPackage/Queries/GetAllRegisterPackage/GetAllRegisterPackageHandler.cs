@@ -25,14 +25,12 @@ namespace Fieldy.BookingYard.Application.Features.RegisterPackage.Queries.GetAll
 
 		public async Task<PagingResult<RegisterPackageDto>> Handle(GetAllRegisterPackageQuery request, CancellationToken cancellationToken)
 		{
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
 			var listRegisterPackage = await _registerPackageRepository.FindAllPaging(
 				requestParams: request.requestParams,
 				expression: x => x.Facility.FacilityName.ToLower().Contains(request.requestParams.Search.ToLower().Trim())
 								|| x.Package.PackageName.ToLower().Contains(request.requestParams.Search.ToLower().Trim()),
 				orderBy: x => x.OrderByDescending(x => x.CreatedAt),
 				cancellationToken: cancellationToken);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
 			return PagingResult<RegisterPackageDto>.Create(
 			   totalCount: listRegisterPackage.TotalCount,
