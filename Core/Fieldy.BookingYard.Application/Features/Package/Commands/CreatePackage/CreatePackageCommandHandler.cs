@@ -31,9 +31,8 @@ namespace Fieldy.BookingYard.Application.Features.Package.Commands.CreatePackage
             if (package == null)
                 throw new BadRequestException("Error create package!");
 
-            package.PackageId = Guid.NewGuid();
             package.IsDeleted = false;
-			package.CreateAt = DateTime.Now;
+			package.CreatedAt = DateTime.Now;
             package.ModifiedAt = DateTime.Now;
 
             await _packageRepository.AddAsync(package);

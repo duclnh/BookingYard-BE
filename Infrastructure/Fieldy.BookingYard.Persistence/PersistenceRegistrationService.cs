@@ -24,8 +24,10 @@ namespace Fieldy.BookingYard.Persistence
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<ISupportRepository, SupportRepository>();
             services.AddTransient<IPackageRepository, PackageRepository>();
+            services.AddTransient<IRegisterPackageRepository, RegisterPackageRepository>();
+            services.AddTransient<IDiscountRepository, DiscountRepository>();
 
-			services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 			return services;
         }
     }
