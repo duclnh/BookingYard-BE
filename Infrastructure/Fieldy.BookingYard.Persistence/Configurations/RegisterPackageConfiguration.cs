@@ -8,7 +8,7 @@ namespace Fieldy.BookingYard.Persistence.Configurations
 	{
 		public void Configure(EntityTypeBuilder<RegisterPackage> builder)
 		{
-			builder.HasKey(x => x.RegisterPackageID);
+			builder.Property(x => x.Id).HasColumnName("RegisterPackageID");
 			/*builder.Property(x => x.RegisterDate).HasColumnName("StartDate");
 			builder.Property(x => x.ExpiredDate).HasColumnName("EndDate");*/
 		}

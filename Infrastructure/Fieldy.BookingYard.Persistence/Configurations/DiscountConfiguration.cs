@@ -8,7 +8,7 @@ namespace Fieldy.BookingYard.Persistence.Configurations
 	{
 		public void Configure(EntityTypeBuilder<Discount> builder)
 		{
-			builder.HasKey(x => x.DiscountID);
+			builder.Property(x => x.Id).HasColumnName("DiscountID");
 		}
 	}
 }

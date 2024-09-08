@@ -21,7 +21,7 @@ namespace Fieldy.BookingYard.Application.Features.Package.Commands.UpdatePackage
 			if (validationResult.Errors.Any())
 				throw new BadRequestException("Invalid update package", validationResult);
 
-			var package = await _packageRepository.Find(x => x.PackageId == request.PackageId, cancellationToken);
+			var package = await _packageRepository.Find(x => x.Id == request.PackageId, cancellationToken);
 			if (package == null)
 				throw new NotFoundException(nameof(package), request.PackageId);
 			if(request.PackageName == null)

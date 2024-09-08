@@ -1,12 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Fieldy.BookingYard.Domain.Common;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Fieldy.BookingYard.Domain.Entities
 {
 	[Table("Discounts")]
-	public class Discount
+	public class Discount : EntityBase<Guid>
 	{
-		public Guid DiscountID { get; set; }
 		public string? DiscountName { get; set; }
 		public string? Image { get; set; }
 		[MinLength(0), MaxLength(100)]

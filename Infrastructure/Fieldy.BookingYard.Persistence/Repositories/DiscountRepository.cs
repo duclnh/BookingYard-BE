@@ -4,7 +4,7 @@ using Fieldy.BookingYard.Persistence.DatabaseContext;
 
 namespace Fieldy.BookingYard.Persistence.Repositories
 {
-	public class DiscountRepository : RepositoryBase<Discount, Discount>, IDiscountRepository
+	public class DiscountRepository : RepositoryBase<Discount, Guid>, IDiscountRepository
 	{
 		public DiscountRepository(BookingYardDBContext bookingYardDBContext) : base(bookingYardDBContext)
 		{

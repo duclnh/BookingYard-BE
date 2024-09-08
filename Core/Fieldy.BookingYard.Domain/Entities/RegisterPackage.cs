@@ -4,9 +4,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Fieldy.BookingYard.Domain.Entities
 {
     [Table("RegisterPackages")]
-    public class RegisterPackage : IDateTracking
+    public class RegisterPackage : EntityBase<Guid>, IDateTracking
     {
-        public Guid RegisterPackageID { get; set; }
         public Guid FacilityID { get; set; }
         public Facility? Facility { get; set; }
         public Guid PackageID { get; set; }

@@ -1,13 +1,7 @@
 ﻿using AutoMapper;
 using Fieldy.BookingYard.Application.Contracts.Persistence;
 using Fieldy.BookingYard.Application.Exceptions;
-using Fieldy.BookingYard.Application.Features.RegisterPackage.Commands.UpdateRegisterPackage;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Fieldy.BookingYard.Application.Features.RegisterPackage.Commands.UpdateRegisterPackage
 {
@@ -33,7 +27,7 @@ namespace Fieldy.BookingYard.Application.Features.RegisterPackage.Commands.Updat
 			if (registerPackage == null)
 				throw new BadRequestException("Error Update register package!");
 
-			var registerPackageExist = await _registerPackageRepository.Find(x => x.RegisterPackageID == request.RegisterPackageID, cancellationToken);
+			var registerPackageExist = await _registerPackageRepository.Find(x => x.Id == request.RegisterPackageID, cancellationToken);
 			if (registerPackageExist == null)
 				throw new BadRequestException("Register package not found!");
 

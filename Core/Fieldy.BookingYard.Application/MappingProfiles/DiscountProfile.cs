@@ -10,7 +10,8 @@ namespace Fieldy.BookingYard.Application.MappingProfiles
 	{
 		public DiscountProfile()
 		{
-			CreateMap<Discount, DiscountDto>();
+			CreateMap<Discount, DiscountDto>()
+				.ForMember(dest => dest.DiscountID, opt => opt.MapFrom(src => src.Id)); ;
 			CreateMap<CreateDiscountCommand, Discount>();
 			CreateMap<UpdateDiscountCommand, Discount>()
 				 .AfterMap((src, dest) =>

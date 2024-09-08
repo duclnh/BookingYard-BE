@@ -8,6 +8,7 @@ namespace Fieldy.BookingYard.Persistence.Configurations
 	{
 		public void Configure(EntityTypeBuilder<Package> builder)
 		{
+			builder.Property(x => x.Id).HasColumnName("PackageID");
 			//set decimal data type
 			builder.Property(p => p.PackagePrice)
 			.HasColumnType("decimal(18,2)");

@@ -4,9 +4,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Fieldy.BookingYard.Domain.Entities
 {
     [Table("Packages")]
-    public class Package : ISoftDelete, IDateTracking
+    public class Package : EntityBase<Guid>, ISoftDelete, IDateTracking
 	{
-        public Guid PackageId { get; set; }
         public string? PackageName { get; set; }
 		public decimal PackagePrice { get; set; }
         public string? PackageDescription { get; set; }

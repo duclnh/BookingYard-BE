@@ -2,7 +2,7 @@
 
 namespace Fieldy.BookingYard.Application.Contracts.Persistence
 {
-	public interface IDiscountRepository : IRepositoryBase<Discount, Discount>
+	public interface IDiscountRepository : IRepositoryBase<Discount, Guid>
 	{
 	}
 }

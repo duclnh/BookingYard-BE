@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Fieldy.BookingYard.Application.Contracts.Persistence;
 using Fieldy.BookingYard.Application.Exceptions;
-using Fieldy.BookingYard.Application.Features.Package.Commands.CreatePackage;
 using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.RegisterPackage.Commands.CreateRegisterPackage
@@ -29,7 +28,6 @@ namespace Fieldy.BookingYard.Application.Features.RegisterPackage.Commands.Creat
 				throw new BadRequestException("Error create register package!");
 
 			registerPackage = _mapper.Map<Domain.Entities.RegisterPackage>(request);
-			registerPackage.RegisterPackageID = Guid.NewGuid();
 			registerPackage.CreatedAt = DateTime.Now;
 			registerPackage.ModifiedAt = DateTime.Now;
 
