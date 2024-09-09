@@ -23,5 +23,5 @@ namespace Fieldy.BookingYard.Domain.Entities
         public required Guid UserID { get; set; }
         public required User User { get; set; }
     }
-
+    
 }
