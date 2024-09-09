@@ -1,7 +1,9 @@
 using Fieldy.BookingYard.Application.Features.User.Queries;
 using Fieldy.BookingYard.Application.Features.User.Queries.GetUserById;
+using Fieldy.BookingYard.Application.Features.User.Queries.GetUserUpdateById;
 using Fieldy.BookingYard.Application.Models.Paging;
 using Fieldy.BookingYard.Application.Models.Query;
+using Fieldy.BookingYard.Application.Models.User;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -33,6 +35,21 @@ namespace Fiedly.BookingYard.Api.Controllers
             CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(new GetUserByIdQuery(id), cancellationToken);
+            return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("update/{id}")]
+        [ProducesResponseType(typeof(UserUpdateDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetUserUpdateById(
+            [FromRoute] Guid id,
+            CancellationToken cancellationToken = default)
+        {
+            var result = await _mediator.Send(new GetUserUpdateById(id), cancellationToken);
             return Ok(result);
         }
 
