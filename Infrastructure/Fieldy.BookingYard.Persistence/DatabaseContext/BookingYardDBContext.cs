@@ -19,7 +19,11 @@ namespace Fieldy.BookingYard.Persistence.DatabaseContext
         public DbSet<Package> Packages { get; set; }
         public DbSet<RegisterPackage> RegisterPackages { get; set; }
         public DbSet<Discount> Discounts { get; set; }
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+		public DbSet<PeakHour> PeakHours { get; set; }
+		public DbSet<FacilityTime> FacilityTimes { get; set; }
+		public DbSet<Holiday> Holidays { get; set; }
+		public DbSet<FeedBack> Feedbacks { get; set; }
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(BookingYardDBContext).Assembly);
             base.OnModelCreating(modelBuilder);

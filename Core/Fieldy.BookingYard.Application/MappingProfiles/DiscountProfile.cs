@@ -14,25 +14,26 @@ namespace Fieldy.BookingYard.Application.MappingProfiles
 				.ForMember(dest => dest.DiscountID, opt => opt.MapFrom(src => src.Id)); ;
 			CreateMap<CreateDiscountCommand, Discount>();
 			CreateMap<UpdateDiscountCommand, Discount>()
-				 .AfterMap((src, dest) =>
-				 {
-					 if (string.IsNullOrEmpty(src.DiscountName))
-					 {
-						 dest.DiscountName = src.DiscountName;
-					 }
-					 if (string.IsNullOrEmpty(src.Image))
-					 {
-						 dest.Image = src.Image;
-					 }
-					 if (string.IsNullOrEmpty(src.DiscountDescription))
-					 {
-						 dest.DiscountDescription = src.DiscountDescription;
-					 }
-					 if (string.IsNullOrEmpty(src.Reason))
-					 {
-						 dest.Reason = src.Reason;
-					 }
-				 });
+				.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.DiscountID))
+				.AfterMap((src, dest) =>
+				{
+					if (string.IsNullOrEmpty(src.DiscountName))
+					{
+						dest.DiscountName = src.DiscountName;
+					}
+					if (string.IsNullOrEmpty(src.Image))
+					{
+						dest.Image = src.Image;
+					}
+					if (string.IsNullOrEmpty(src.DiscountDescription))
+					{
+						dest.DiscountDescription = src.DiscountDescription;
+					}
+					if (string.IsNullOrEmpty(src.Reason))
+					{
+						dest.Reason = src.Reason;
+					}
+				});
 		}
 	}
 }

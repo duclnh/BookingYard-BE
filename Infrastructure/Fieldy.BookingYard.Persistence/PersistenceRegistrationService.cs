@@ -1,16 +1,13 @@
-﻿using Fieldy.BookingYard.Application.Contracts.JWT;
-using Fieldy.BookingYard.Application.Contracts.Persistence;
-using Fieldy.BookingYard.Application.Features.Package.Commands.CreatePackage;
+﻿using Fieldy.BookingYard.Application.Contracts.Persistence;
 using Fieldy.BookingYard.Persistence.DatabaseContext;
 using Fieldy.BookingYard.Persistence.Repositories;
-using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Fieldy.BookingYard.Persistence
 {
-    public static class PersistenceRegistrationService
+	public static class PersistenceRegistrationService
     {
         public static IServiceCollection AddPersistenceServices(this IServiceCollection services, IConfiguration configuration)
         {
@@ -26,8 +23,12 @@ namespace Fieldy.BookingYard.Persistence
             services.AddTransient<IPackageRepository, PackageRepository>();
             services.AddTransient<IRegisterPackageRepository, RegisterPackageRepository>();
             services.AddTransient<IDiscountRepository, DiscountRepository>();
+			services.AddTransient<IPeakHourRepository, PeakHourRepository>();
+			services.AddTransient<IFacilityTimeRepository, FacilityTimeRepository>();
+			services.AddTransient<IHolidayRepository, HolidayRepository>();
+			services.AddTransient<IFeedbackRepository, FeedbackRepository>();
 
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+			services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 			return services;
         }
     }
