@@ -7,7 +7,7 @@ namespace Fieldy.BookingYard.Domain.Entities
 	[Table("Discounts")]
 	public class Discount : EntityBase<Guid>
 	{
-		public string? DiscountName { get; set; }
+		public required string DiscountName { get; set; }
 		public string? Image { get; set; }
 		[MinLength(0), MaxLength(100)]
 		public int Percentage { get; set; }

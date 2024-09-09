@@ -18,13 +18,13 @@ namespace Fieldy.BookingYard.Application.Features.Discount.Queries.GetAllDiscoun
 
 		public async Task<PagingResult<DiscountDto>> Handle(GetAllDiscountQuery request, CancellationToken cancellationToken)
 		{
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
+
 			var listDiscount = await _DiscountRepository.FindAllPaging(
 				requestParams: request.requestParams,
-				expression: x => x.DiscountName.ToLower().Contains(request.requestParams.Search.ToLower().Trim()),
+				expression: x => request.requestParams.Search != null
+								&& x.DiscountName.ToLower().Contains(request.requestParams.Search.ToLower().Trim()),
 				orderBy: x => x.OrderByDescending(x => x.ExpiredDate),
 				cancellationToken: cancellationToken);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
 			return PagingResult<DiscountDto>.Create(
 			   totalCount: listDiscount.TotalCount,

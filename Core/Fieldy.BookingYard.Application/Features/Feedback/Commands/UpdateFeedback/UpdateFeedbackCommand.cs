@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.Feedback.Commands.UpdateFeedback
 {
-	public class UpdateFeedbackCommand : IRequest<string>
+	public class 	UpdateFeedbackCommand : IRequest<string>
 	{
 		public int FeedbackID { get; set; }
 		public Guid UserID { get; set; }
