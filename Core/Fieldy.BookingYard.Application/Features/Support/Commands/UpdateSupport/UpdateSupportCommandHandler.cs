@@ -1,4 +1,3 @@
-using System;
 using Fieldy.BookingYard.Application.Contracts.JWT;
 using Fieldy.BookingYard.Application.Contracts.Persistence;
 using Fieldy.BookingYard.Application.Exceptions;

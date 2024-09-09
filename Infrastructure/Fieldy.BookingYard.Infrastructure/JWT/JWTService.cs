@@ -27,7 +27,7 @@ namespace Fieldy.BookingYard.Infrastructure.JWT
                 return Guid.TryParse(userId, out var result) ? result : Guid.Empty;
             }
         }
-        public string CreateTokenJWT(User user)
+        public JWTResponse CreateTokenJWT(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_jwtSetting.Key);
@@ -49,7 +49,11 @@ namespace Fieldy.BookingYard.Infrastructure.JWT
                 signingCredentials: signingCredentials
             );
 
-            return tokenHandler.WriteToken(jwtSecurityToken);
+            return new JWTResponse
+            {
+                Token = tokenHandler.WriteToken(jwtSecurityToken),
+                Expiration = timeExpiration,
+            };
         }
     }
 }

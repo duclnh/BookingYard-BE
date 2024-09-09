@@ -36,7 +36,7 @@ namespace Fieldy.BookingYard.Application.Features.Support.Commands.CreateContact
             if (contact == null)
                 throw new BadRequestException("Error create contact!");
 
-            contact.TypeSupport = TypeSupport.Partner;
+            contact.TypeSupport = TypeSupport.Contact;
             contact.CreatedAt = DateTime.UtcNow;
 
             await _supportRepository.AddAsync(contact);
@@ -45,7 +45,6 @@ namespace Fieldy.BookingYard.Application.Features.Support.Commands.CreateContact
 
             if (result < 0)
                 throw new BadRequestException("Create new contact fail!");
-
 
             return "Create contact successfully";
         }

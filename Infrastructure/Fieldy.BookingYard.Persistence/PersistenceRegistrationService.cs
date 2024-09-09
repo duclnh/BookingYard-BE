@@ -21,7 +21,7 @@ namespace Fieldy.BookingYard.Persistence
             services.AddTransient(typeof(IRepositoryBase<,>), typeof(RepositoryBase<,>));
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<ISupportRepository, SupportRepository>();
-
+            services.AddTransient<IFacilityRepository, FacilityRepository>();
             return services;
         }
     }

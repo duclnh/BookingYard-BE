@@ -21,10 +21,13 @@ namespace Fieldy.BookingYard.Application.Features.Support.Queries.GetAllSupport
         {
             var listSupport = await _supportRepository.FindAllPaging(
                 requestParams: request.requestParams,
-                expression: x => x.Name.ToLower().Contains(request.requestParams.Search.ToLower().Trim())
-                                || x.Phone.Contains(request.requestParams.Search.Trim()),
+                expression: x => (string.IsNullOrEmpty(request.requestParams.Search) || (x.Name.ToLower().Contains(request.requestParams.Search.ToLower().Trim())
+                                || x.Phone.Contains(request.requestParams.Search.Trim())))
+                                && (!request.requestParams.type.HasValue || x.TypeSupport == request.requestParams.type),
                 orderBy: x => x.OrderByDescending(x => x.CreatedAt),
-                cancellationToken: cancellationToken);
+                cancellationToken: cancellationToken
+            );
+
 
             return PagingResult<SupportDTO>.Create(
                totalCount: listSupport.TotalCount,

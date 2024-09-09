@@ -27,11 +27,11 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Queries.Login
 
         public async Task<AuthResponse> Handle(LoginQuery request, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.Find(x => (x.Phone == request.Email
-                                                        || x.Email == request.Email)
+            var user = await _userRepository.Find(x => (x.Phone == request.UserName
+                                                        || x.Email == request.UserName)
                                                         && x.IsDeleted == false, cancellationToken);
             if (user == null)
-                throw new NotFoundException(nameof(user), request.Email);
+                throw new NotFoundException(nameof(user), request.UserName);
 
             if (user.IsBanned)
                 throw new BadRequestException("User is banned!");
@@ -41,12 +41,15 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Queries.Login
 
             _logger.LogInformation($"Login Account: {user.Email}");
 
+            var jwtResult = _jwtService.CreateTokenJWT(user);
+           
             return new AuthResponse()
             {
                 UserID = user.Id.ToString(),
                 ImageUrl = user.ImageUrl,
                 Name = user.Name,
-                Token = _jwtService.CreateTokenJWT(user),
+                Token = jwtResult.Token,
+                Expiration = jwtResult.Expiration,
                 Email = user.Email,
                 Gender = user.Gender.ToString(),
                 Role = user.Role.ToString(),

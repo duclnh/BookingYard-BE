@@ -15,8 +15,6 @@ namespace Fieldy.BookingYard.Domain.Entities
         public required TypeSupport TypeSupport { get; set; }
         public DateTime CreatedAt { get; set; }
         public Guid? ModifiedBy { get; set; }
-        [NotMapped]
-        public User? User { get; set; }
         public DateTime? ModifiedAt { get; set; }
         public bool IsProcessed() => ModifiedBy != null;
     }

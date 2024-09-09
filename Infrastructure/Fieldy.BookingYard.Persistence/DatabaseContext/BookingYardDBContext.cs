@@ -16,6 +16,7 @@ namespace Fieldy.BookingYard.Persistence.DatabaseContext
         }
         public DbSet<User> Users { get; set; }
         public DbSet<Support> Supports { get; set; }
+        public DbSet<Facility> Facilities { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(BookingYardDBContext).Assembly);
