@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Fieldy.BookingYard.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/facility")]
     [ApiController]
     public class FacilityController : ControllerBase
     {

@@ -1,14 +1,7 @@
 ﻿using AutoMapper;
 using Fieldy.BookingYard.Application.Contracts.Persistence;
-using Fieldy.BookingYard.Application.Features.Package.Queries;
-using Fieldy.BookingYard.Application.Features.Package.Queries.GetAllPackage;
 using Fieldy.BookingYard.Application.Models.Paging;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Fieldy.BookingYard.Application.Features.RegisterPackage.Queries.GetAllRegisterPackage
 {
@@ -27,7 +20,7 @@ namespace Fieldy.BookingYard.Application.Features.RegisterPackage.Queries.GetAll
 		{
 			var listRegisterPackage = await _registerPackageRepository.FindAllPaging(
 				requestParams: request.requestParams,
-				expression: x => x.Facility.FacilityName.ToLower().Contains(request.requestParams.Search.ToLower().Trim())
+				expression: x => x.Facility.Name.ToLower().Contains(request.requestParams.Search.ToLower().Trim())
 								|| x.Package.PackageName.ToLower().Contains(request.requestParams.Search.ToLower().Trim()),
 				orderBy: x => x.OrderByDescending(x => x.CreatedAt),
 				cancellationToken: cancellationToken);

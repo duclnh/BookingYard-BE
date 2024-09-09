@@ -7,6 +7,7 @@ using Fieldy.BookingYard.Application.Features.Support.Queries.GetStatisticSuppor
 using Fieldy.BookingYard.Application.Models.Paging;
 using Fieldy.BookingYard.Application.Models.Query;
 using Fieldy.BookingYard.Application.Models.Statistic;
+using Fieldy.BookingYard.Domain.Enum;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -62,9 +63,10 @@ namespace Fieldy.BookingYard.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAllSupport(
             [FromQuery] RequestParams requestParams,
+            [FromQuery] TypeSupport? typeSupport,
             CancellationToken cancellationToken = default)
         {
-            var result = await _mediator.Send(new GetAllSupportQuery(requestParams), cancellationToken);
+            var result = await _mediator.Send(new GetAllSupportQuery(requestParams, typeSupport), cancellationToken);
             return Ok(result);
         }
 

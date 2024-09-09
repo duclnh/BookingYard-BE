@@ -22,7 +22,7 @@ public class CreateFacilityCommand : IRequest<string>
     public required decimal PeakHourPrice { get; set; }
     public List<string> OpenDate { get; set; } = new List<string>();
     public List<DateTime> HolidayDate { get; set; } = new List<DateTime>();
-    public List<TimeOnly> PeakHour { get; set; } = new List<TimeOnly>();
+    public List<TimeSpan> PeakHour { get; set; } = new List<TimeSpan>();
     public int WardID { get; set; }
     public int ProvinceID {get; set; }
 }

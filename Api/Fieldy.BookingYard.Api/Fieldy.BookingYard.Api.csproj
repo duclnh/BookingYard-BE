@@ -24,8 +24,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Fieldy.BookingYard.Application\Fieldy.BookingYard.Application.csproj" />
-    <ProjectReference Include="..\..\Infrastructure\Fieldy.BookingYard.Persistence\Fieldy.BookingYard.Persistence.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Fieldy.BookingYard.Infrastructure\Fieldy.BookingYard.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Fieldy.BookingYard.Persistence\Fieldy.BookingYard.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

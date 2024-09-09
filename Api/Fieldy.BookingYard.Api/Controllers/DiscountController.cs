@@ -9,7 +9,7 @@ using System.Net.Mime;
 
 namespace Fieldy.BookingYard.Api.Controllers
 {
-	[Route("api/[controller]")]
+	[Route("api/discount")]
 	[ApiController]
 	public class DiscountController : ControllerBase
 	{

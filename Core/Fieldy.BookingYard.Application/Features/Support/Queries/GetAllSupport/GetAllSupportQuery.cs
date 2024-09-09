@@ -1,9 +1,10 @@
 using Fieldy.BookingYard.Application.Models.Paging;
 using Fieldy.BookingYard.Application.Models.Query;
+using Fieldy.BookingYard.Domain.Enum;
 using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.Support.Queries.GetAllSupport{
-    public record GetAllSupportQuery(RequestParams requestParams) : IRequest<PagingResult<SupportDTO>>{
+    public record GetAllSupportQuery(RequestParams requestParams,TypeSupport? typeSupport) : IRequest<PagingResult<SupportDTO>>{
 
     }
 }

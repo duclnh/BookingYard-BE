@@ -23,7 +23,7 @@ namespace Fieldy.BookingYard.Domain.Entities
         [StringLength(12, MinimumLength = 10)]
         public string? Phone { get; set; }
         public Gender Gender { get; set; }
-        
+
         public string? ImageUrl { get; set; }
         [MaxLength(30)]
         public string? GoogleID { get; set; }
@@ -45,6 +45,7 @@ namespace Fieldy.BookingYard.Domain.Entities
         public Role Role { get; set; }
 
         public bool IsVerification() => VerificationToken == null;
+        public ICollection<FeedBack> FeedBacks {get;set;}
 
     }
 

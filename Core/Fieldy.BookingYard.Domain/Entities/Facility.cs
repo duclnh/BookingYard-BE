@@ -10,8 +10,8 @@ namespace Fieldy.BookingYard.Domain.Entities
         public required string Address { get; set; }
         public required string Description { get; set; }
         public required string Convenient { get; set; }
-        public required TimeOnly StartTime { get; set; }
-        public required TimeOnly EndTime { get; set; }
+        public required TimeSpan StartTime { get; set; }
+        public required TimeSpan EndTime { get; set; }
         public required double Longitude { get; set; }
         public required double Latitude { get; set; }
         public required decimal MonthPrice { get; set; }
@@ -22,6 +22,7 @@ namespace Fieldy.BookingYard.Domain.Entities
         public int ProvinceID { get; set; }
         public required Guid UserID { get; set; }
         public required User User { get; set; }
+        public required ICollection<FeedBack> FeedBacks { get; set; }
     }
     
 }

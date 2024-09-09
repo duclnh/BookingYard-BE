@@ -23,7 +23,7 @@ namespace Fieldy.BookingYard.Application.Features.Support.Queries.GetAllSupport
                 requestParams: request.requestParams,
                 expression: x => (string.IsNullOrEmpty(request.requestParams.Search) || (x.Name.ToLower().Contains(request.requestParams.Search.ToLower().Trim())
                                 || x.Phone.Contains(request.requestParams.Search.Trim())))
-                                && (!request.requestParams.type.HasValue || x.TypeSupport == request.requestParams.type),
+                                && (!request.typeSupport.HasValue || x.TypeSupport == request.typeSupport),
                 orderBy: x => x.OrderByDescending(x => x.CreatedAt),
                 cancellationToken: cancellationToken
             );

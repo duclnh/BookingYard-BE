@@ -11,6 +11,15 @@ namespace Fieldy.BookingYard.Persistence.Configurations
 		public void Configure(EntityTypeBuilder<FeedBack> builder)
 		{
 			builder.Property(x => x.Id).ValueGeneratedOnAdd();
-		}
+			builder.Property(x => x.Id)
+				   .HasColumnName("FeedbackID");
+
+            builder.HasOne(x => x.Facility)
+                   .WithMany(y => y.FeedBacks)
+                   .HasForeignKey(x => x.FacilityID)
+                   .OnDelete(DeleteBehavior.Restrict);
+
+
+        }
 	}
 }
