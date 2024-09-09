@@ -37,7 +37,7 @@ bld/
 .vs/
 .vscode/
 Infrastructure/Fieldy.BookingYard.Persistence/Migrations
-Api/Fieldy.BookingYard.Api/appsettings.Development.json
+**/appsettings.Development.json
 # Uncomment if you have tasks that create the project's static files in wwwroot
 #wwwroot/
 
