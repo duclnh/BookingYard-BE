@@ -10,7 +10,7 @@ namespace Fieldy.BookingYard.Persistence.Configurations
 	{
 		public void Configure(EntityTypeBuilder<FeedBack> builder)
 		{
-			builder.Property(x => x.Id).HasColumnName("FeedbackID");
+			builder.Property(x => x.Id).ValueGeneratedOnAdd();
 		}
 	}
 }
