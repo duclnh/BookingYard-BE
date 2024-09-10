@@ -13,14 +13,14 @@ namespace Fieldy.BookingYard.Application.Features.Package.Queries.GetAllPackage
         public GetAllPackageHandler(IMapper mapper, IPackageRepository packageRepository)
         {
             _mapper = mapper;
-            _packageRepository = packageRepository;
+			_packageRepository = packageRepository;
         }
 
         public async Task<PagingResult<PackageDto>> Handle(GetAllPackageQuery request, CancellationToken cancellationToken)
         {
 			var listPackage = await _packageRepository.FindAllPaging(
                 requestParams: request.requestParams,
-                expression: x => x.PackageName.ToLower().Contains(request.requestParams.Search.ToLower().Trim()),
+				expression: string.IsNullOrEmpty(request.requestParams.Search) ? null : (x => x.PackageName.ToLower().Contains(request.requestParams.Search.ToLower().Trim())),
                 orderBy: x => x.OrderByDescending(x => x.CreatedAt),
                 cancellationToken: cancellationToken);
 
@@ -33,6 +33,6 @@ namespace Fieldy.BookingYard.Application.Features.Package.Queries.GetAllPackage
                hasPrevious: listPackage.HasPrevious,
                results: _mapper.Map<IList<PackageDto>>(listPackage.Results)
            );
-        }
-    }
+		}
+	}
 }

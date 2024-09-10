@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.Feedback.Queries.GetAllFeedback
 {
-	public record GetAllFeedbackQuery(RequestParams requestParams) : IRequest<PagingResult<FeedbackDto>>
+	public record GetAllFeedbackQuery(RequestParams requestParams, Guid FaciliyId) : IRequest<PagingResult<FeedbackDto>>
 	{
 	}
 }

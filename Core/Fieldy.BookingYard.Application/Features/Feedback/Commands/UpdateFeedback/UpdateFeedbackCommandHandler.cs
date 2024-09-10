@@ -21,10 +21,16 @@ namespace Fieldy.BookingYard.Application.Features.Feedback.Commands.UpdateFeedba
 			if (validationResult.Errors.Any())
 				throw new BadRequestException("Invalid register Feedback", validationResult);
 
-			var Feedback = _mapper.Map<Domain.Entities.FeedBack>(request);
+			var Feedback = await _FeedbackRepository.Find(x => x.Id == request.FeedbackID, cancellationToken);
 
 			if (Feedback == null)
 				throw new BadRequestException("Error Update Feedback!");
+
+			Feedback.Image = request.Image;
+			Feedback.Content = request.Content;
+			Feedback.Rating = request.Rating;
+			Feedback.TypeFeedback = request.TypeFeedback;
+			Feedback.IsShow = request.IsShow;
 
 			_FeedbackRepository.Update(Feedback);
 

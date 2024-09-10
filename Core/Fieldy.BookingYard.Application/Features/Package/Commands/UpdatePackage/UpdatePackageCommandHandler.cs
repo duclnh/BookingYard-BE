@@ -24,17 +24,11 @@ namespace Fieldy.BookingYard.Application.Features.Package.Commands.UpdatePackage
 			var package = await _packageRepository.Find(x => x.Id == request.PackageId, cancellationToken);
 			if (package == null)
 				throw new NotFoundException(nameof(package), request.PackageId);
-			if(request.PackageName == null)
-			{
-				package.IsDeleted = true;
-			}
-			else
-			{
-				package = _mapper.Map<Domain.Entities.Package>(request);
-				package.ModifiedAt = DateTime.Now;
-			}
 
+			package = _mapper.Map<Domain.Entities.Package>(request);
+			package.ModifiedAt = DateTime.Now;
 			_packageRepository.Update(package);
+
 			var result = await _packageRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
 			if (result < 0)
 				throw new BadRequestException("Update package fail!");

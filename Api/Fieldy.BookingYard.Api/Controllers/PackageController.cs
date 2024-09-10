@@ -1,7 +1,10 @@
-﻿using Fieldy.BookingYard.Application.Features.Package.Commands.CreatePackage;
+﻿using Fieldy.BookingYard.Application.Features.Feedback.Commands.DeleteFeedback;
+using Fieldy.BookingYard.Application.Features.Package.Commands.CreatePackage;
+using Fieldy.BookingYard.Application.Features.Package.Commands.DeletePackage;
 using Fieldy.BookingYard.Application.Features.Package.Commands.UpdatePackage;
 using Fieldy.BookingYard.Application.Features.Package.Queries;
 using Fieldy.BookingYard.Application.Features.Package.Queries.GetAllPackage;
+using Fieldy.BookingYard.Application.Features.Package.Queries.GetPackageCreate;
 using Fieldy.BookingYard.Application.Models.Query;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -63,18 +66,45 @@ namespace Fieldy.BookingYard.Api.Controllers
 			return Ok(result);
 		}*/
 
-		[HttpPost()]
-		[Route("Paging")]
+		[HttpDelete("{id}")]
+		[Produces(MediaTypeNames.Application.Json)]
+		[ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+		public async Task<IActionResult> DeleteFeedback(
+			[FromRoute] Guid id,
+			CancellationToken cancellationToken = default)
+		{
+			var result = await _mediator.Send(new DeletePackageCommand { PackageId = id }, cancellationToken);
+			return Ok(result);
+		}
+
+		[HttpGet()]
 		[Produces(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(typeof(PackageDto), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
 		public async Task<IActionResult> GetAllPackage(
-						[FromBody] RequestParams requestParams,
+						[FromQuery] RequestParams requestParams,
 							CancellationToken cancellationToken = default)
 		{
 			var result = await _mediator.Send(new GetAllPackageQuery(requestParams), cancellationToken);
+			return Ok(result);
+		}
+
+		[HttpGet()]
+		[Route("create")]
+		[Produces(MediaTypeNames.Application.Json)]
+		[ProducesResponseType(typeof(PackageDto), StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+		public async Task<IActionResult> GetPackage(
+							CancellationToken cancellationToken = default)
+		{
+			var result = await _mediator.Send(new GetPackageCreateQuery(), cancellationToken);
 			return Ok(result);
 		}
 	}

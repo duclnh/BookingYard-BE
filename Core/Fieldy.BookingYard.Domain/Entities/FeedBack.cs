@@ -11,6 +11,7 @@ namespace Fieldy.BookingYard.Domain.Entities
         public User? User { get; set; }
         public Guid FacilityID { get; set; }
         public Facility? Facility { get; set; }
+        public string? Image { get; set; }
         public string? Content { get; set; }
         public int Rating { get; set; }
         public TypeFeedback TypeFeedback { get; set; }

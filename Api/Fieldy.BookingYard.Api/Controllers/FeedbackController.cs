@@ -39,6 +39,7 @@ namespace Fieldy.BookingYard.Api.Controllers
 			return Created(string.Empty, result);
 		}
 
+		[AllowAnonymous]
 		[HttpPut]
 		[Produces(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
@@ -69,18 +70,18 @@ namespace Fieldy.BookingYard.Api.Controllers
 		}
 
 		[AllowAnonymous]
-		[HttpPost()]
-		[Route("Paging")]
+		[HttpGet("{facilityId}")]
 		[Produces(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(typeof(PagingResult<FeedbackDto>), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
 		public async Task<IActionResult> GetAllFeedback(
-			[FromBody] RequestParams requestParams,
+			[FromRoute] Guid facilityId,
+			[FromQuery] RequestParams requestParams,
 			CancellationToken cancellationToken = default)
 		{
-			var result = await _mediator.Send(new GetAllFeedbackQuery(requestParams), cancellationToken);
+			var result = await _mediator.Send(new GetAllFeedbackQuery(requestParams, facilityId), cancellationToken);
 			return Ok(result);
 		}
 	}
