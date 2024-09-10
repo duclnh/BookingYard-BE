@@ -15,7 +15,10 @@ namespace Fieldy.BookingYard.Application.MappingProfiles
 				.ForMember(dest => dest.FeedbackID, opt => opt.MapFrom(src => src.Id));
 			CreateMap<CreateFeedbackCommand, FeedBack>();
 			CreateMap<UpdateFeedbackCommand, FeedBack>()
-				.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.FeedbackID));
+				.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.FeedbackID))
+				.ForMember(dest => dest.FacilityID, opt => opt.Ignore())
+				.ForMember(dest => dest.UserID, opt => opt.Ignore())
+				.ForMember(dest => dest.CreatedAt, opt => opt.Ignore());
 			CreateMap<DeleteFeedbackCommand, FeedBack>()
 				.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.FeedbackID));
 		}

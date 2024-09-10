@@ -27,6 +27,9 @@ namespace Fieldy.BookingYard.Application.Features.Package.Commands.CreatePackage
 				throw new ConflictException("Package already exists");
 
 			var package = _mapper.Map<Domain.Entities.Package>(request);
+            package.Id = Guid.NewGuid();
+            package.CreatedAt = DateTime.Now;
+            package.ModifiedAt = DateTime.Now;
 
             if (package == null)
                 throw new BadRequestException("Error create package!");

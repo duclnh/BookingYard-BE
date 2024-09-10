@@ -20,8 +20,8 @@ namespace Fieldy.BookingYard.Application.Features.Feedback.Queries.GetAllFeedbac
 		{
 			var listFeedback = await _FeedbackRepository.FindAllPaging(
 				requestParams: request.requestParams,
-				expression: null,
-				orderBy: null,
+				expression: x => x.FacilityID == request.FaciliyId,
+				orderBy: x => x.OrderByDescending(x => x.CreatedAt),
 				cancellationToken: cancellationToken);
 
 			return PagingResult<FeedbackDto>.Create(

@@ -6,8 +6,7 @@ namespace Fieldy.BookingYard.Application.Features.Feedback.Commands.UpdateFeedba
 	public class 	UpdateFeedbackCommand : IRequest<string>
 	{
 		public int FeedbackID { get; set; }
-		public Guid UserID { get; set; }
-		public Guid FacilityID { get; set; }
+		public string? Image { get; set; }
 		public string? Content { get; set; }
 		public int Rating { get; set; }
 		public TypeFeedback TypeFeedback { get; set; }
