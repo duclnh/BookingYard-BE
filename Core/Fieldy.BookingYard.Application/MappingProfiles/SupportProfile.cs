@@ -6,9 +6,9 @@ using Fieldy.BookingYard.Domain.Entities;
 
 namespace Fieldy.BookingYard.Application.MappingProfiles
 {
-    public class SupportProfiles : Profile
+    public class SupportProfile : Profile
     {
-        public SupportProfiles()
+        public SupportProfile()
         {
             CreateMap<CreateAdviseCommand, Support>();
             CreateMap<CreateContactCommand, Support>();

@@ -9,8 +9,6 @@ namespace Fieldy.BookingYard.Persistence.Configurations
 		public void Configure(EntityTypeBuilder<FacilityTime> builder)
 		{
 			builder.Property(x => x.Id).HasColumnName("FacilityTimeID");
-			builder.Property(p => p.Time)
-			.HasColumnType("timestamp");
 		}
 	}
 }

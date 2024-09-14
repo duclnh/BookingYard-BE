@@ -5,7 +5,7 @@ using Fieldy.BookingYard.Persistence.DatabaseContext;
 
 namespace Fieldy.BookingYard.Persistence.Repositories;
 
-public class FacilityRepository : RepositoryBase<Facility, Facility>, IFacilityRepository
+public class FacilityRepository : RepositoryBase<Facility, Guid>, IFacilityRepository
 {
     public FacilityRepository(BookingYardDBContext bookingYardDBContext) : base(bookingYardDBContext)
     {

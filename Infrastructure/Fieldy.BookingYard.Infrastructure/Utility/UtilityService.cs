@@ -1,9 +1,19 @@
 using Fieldy.BookingYard.Application.Contracts;
+using Fieldy.BookingYard.Application.Exceptions;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 
 namespace Fieldy.BookingYard.Infrastructure.Utility
 {
     public class UtilityService : IUtilityService
     {
+        private readonly IWebHostEnvironment _environment;
+
+        public UtilityService(IWebHostEnvironment environment)
+        {
+            _environment = environment;
+        }
+
         public string GenerationCode()
         {
             const string chars = "0123456789";
@@ -26,5 +36,28 @@ namespace Fieldy.BookingYard.Infrastructure.Utility
         {
             return BCrypt.Net.BCrypt.EnhancedVerify(content, hash);
         }
+
+        public async Task<string> AddFile(IFormFile fileUpload, string folder)
+        {
+            var extension = Path.GetExtension(fileUpload.FileName);
+            var newFileName = $"{Guid.NewGuid()}{extension}";
+
+            var path = Path.Combine(_environment.WebRootPath, folder);
+
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+
+            var fullPath = Path.Combine(_environment.WebRootPath, folder, newFileName);
+
+            using (var fileStream = new FileStream(fullPath, FileMode.Create))
+            {
+                await fileUpload.CopyToAsync(fileStream);
+            }
+
+            return $"/{folder}/{newFileName}";
+        }
+        
     }
 }

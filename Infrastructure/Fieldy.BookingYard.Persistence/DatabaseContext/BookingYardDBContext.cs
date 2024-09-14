@@ -24,6 +24,7 @@ namespace Fieldy.BookingYard.Persistence.DatabaseContext
         public DbSet<FacilityTime> FacilityTimes { get; set; }
         public DbSet<Holiday> Holidays { get; set; }
         public DbSet<FeedBack> Feedbacks { get; set; }
+        public DbSet<Image> Images{ get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(BookingYardDBContext).Assembly);

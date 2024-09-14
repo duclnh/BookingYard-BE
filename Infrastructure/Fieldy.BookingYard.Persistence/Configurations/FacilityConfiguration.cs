@@ -14,9 +14,11 @@ public class FacilityConfiguration : IEntityTypeConfiguration<Facility>
                      .HasColumnName("FacilityName");
               builder.Property(x => x.MonthPrice)
                      .HasColumnType("decimal(18,2)");
-              builder.Property(x => x.YeahPrice)
+              builder.Property(x => x.YearPrice)
                      .HasColumnType("decimal(18,2)");
               builder.Property(x => x.PeakHourPrice)
                      .HasColumnType("decimal(18,2)");
-       }
+              builder.Property(x => x.HolidayPrice)
+                     .HasColumnType("decimal(18,2)");
+    }
 }

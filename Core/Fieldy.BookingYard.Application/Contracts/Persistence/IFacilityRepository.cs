@@ -3,7 +3,7 @@ using Fieldy.BookingYard.Domain.Entities;
 
 namespace Fieldy.BookingYard.Application.Contracts.Persistence;
 
-public interface IFacilityRepository : IRepositoryBase<Facility, Facility>
+public interface IFacilityRepository : IRepositoryBase<Facility, Guid>
 {
 
 }

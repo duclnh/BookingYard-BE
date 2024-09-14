@@ -11,7 +11,6 @@ namespace Fieldy.BookingYard.Persistence.Configurations
         {
             builder.Property(x => x.Id)
                    .HasColumnName("SupportID");
-
         }
     }
 }

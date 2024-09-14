@@ -18,8 +18,6 @@ namespace Fieldy.BookingYard.Persistence.Configurations
                    .WithMany(y => y.FeedBacks)
                    .HasForeignKey(x => x.FacilityID)
                    .OnDelete(DeleteBehavior.Restrict);
-
-
         }
 	}
 }

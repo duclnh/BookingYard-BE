@@ -8,7 +8,7 @@ namespace Fieldy.BookingYard.Domain.Entities
     {
         public Guid FacilityID { get; set; }
         public Facility? Facility { get; set; }
-        public TimeSpan Time { get; set; }
+        public required string Time { get; set; }
     }
 
 }

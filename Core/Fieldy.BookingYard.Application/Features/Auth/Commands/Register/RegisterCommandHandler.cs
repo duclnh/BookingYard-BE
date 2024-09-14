@@ -49,7 +49,7 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Register
             EmailMessage email = new()
             {
                 To = user.Email,
-                Subject = "Verification Account",
+                Subject = "Xác nhận tài khoản",
                 Body = generationCode,
             };
             var resultEmail = await _emailSender.SendEmailAsync(email);
