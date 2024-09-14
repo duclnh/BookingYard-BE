@@ -24,7 +24,7 @@ namespace Fieldy.BookingYard.Api.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateFacility(
-           [FromBody] CreateFacilityCommand command,
+           [FromForm] CreateFacilityCommand command,
            CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(command, cancellationToken);

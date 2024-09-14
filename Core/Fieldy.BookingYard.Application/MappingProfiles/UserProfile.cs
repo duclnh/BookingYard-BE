@@ -6,9 +6,9 @@ using Fieldy.BookingYard.Domain.Entities;
 
 namespace Fieldy.BookingYard.Application.MappingProfiles
 {
-    public class UserProfiles : Profile
+    public class UserProfile : Profile
     {
-        public UserProfiles()
+        public UserProfile()
         {
             CreateMap<User, UserDTO>();
             CreateMap<GoogleCommand, User>();

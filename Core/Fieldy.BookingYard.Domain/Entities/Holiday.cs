@@ -8,7 +8,7 @@ namespace Fieldy.BookingYard.Domain.Entities
     {
         public Guid FacilityID { get; set; }
         public Facility? Facility { get; set; }
-        public DateOnly Date { get; set; }
+        public DateTime Date { get; set; }
     }
 
 }
