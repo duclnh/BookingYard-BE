@@ -69,74 +69,43 @@ public class CreateFacilityCommandHandler : IRequestHandler<CreateFacilityComman
             facility.Logo = await _utilityService.AddFile(request.Logo, "facility");
         }
 
-        List<Domain.Entities.Image> images = new List<Domain.Entities.Image>();
-
-
-        if (request.Other != null)
+        if (request.Other?.Any() == true)
         {
-            foreach (var file in request.Other)
-            {
-                var image = new Image
-                {
-                    Id = 0,
-                    ImageLink = await _utilityService.AddFile(file, "facility"),
-                    Facility = facility,
-                };
-                images.Add(image);
-            }
+            facility.Images = request.Other
+                                     .Select(async file => new Image
+                                     {
+                                        Id = 0,
+                                        ImageLink = await _utilityService.AddFile(file, "facility"),
+                                     })
+                                     .Select(t => t.Result)
+                                     .ToList();
         }
 
-        facility.Images = images;
+        facility.FacilityTimes = request.OpenDate
+                                        .Select(time => new FacilityTime{
+                                            Id = 0,
+                                            Time = time
+                                        })
+                                        .ToList();
 
-        List<FacilityTime> facilityTimes = new List<FacilityTime>();
-
-        foreach (var time in request.OpenDate)
+        if (request.PeakHour?.Any() == true)
         {
-
-            var facilityTime = new FacilityTime
-            {
-                Id = 0,
-                Time = time,
-            };
-
-            facilityTimes.Add(facilityTime);
-
+            facility.PeakHours = request.PeakHour
+                                        .Select(x => new PeakHour{
+                                            Id =  0,
+                                            Time = x
+                                        }).ToList();
         }
 
-        facility.FacilityTimes = facilityTimes;
-
-        List<PeakHour> peakHours = new List<PeakHour>();
-        if (request.PeakHour != null)
+        if (request.HolidayDate?.Any() == true)
         {
-            foreach (var time in request.PeakHour)
-            {
-                var peakHour = new PeakHour
-                {
-                    Time = time,
-                    Id = 0,
-                };
-                peakHours.Add(peakHour);
-            }
+            facility.Holidays  = request.HolidayDate
+                                        .Select(x => new Holiday{
+                                            Id = 0,
+                                            Date = x
+                                        }).ToList();
         }
-
-        facility.PeakHours = peakHours;
-
-        List<Holiday> holidays = new List<Holiday>();
-        if (request.HolidayDate != null)
-        {
-            foreach (var date in request.HolidayDate)
-            {
-                var holidayDate = new Holiday
-                {
-                    Id = 0,
-                    Date = date
-                };
-                holidays.Add(holidayDate);
-            }
-        }
-
-        facility.Holidays = holidays;
-
+        
         await _facilityRepository.AddAsync(facility);
 
         var result = await _facilityRepository.UnitOfWork.SaveChangesAsync();
