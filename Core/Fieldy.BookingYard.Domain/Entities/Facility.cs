@@ -9,6 +9,7 @@ namespace Fieldy.BookingYard.Domain.Entities
     {
         public required string Name { get; set; }
         public required string Address { get; set; }
+        public required string FullAddress { get; set; }
         public required string Description { get; set; }
         public required string Convenient { get; set; }
         public required TimeSpan StartTime { get; set; }
@@ -25,7 +26,7 @@ namespace Fieldy.BookingYard.Domain.Entities
         public int DistrictID { get; set; }
         public int ProvinceID { get; set; }
         public required Guid UserID { get; set; }
-        public required User User { get; set; }
+        public User? User { get; set; }
         public ICollection<FeedBack>? FeedBacks { get; set; }
         public ICollection<Image>? Images { get; set; }
         public ICollection<FacilityTime>? FacilityTimes { get; set; }

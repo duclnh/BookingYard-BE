@@ -39,7 +39,11 @@ bld/
 Infrastructure/Fieldy.BookingYard.Persistence/Migrations
 # Uncomment if you have tasks that create the project's static files in wwwroot
 
-wwwroot/
+wwwroot/*
+
+!wwwroot/facility/31fff3b5-663d-49af-b2b6-64fe034f1304.jpg
+!wwwroot/facility/bcc982ee-e942-43f9-8ab5-6fad3740135e.jpg
+!wwwroot/facility/d8009fa4-fd59-4784-85c7-dca24465e308.jpg
 
 # Visual Studio 2017 auto generated files
 Generated\ Files/
