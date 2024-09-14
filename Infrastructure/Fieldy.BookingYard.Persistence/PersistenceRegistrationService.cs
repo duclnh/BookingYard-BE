@@ -28,6 +28,7 @@ namespace Fieldy.BookingYard.Persistence
 			services.AddTransient<IFacilityTimeRepository, FacilityTimeRepository>();
 			services.AddTransient<IHolidayRepository, HolidayRepository>();
 			services.AddTransient<IFeedbackRepository, FeedbackRepository>();
+            services.AddTransient<IHistoryPointRepository, HistoryPointRepository>();
 
 			return services;
         }
