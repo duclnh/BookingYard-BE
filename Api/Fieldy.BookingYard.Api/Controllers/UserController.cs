@@ -23,7 +23,6 @@ namespace Fiedly.BookingYard.Api.Controllers
             _mediator = mediator;
         }
 
-        [AllowAnonymous]
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(UserDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -38,8 +37,8 @@ namespace Fiedly.BookingYard.Api.Controllers
             return Ok(result);
         }
 
-        [AllowAnonymous]
-        [HttpGet("update/{id}")]
+        [HttpGet("user-update/{id}")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         [ProducesResponseType(typeof(UserUpdateDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -53,7 +52,8 @@ namespace Fiedly.BookingYard.Api.Controllers
             return Ok(result);
         }
 
-        [HttpGet()]
+        [HttpGet]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(PagingResult<UserDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

@@ -43,6 +43,7 @@ namespace Fieldy.BookingYard.Domain.Entities
 
         [Column(TypeName = "smallint")]
         public Role Role { get; set; }
+        public int? WardID { get; set; }
 
         public bool IsVerification() => VerificationToken == null;
         public ICollection<FeedBack> FeedBacks {get;set;}

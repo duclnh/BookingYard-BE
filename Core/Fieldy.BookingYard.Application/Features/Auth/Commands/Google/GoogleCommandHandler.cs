@@ -37,47 +37,42 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Google
 
             if (userExist != null)
             {
+                if (!string.IsNullOrEmpty(userExist.UserName))
+                    throw new BadRequestException("This email is already registered.");
+
                 if (userExist.IsBanned)
                     throw new BadRequestException("User is banned!");
 
-                //check GoogleID exist in database if exist return AuthResponse else update GoogleID to user
                 jwtResult = _jwtService.CreateTokenJWT(userExist);
 
-                if (userExist.GoogleID != null)
-                    return new AuthResponse()
-                    {
-                        UserID = userExist.Id.ToString(),
-                        ImageUrl = userExist.ImageUrl,
-                        Name = userExist.Name,
-                        Token = jwtResult.Token,
-                        Expiration = jwtResult.Expiration,
-                        Email = userExist.Email,
-                        Gender = userExist.Gender.ToString(),
-                        Role = userExist.Role.ToString(),
-                        IsVerification = userExist.IsVerification(),
-                    };
-
-                userExist.GoogleID = request.GoogleID;
-                userExist.ImageUrl ??= request.ImageUrl;
-                _userRepository.Update(userExist);
+                return new AuthResponse()
+                {
+                    UserID = userExist.Id.ToString(),
+                    ImageUrl = userExist.ImageUrl,
+                    Name = userExist.Name,
+                    Token = jwtResult.Token,
+                    Expiration = jwtResult.Expiration,
+                    Email = userExist.Email,
+                    Gender = userExist.Gender.ToString(),
+                    Role = userExist.Role.ToString(),
+                    IsVerification = userExist.IsVerification(),
+                };
             }
-            else
-            {
-                //map data GoogleCommand -> User
-                var userCreate = _mapper.Map<Domain.Entities.User>(request);
-                if (userCreate == null)
-                    throw new BadRequestException("Error system register user by Google");
 
-                userCreate.PasswordHash = string.Empty;
-                //add role customer to user    
-                userCreate.Role = Domain.Enum.Role.Customer;
+            //map data GoogleCommand -> User
+            var userCreate = _mapper.Map<Domain.Entities.User>(request);
+            if (userCreate == null)
+                throw new BadRequestException("Error system register user by Google");
 
-                //add gender other to user
-                userCreate.Gender = Domain.Enum.Gender.Other;
+            userCreate.PasswordHash = string.Empty;
+            //add role customer to user    
+            userCreate.Role = Domain.Enum.Role.Customer;
 
-                //create new user
-                await _userRepository.AddAsync(userCreate);
-            }
+            //add gender other to user
+            userCreate.Gender = Domain.Enum.Gender.Other;
+
+            //create new user
+            await _userRepository.AddAsync(userCreate);
 
             //save to database
             var result = await _userRepository.UnitOfWork.SaveChangesAsync(cancellationToken);

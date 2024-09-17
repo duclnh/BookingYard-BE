@@ -58,6 +58,16 @@ namespace Fieldy.BookingYard.Infrastructure.Utility
 
             return $"/{folder}/{newFileName}";
         }
-        
+
+        public void RemoveFile(List<string> addressFile)
+        {
+            foreach (var address in addressFile)
+            {
+                if (Directory.Exists(address))
+                {
+                    Directory.Delete(address);
+                }
+            }
+        }
     }
 }
