@@ -47,15 +47,14 @@ namespace Fieldy.BookingYard.Api.Controllers
 			return Ok(result);
 		}
 
-		[HttpPost()]
-		[Route("Paging")]
+		[HttpGet]
 		[Produces(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(typeof(RegisterPackageDto), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
 		public async Task<IActionResult> GetAllRegisterPackage(
-						[FromBody] RequestParams requestParams,
+						[FromQuery] RequestParams requestParams,
 							CancellationToken cancellationToken = default)
 		{
 			var result = await _mediator.Send(new GetAllRegisterPackageQuery(requestParams), cancellationToken);
