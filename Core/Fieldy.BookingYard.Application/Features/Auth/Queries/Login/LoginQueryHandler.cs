@@ -49,12 +49,8 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Queries.Login
             return new AuthResponse()
             {
                 UserID = user.Id.ToString(),
-                ImageUrl = user.ImageUrl,
-                Name = user.Name,
                 Token = jwtResult.Token,
                 Expiration = jwtResult.Expiration,
-                Email = user.Email,
-                Gender = user.Gender.ToString(),
                 Role = user.Role.ToString(),
                 IsVerification = user.IsVerification(),
             };

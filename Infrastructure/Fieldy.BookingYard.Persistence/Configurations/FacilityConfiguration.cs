@@ -152,6 +152,7 @@ public class FacilityConfiguration : IEntityTypeConfiguration<Facility>
               CreatedBy = Guid.Parse("03b17c1c-0403-4e08-9ed6-738939dd911b"),
               ModifiedAt = DateTime.Now,
               ModifiedBy = Guid.Parse("03b17c1c-0403-4e08-9ed6-738939dd911b"),
+              IsActive = true,
           }
         );
 

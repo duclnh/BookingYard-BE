@@ -28,17 +28,18 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, strin
         if (validationResult.Errors.Any())
             throw new BadRequestException("Invalid update user", validationResult);
 
-        var user = await _userRepository.Find(x => x.Id == request.UserId);
+        var user = await _userRepository.Find(x => x.Id == request.UserId, cancellationToken);
 
         if (user == null)
             throw new NotFoundException(nameof(user), request.UserId);
 
-        var userUpdate = await _userRepository.Find(x => x.Id == _jwtService.UserID);
+        var userUpdate = await _userRepository.Find(x => x.Id == _jwtService.UserID, cancellationToken);
 
-        if (userUpdate != null && userUpdate.Id != user.Id)
-            throw new BadRequestException($"You don't update user have ID: {request.UserId}");
+        if (userUpdate != null && userUpdate.Role != Role.Admin && userUpdate.Id != user.Id)
+            throw new BadRequestException($"You don't have permission update user have ID: {request.UserId}");
 
-        if(user.ImageUrl != null){
+        if (user.ImageUrl != null && request.Image != null)
+        {
             oldImage.Add(user.ImageUrl);
         }
 
@@ -47,7 +48,7 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, strin
         user.Phone = request.Phone ?? user.Phone;
         user.Gender = request.Gender != "other" ? request.Gender == "female" ? Gender.Female : Gender.Male : Gender.Other;
         user.WardID = request.WardID ?? user.WardID;
-        user.ImageUrl = request.Image != null ? await _utilityService.AddFile(request.Image, $"User/{user.Id}") : user.ImageUrl;
+        user.ImageUrl = request.Image != null ? await _utilityService.AddFile(request.Image, $"user/{user.Id}") : user.ImageUrl;
 
         _userRepository.Update(user);
         var result = await _userRepository.UnitOfWork.SaveChangesAsync(cancellationToken);

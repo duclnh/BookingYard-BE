@@ -27,6 +27,7 @@ namespace Fieldy.BookingYard.Domain.Entities
         public int ProvinceID { get; set; }
         public required Guid UserID { get; set; }
         public User? User { get; set; }
+        public bool IsActive { get; set; }
         public ICollection<FeedBack>? FeedBacks { get; set; }
         public ICollection<Image>? Images { get; set; }
         public ICollection<FacilityTime>? FacilityTimes { get; set; }
