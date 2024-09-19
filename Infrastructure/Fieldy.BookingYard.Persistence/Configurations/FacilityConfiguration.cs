@@ -152,8 +152,115 @@ public class FacilityConfiguration : IEntityTypeConfiguration<Facility>
               CreatedBy = Guid.Parse("03b17c1c-0403-4e08-9ed6-738939dd911b"),
               ModifiedAt = DateTime.Now,
               ModifiedBy = Guid.Parse("03b17c1c-0403-4e08-9ed6-738939dd911b"),
-          }
-        );
+          },
+		  new Facility
+		  {
+			  Id = Guid.Parse("E175DAF6-B5A4-4D0E-544D-08DCD4D409D4"),
+			  Name = "Sân Tennis Mega Ruby Khang Điền",
+			  Address = "Sân Tennis Mega Ruby Khang Điền",
+			  FullAddress = "Sân Tennis Mega Ruby Khang Điền, Phường Phú Hữu, Thành Phố Thủ Đức, Thành phố Hồ Chí Minh",
+			  Latitude = 10.85155894385053,
+			  Longitude = 106.75803191349321,
+			  Description = $@"
+                            <h1>Sân Tennis Mega Ruby Khang Điền</h1>
+    
+                            <p>
+                                Sân Tennis Mega Ruby Khang Điền nằm tại quận Thủ Đức, TP.HCMo. Sân được thiết kế 
+                                có hệ thống chiếu sáng hiện đại phục vụ các trận vào buổi tối.
+                            </p>
+
+                            <p>
+                                Ngoài ra, sân còn có khu vực ghế ngồi cho khán giả, phòng thay đồ, và dịch vụ 
+                                cho thuê bóng, giày. 
+							</p>
+                            ",
+			  ProvinceID = 79,
+			  DistrictID = 769,
+			  WardID = 26815,
+			  Image = "/facility/tennis.jpg",
+			  Logo = "/facility/tennis_logo.png",
+			  Convenient = @"
+                             [
+                              {
+                                ""title"": ""payment"",
+                                ""content"": ""Các phương thức thanh toán"",
+                                ""icon"": ""MdPayments"",
+                                ""feature"": [
+                                  {
+                                    ""title"": ""Thẻ tín dụng (Visa, Master card)"",
+                                    ""isEnable"": true
+                                  },
+                                  {
+                                    ""title"": ""Momo"",
+                                    ""isEnable"": true
+                                  },
+                                  {
+                                    ""title"": ""Chuyển khoản"",
+                                    ""isEnable"": true
+                                  },
+                                  {
+                                    ""title"": ""Tiền mặt"",
+                                    ""isEnable"": true
+                                  }
+                                ]
+                              },
+                              {
+                                ""title"": ""entertainment"",
+                                ""content"": ""Các dịch vụ giải trí"",
+                                ""icon"": ""IoStorefrontSharp"",
+                                ""feature"": [
+                                  {
+                                    ""title"": ""Nhà hàng"",
+                                    ""isEnable"": true
+                                  },
+                                  {
+                                    ""title"": ""Quán nước"",
+                                    ""isEnable"": true
+                                  },
+                                  {
+                                    ""title"": ""Căn tin"",
+                                    ""isEnable"": true
+                                  },
+                                  {
+                                    ""title"": ""Cửa hàng tiện lợi"",
+                                    ""isEnable"": true
+                                  }
+                                ]
+                              },
+                              {
+                                ""title"": ""safe"",
+                                ""content"": ""Các dịch vụ an toàn và chăm sóc"",
+                                ""icon"": ""MdHealthAndSafety"",
+                                ""feature"": [
+                                  {
+                                    ""title"": ""Bảo vệ"",
+                                    ""isEnable"": true
+                                  },
+                                  {
+                                    ""title"": ""Nhà gửi xe"",
+                                    ""isEnable"": true
+                                  },
+                                  {
+                                    ""title"": ""Chăm sóc y tế"",
+                                    ""isEnable"": true
+                                  }
+                                ]
+                              }
+                            ]
+                            ",
+			  StartTime = new TimeSpan(8, 0, 0),
+			  EndTime = new TimeSpan(24, 0, 0),
+			  HolidayPrice = 0,
+			  MonthPrice = 0,
+			  PeakHourPrice = 0,
+			  YearPrice = 0,
+			  UserID = Guid.Parse("03b17c1c-0403-2e08-9ed3-709339dd911b"),
+			  CreatedAt = DateTime.Now,
+			  CreatedBy = Guid.Parse("03b17c1c-0403-4e08-9ed6-738939dd911b"),
+			  ModifiedAt = DateTime.Now,
+			  ModifiedBy = Guid.Parse("03b17c1c-0403-4e08-9ed6-738939dd911b"),
+		  }
+		);
 
     }
 }

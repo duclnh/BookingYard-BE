@@ -74,7 +74,27 @@ namespace Fieldy.BookingYard.Persistence.Configurations
                     ModifiedBy = Guid.Parse("03b17c1c-0403-4e08-9ed6-738939dd911b")
                 }
             );
-        }
+			builder.HasData(
+				new User
+				{
+					Id = Guid.Parse("03b17c1c-0403-2e08-9ed3-709339dd911c"),
+					Name = "Lưu Gia Phong",
+					Address = "123 Main St, City, Country",
+					UserName = "lengochuynhduc2024",
+					Email = "luuphong016@gmail.com",
+					Phone = "1234567890",
+					Gender = Gender.Other,
+					Point = 0,
+					PasswordHash = "$2a$10$qoOcRE7I52UUVlNSF3lrhOPhn6aLidL32gqEdeg7KezoOSDNjYQLa",
+					VerificationToken = null,
+					Role = Role.Customer,
+					CreatedAt = DateTime.Now,
+					CreatedBy = Guid.Parse("03b17c1c-0403-4e08-9ed6-738939dd911b"),
+					ModifiedAt = DateTime.Now,
+					ModifiedBy = Guid.Parse("03b17c1c-0403-4e08-9ed6-738939dd911b")
+				}
+			);
+		}
         
     }
 }

@@ -16,6 +16,12 @@ public class ImageConfiguration : IEntityTypeConfiguration<Image>
                Id = 1,
                ImageLink = "/facility/bcc982ee-e942-43f9-8ab5-6fad3740135e.jpg",
                FacilityID = Guid.Parse("E175DAF6-B5A4-4D0E-544D-08DCD4D409D4"),
+           },
+           new Image
+           {
+               Id = 2,
+               ImageLink = "/facility/tennis.jfif",
+               FacilityID = Guid.Parse("E175DAF6-B5A4-4D0E-544D-18DCD4D409D5"),
            }
         );
     }
