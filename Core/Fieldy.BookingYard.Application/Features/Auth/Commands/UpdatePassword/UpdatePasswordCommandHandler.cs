@@ -1,6 +1,8 @@
 using Fieldy.BookingYard.Application.Contracts;
+using Fieldy.BookingYard.Application.Contracts.JWT;
 using Fieldy.BookingYard.Application.Contracts.Persistence;
 using Fieldy.BookingYard.Application.Exceptions;
+using Fieldy.BookingYard.Domain.Enum;
 using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.Auth.Commands.UpdatePassword
@@ -11,13 +13,17 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.UpdatePassword
         private readonly IAppLogger<UpdatePasswordCommand> _logger;
         private readonly IUtilityService _utility;
 
+        private readonly IJWTService _jWTService;
+
         public UpdatePasswordCommandHandler(IUserRepository userRepository,
                                             IAppLogger<UpdatePasswordCommand> logger,
+                                            IJWTService jWTService,
                                             IUtilityService utility)
         {
             _userRepository = userRepository;
             _logger = logger;
             _utility = utility;
+            _jWTService = jWTService;
         }
         public async Task<string> Handle(UpdatePasswordCommand request, CancellationToken cancellationToken)
         {
@@ -27,16 +33,18 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.UpdatePassword
             if (validationResult.Errors.Any())
                 throw new BadRequestException("Invalid Update Password Request", validationResult);
 
-            var user = await _userRepository.Find(x => x.Id == request.UserID && x.IsDeleted == false , cancellationToken);
+            var user = await _userRepository.Find(x => x.Id == request.UserID && x.IsDeleted == false, cancellationToken);
 
             if (user == null)
                 throw new NotFoundException(nameof(user), request.UserID);
 
-            if (user.ResetToken != null || user.ExpirationResetToken != null)
-                throw new BadRequestException("PLease verify reset password token before update password");
-
-            if (_utility.Verify(request.OldPassword, user.PasswordHash))
+            if (!_utility.Verify(request.OldPassword, user.PasswordHash))
                 throw new BadRequestException("Old password not match");
+
+            var userUpdate = await _userRepository.Find(x => x.Id == _jWTService.UserID, cancellationToken);
+            
+            if (userUpdate != null && userUpdate.Role != Role.Admin && userUpdate.Id != user.Id)
+                throw new BadRequestException($"You don't have permission update user have ID: {request.UserID}");
 
             user.PasswordHash = _utility.Hash(request.NewPassword);
 

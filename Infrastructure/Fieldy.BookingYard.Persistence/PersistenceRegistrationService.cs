@@ -29,8 +29,10 @@ namespace Fieldy.BookingYard.Persistence
 			services.AddTransient<IHolidayRepository, HolidayRepository>();
 			services.AddTransient<IFeedbackRepository, FeedbackRepository>();
             services.AddTransient<IHistoryPointRepository, HistoryPointRepository>();
+            services.AddTransient<ISportRepository, SportRepository>();
+            services.AddTransient<ICourtRepository, CourtRepository>();
 
-			return services;
+            return services;
         }
     }
 

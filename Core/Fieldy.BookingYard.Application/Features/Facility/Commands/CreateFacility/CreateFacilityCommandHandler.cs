@@ -61,6 +61,7 @@ public class CreateFacilityCommandHandler : IRequestHandler<CreateFacilityComman
             throw new ConflictException("Username already exist!");
 
         facility.User = user;
+        facility.IsActive = true;
 
         facility.Image = await _utilityService.AddFile(request.Image, "facility");
 

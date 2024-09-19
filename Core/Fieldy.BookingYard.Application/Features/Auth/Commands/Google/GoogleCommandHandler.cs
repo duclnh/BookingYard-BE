@@ -48,12 +48,8 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Google
                 return new AuthResponse()
                 {
                     UserID = userExist.Id.ToString(),
-                    ImageUrl = userExist.ImageUrl,
-                    Name = userExist.Name,
                     Token = jwtResult.Token,
                     Expiration = jwtResult.Expiration,
-                    Email = userExist.Email,
-                    Gender = userExist.Gender.ToString(),
                     Role = userExist.Role.ToString(),
                     IsVerification = userExist.IsVerification(),
                 };
@@ -92,12 +88,8 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Google
             return new AuthResponse()
             {
                 UserID = user.Id.ToString(),
-                ImageUrl = user.ImageUrl,
-                Name = user.Name,
                 Token = jwtResult.Token,
                 Expiration = jwtResult.Expiration,
-                Email = user.Email,
-                Gender = user.Gender.ToString(),
                 Role = user.Role.ToString(),
                 IsVerification = user.IsVerification(),
             };

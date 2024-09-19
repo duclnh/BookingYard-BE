@@ -17,6 +17,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Fieldy.BookingYard.Domain\Fieldy.BookingYard.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Features\Sport\Queries\GetAllSport\" />
   </ItemGroup>   
   
 </Project>
