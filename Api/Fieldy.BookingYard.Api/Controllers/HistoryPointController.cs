@@ -6,6 +6,8 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
+using Fieldy.BookingYard.Application.Features.HistoryPoint.Queries;
+using Fieldy.BookingYard.Application.Features.HistoryPoint.Queries.GetHistoryPoint;
 
 namespace Fieldy.BookingYard.Api.Controllers
 {
@@ -23,7 +25,7 @@ namespace Fieldy.BookingYard.Api.Controllers
 		[AllowAnonymous]
 		[HttpGet("{userId}")]
 		[Produces(MediaTypeNames.Application.Json)]
-		[ProducesResponseType(typeof(PagingResult<FeedbackDto>), StatusCodes.Status200OK)]
+		[ProducesResponseType(typeof(PagingResult<HistoryPointDto>), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
@@ -32,7 +34,7 @@ namespace Fieldy.BookingYard.Api.Controllers
 			[FromQuery] RequestParams requestParams,
 			CancellationToken cancellationToken = default)
 		{
-			var result = await _mediator.Send(new GetAllFeedbackQuery(requestParams, userId), cancellationToken);
+			var result = await _mediator.Send(new GetHistoryPointQuery(requestParams, userId), cancellationToken);
 			return Ok(result);
 		}
 	}

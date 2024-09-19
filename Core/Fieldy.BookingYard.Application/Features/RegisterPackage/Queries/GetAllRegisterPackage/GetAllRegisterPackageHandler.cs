@@ -2,6 +2,7 @@
 using Fieldy.BookingYard.Application.Contracts.Persistence;
 using Fieldy.BookingYard.Application.Models.Paging;
 using MediatR;
+using System.Linq.Expressions;
 
 namespace Fieldy.BookingYard.Application.Features.RegisterPackage.Queries.GetAllRegisterPackage
 {
@@ -20,10 +21,15 @@ namespace Fieldy.BookingYard.Application.Features.RegisterPackage.Queries.GetAll
 		{
 			var listRegisterPackage = await _registerPackageRepository.FindAllPaging(
 				requestParams: request.requestParams,
-				expression: x => x.Facility.Name.ToLower().Contains(request.requestParams.Search.ToLower().Trim())
-								|| x.Package.PackageName.ToLower().Contains(request.requestParams.Search.ToLower().Trim()),
+				expression: x => (x.Facility != null && x.Facility.Name.ToLower().Trim().Contains(request.requestParams.Search.ToLower().Trim())) ||
+								 (x.Package != null && x.Package.PackageName.ToLower().Trim().Contains(request.requestParams.Search.ToLower().Trim())),
 				orderBy: x => x.OrderByDescending(x => x.CreatedAt),
-				cancellationToken: cancellationToken);
+				cancellationToken: cancellationToken,
+				includes: new Expression<Func<Domain.Entities.RegisterPackage, object>>[]
+				{
+					x => x.Facility,
+					x => x.Package
+				});
 
 			return PagingResult<RegisterPackageDto>.Create(
 			   totalCount: listRegisterPackage.TotalCount,

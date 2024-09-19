@@ -90,17 +90,17 @@ namespace Fieldy.BookingYard.Persistence.Repositories
         {
             IQueryable<TEntity> query = _dbSet;
 
-            if (expression != null)
+			if (includes != null)
+			{
+				foreach (var includeProperty in includes)
+				{
+					query = query.Include(includeProperty);
+				}
+			}
+
+			if (expression != null)
             {
                 query = query.Where(expression);
-            }
-
-            if (includes != null)
-            {
-                foreach (var includeProperty in includes)
-                {
-                    query = query.Include(includeProperty);
-                }
             }
 
             if (orderBy != null)
