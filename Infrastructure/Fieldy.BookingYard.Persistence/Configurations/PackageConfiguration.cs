@@ -13,6 +13,28 @@ namespace Fieldy.BookingYard.Persistence.Configurations
 			builder.Property(p => p.PackagePrice)
 			.HasColumnType("decimal(18,2)");
 
+			builder.HasData(
+				new Package
+				{
+Id = 1, 
+					PackageName = "Package 1", 
+					PackagePrice = 100000, 
+					PackageDescription = "Package 1 Description",
+					IsDeleted = false,
+					CreatedAt = DateTime.Now,
+					ModifiedAt = DateTime.Now
+				},
+				new Package
+				{
+Id = 2, 
+					PackageName = "Package 2", 
+					PackagePrice = 200000, 
+					PackageDescription = "Package 2 Description",
+					IsDeleted = false,
+					CreatedAt = DateTime.Now,
+					ModifiedAt = DateTime.Now
+				},
+				);
 		}
 	}
 }
