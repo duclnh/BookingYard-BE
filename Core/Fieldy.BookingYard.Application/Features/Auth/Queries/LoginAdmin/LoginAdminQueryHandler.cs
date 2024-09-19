@@ -5,17 +5,17 @@ using Fieldy.BookingYard.Application.Exceptions;
 using Fieldy.BookingYard.Application.Models.Auth;
 using MediatR;
 
-namespace Fieldy.BookingYard.Application.Features.Auth.Queries.Login
+namespace Fieldy.BookingYard.Application.Features.Auth.Queries.LoginAdmin
 {
-    public class LoginQueryHandler : IRequestHandler<LoginQuery, AuthResponse>
+    public class LoginAdminQueryHandler : IRequestHandler<LoginAdminQuery, AuthResponse>
     {
         private readonly IUserRepository _userRepository;
-        private readonly IAppLogger<LoginQueryHandler> _logger;
+        private readonly IAppLogger<LoginAdminQueryHandler> _logger;
         private readonly IJWTService _jwtService;
         private readonly IUtilityService _utility;
 
-        public LoginQueryHandler(IUserRepository userRepository,
-                                 IAppLogger<LoginQueryHandler> logger,
+        public LoginAdminQueryHandler(IUserRepository userRepository,
+                                 IAppLogger<LoginAdminQueryHandler> logger,
                                  IUtilityService utility,
                                  IJWTService jwtService)
         {
@@ -25,24 +25,20 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Queries.Login
             _utility = utility;
         }
 
-        public async Task<AuthResponse> Handle(LoginQuery request, CancellationToken cancellationToken)
+        public async Task<AuthResponse> Handle(LoginAdminQuery request, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.Find(x => (x.Phone == request.UserName
-                                                        || x.Email == request.UserName)
+            var user = await _userRepository.Find(x => (x.UserName == request.UserName)
                                                         && x.IsDeleted == false, cancellationToken);
             if (user == null)
                 throw new NotFoundException(nameof(user), request.UserName);
 
+            if (user.IsBanned)
+                throw new BadRequestException("User is banned!");
+
             if (!_utility.Verify(request.Password, user.PasswordHash))
                 throw new BadRequestException("Password incorrect!");
 
-                if (user.IsBanned)
-                throw new BadRequestException("User is banned!");
-
-            if(user.Role != Domain.Enum.Role.Customer)
-                    throw new BadRequestException("Invalid request");
-
-            _logger.LogInformation($"Login Account: {user.Email}");
+            _logger.LogInformation($"Login Admin Account: {user.Email}");
 
             var jwtResult = _jwtService.CreateTokenJWT(user);
            

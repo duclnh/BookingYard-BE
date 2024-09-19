@@ -7,6 +7,7 @@ using Fieldy.BookingYard.Application.Features.Auth.Commands.UpdateResetPassword;
 using Fieldy.BookingYard.Application.Features.Auth.Commands.Verification;
 using Fieldy.BookingYard.Application.Features.Auth.Commands.VerificationResetPassword;
 using Fieldy.BookingYard.Application.Features.Auth.Queries.Login;
+using Fieldy.BookingYard.Application.Features.Auth.Queries.LoginAdmin;
 using Fieldy.BookingYard.Application.Features.Auth.SendResetPassword;
 using Fieldy.BookingYard.Application.Models.Auth;
 using MediatR;
@@ -37,6 +38,22 @@ namespace Fiedly.BookingYard.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Login(
             [FromBody] LoginQuery query,
+            CancellationToken cancellationToken = default)
+        {
+            var result = await _mediator.Send(query, cancellationToken);
+            return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("manager")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> LoginAdmin(
+            [FromBody] LoginAdminQuery query,
             CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(query, cancellationToken);

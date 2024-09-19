@@ -28,6 +28,7 @@ namespace Fieldy.BookingYard.Persistence.Configurations
                     Role = Role.Customer,
                     IsBanned = false,
                     IsDeleted = false,
+                    WardID = 07441,
                     CreatedAt = DateTime.Now,
                     CreatedBy = new Guid("57562e90-5835-4461-98f5-565cd760e6da"),
                     ModifiedAt = DateTime.Now,
