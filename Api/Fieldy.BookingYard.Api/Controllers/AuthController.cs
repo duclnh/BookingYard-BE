@@ -46,7 +46,7 @@ namespace Fiedly.BookingYard.Api.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        [Route("admin")]
+        [Route("manager")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

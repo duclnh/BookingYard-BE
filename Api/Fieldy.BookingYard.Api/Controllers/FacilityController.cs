@@ -31,7 +31,7 @@ namespace Fieldy.BookingYard.Api.Controllers
            CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(command, cancellationToken);
-            return Ok(result);
+            return Created("", result);
         }
     }
 }
