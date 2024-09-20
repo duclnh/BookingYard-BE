@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.HistoryPoint.Queries.GetHistoryPoint
 {
-    public record GetHistoryPointQuery(RequestParams requestParams, Guid UserID) : IRequest<PagingResult<HistoryPointDto>>
+    public record GetHistoryPointQuery(RequestParams requestParams, Guid UserID, string type) : IRequest<PagingResult<HistoryPointDto>>
     {
     }
 }

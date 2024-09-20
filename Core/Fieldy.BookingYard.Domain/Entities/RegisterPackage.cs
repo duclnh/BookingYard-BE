@@ -6,7 +6,7 @@ namespace Fieldy.BookingYard.Domain.Entities
     [Table("RegisterPackages")]
     public class RegisterPackage : EntityBase<Guid>, IDateTracking
     {
-        public Guid PackageID { get; set; }
+        public int PackageID { get; set; }
         public Package? Package { get; set; }
         public Guid UserID { get; set; }
         [Column("StartDate")]

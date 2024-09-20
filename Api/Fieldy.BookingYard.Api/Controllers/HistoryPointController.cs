@@ -11,7 +11,7 @@ using Fieldy.BookingYard.Application.Features.HistoryPoint.Queries.GetHistoryPoi
 
 namespace Fieldy.BookingYard.Api.Controllers
 {
-	[Route("api/[controller]")]
+	[Route("api/historypoint")]
 	[ApiController]
 	public class HistoryPointController : ControllerBase
 	{
@@ -32,9 +32,10 @@ namespace Fieldy.BookingYard.Api.Controllers
 		public async Task<IActionResult> GetPointByUserID(
 			[FromRoute] Guid userId,
 			[FromQuery] RequestParams requestParams,
+			[FromQuery] string type,
 			CancellationToken cancellationToken = default)
 		{
-			var result = await _mediator.Send(new GetHistoryPointQuery(requestParams, userId), cancellationToken);
+			var result = await _mediator.Send(new GetHistoryPointQuery(requestParams, userId, type), cancellationToken);
 			return Ok(result);
 		}
 	}

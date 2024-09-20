@@ -73,7 +73,7 @@ namespace Fieldy.BookingYard.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
 		public async Task<IActionResult> DeleteFeedback(
-			[FromRoute] Guid id,
+			[FromRoute] int id,
 			CancellationToken cancellationToken = default)
 		{
 			var result = await _mediator.Send(new DeletePackageCommand { PackageId = id }, cancellationToken);
