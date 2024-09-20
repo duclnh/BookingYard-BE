@@ -1,9 +1,10 @@
 using AutoMapper;
-using Fieldy.BookingYard.Application.Contracts;
-using Fieldy.BookingYard.Application.Contracts.Persistence;
+using Fieldy.BookingYard.Application.Abstractions;
 using Fieldy.BookingYard.Application.Exceptions;
 using Fieldy.BookingYard.Application.Models;
+using Fieldy.BookingYard.Domain.Abstractions.Repositories;
 using Fieldy.BookingYard.Domain.Entities;
+using Fieldy.BookingYard.Domain.Enums;
 using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.Facility.Commands.CreateFacility;
@@ -51,8 +52,8 @@ public class CreateFacilityCommandHandler : IRequestHandler<CreateFacilityComman
 
 
         user.PasswordHash = _utilityService.Hash("Fieldy123456");
-        user.Role = Domain.Enum.Role.CourtOwner;
-        user.Gender = Domain.Enum.Gender.Other;
+        user.Role = Role.CourtOwner;
+        user.Gender = Gender.Other;
         user.UserName = user.Email.Split("@")[0];
 
         var UserNameExist = await _userRepository.AnyAsync(x => x.UserName == user.UserName

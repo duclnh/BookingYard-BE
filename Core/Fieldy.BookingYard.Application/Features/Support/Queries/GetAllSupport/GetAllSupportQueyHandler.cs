@@ -1,7 +1,6 @@
-using System;
 using AutoMapper;
-using Fieldy.BookingYard.Application.Contracts.Persistence;
 using Fieldy.BookingYard.Application.Models.Paging;
+using Fieldy.BookingYard.Domain.Abstractions.Repositories;
 using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.Support.Queries.GetAllSupport
@@ -20,7 +19,8 @@ namespace Fieldy.BookingYard.Application.Features.Support.Queries.GetAllSupport
         public async Task<PagingResult<SupportDTO>> Handle(GetAllSupportQuery request, CancellationToken cancellationToken)
         {
             var listSupport = await _supportRepository.FindAllPaging(
-                requestParams: request.requestParams,
+                currentPage: request.requestParams.CurrentPage,
+                pageSize: request.requestParams.PageSize,
                 expression: x => (string.IsNullOrEmpty(request.requestParams.Search) || (x.Name.ToLower().Contains(request.requestParams.Search.ToLower().Trim())
                                 || x.Phone.Contains(request.requestParams.Search.Trim())))
                                 && (!request.typeSupport.HasValue || x.TypeSupport == request.typeSupport),

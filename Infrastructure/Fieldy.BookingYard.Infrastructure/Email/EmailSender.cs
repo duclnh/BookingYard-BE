@@ -1,6 +1,6 @@
 using System.Net;
 using System.Net.Mail;
-using Fieldy.BookingYard.Application.Contracts;
+using Fieldy.BookingYard.Application.Abstractions;
 using Fieldy.BookingYard.Application.Models;
 using Microsoft.Extensions.Options;
 

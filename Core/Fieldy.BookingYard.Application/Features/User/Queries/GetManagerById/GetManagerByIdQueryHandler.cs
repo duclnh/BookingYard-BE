@@ -1,8 +1,7 @@
-using System.Linq.Expressions;
 using AutoMapper;
-using Fieldy.BookingYard.Application.Contracts.Persistence;
 using Fieldy.BookingYard.Application.Exceptions;
 using Fieldy.BookingYard.Application.Features.User.Queries.DTO;
+using Fieldy.BookingYard.Domain.Abstractions.Repositories;
 using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.User.Queries.GetManagerById

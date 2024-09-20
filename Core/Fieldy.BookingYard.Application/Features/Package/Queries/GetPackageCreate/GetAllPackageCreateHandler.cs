@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
-using Fieldy.BookingYard.Application.Contracts.Persistence;
 using Fieldy.BookingYard.Application.Features.Package.Queries.GetPackageCreate;
-using Fieldy.BookingYard.Application.Models.Paging;
+using Fieldy.BookingYard.Domain.Abstractions.Repositories;
 using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.Package.Queries.GetAllPackage

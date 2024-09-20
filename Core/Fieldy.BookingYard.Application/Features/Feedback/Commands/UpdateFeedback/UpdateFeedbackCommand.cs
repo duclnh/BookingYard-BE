@@ -1,9 +1,9 @@
-﻿using Fieldy.BookingYard.Domain.Enum;
+﻿using Fieldy.BookingYard.Domain.Enums;
 using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.Feedback.Commands.UpdateFeedback
 {
-	public class 	UpdateFeedbackCommand : IRequest<string>
+	public class UpdateFeedbackCommand : IRequest<string>
 	{
 		public int FeedbackID { get; set; }
 		public string? Image { get; set; }

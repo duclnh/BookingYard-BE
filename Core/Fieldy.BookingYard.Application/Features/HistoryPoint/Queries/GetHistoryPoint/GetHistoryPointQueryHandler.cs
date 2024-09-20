@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using AutoMapper;
-using Fieldy.BookingYard.Application.Contracts.Persistence;
 using Fieldy.BookingYard.Application.Models.Paging;
+using Fieldy.BookingYard.Domain.Abstractions.Repositories;
 using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.HistoryPoint.Queries.GetHistoryPoint
@@ -29,8 +29,9 @@ namespace Fieldy.BookingYard.Application.Features.HistoryPoint.Queries.GetHistor
 			};
 
 			var listHistoryPoint = await _HistoryPointRepository.FindAllPaging(
-				requestParams: request.requestParams,
-				expression: expression,
+                currentPage: request.requestParams.CurrentPage,
+                pageSize: request.requestParams.PageSize,
+                expression: expression,
 				orderBy: x => x.OrderByDescending(x => x.CreatedAt),
 				cancellationToken: cancellationToken);
 

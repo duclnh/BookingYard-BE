@@ -1,4 +1,4 @@
-using Fieldy.BookingYard.Domain.Common;
+using Fieldy.BookingYard.Domain.Abstractions;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Fieldy.BookingYard.Domain.Entities

@@ -1,4 +1,4 @@
-using Fieldy.BookingYard.Application.Contracts;
+using Fieldy.BookingYard.Application.Abstractions;
 using Microsoft.Extensions.Logging;
 
 namespace Fieldy.BookingYard.Infrastructure.LoggerAdaptor

@@ -1,4 +1,4 @@
-using Fieldy.BookingYard.Application.Contracts.Persistence;
+using Fieldy.BookingYard.Domain.Abstractions.Repositories;
 using FluentValidation;
 
 namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Register

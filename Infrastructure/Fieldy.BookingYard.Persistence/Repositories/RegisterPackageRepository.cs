@@ -1,9 +1,6 @@
-﻿using Fieldy.BookingYard.Application.Contracts.Persistence;
+﻿using Fieldy.BookingYard.Domain.Abstractions.Repositories;
 using Fieldy.BookingYard.Domain.Entities;
 using Fieldy.BookingYard.Persistence.DatabaseContext;
-using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
-using System.Linq;
 
 namespace Fieldy.BookingYard.Persistence.Repositories
 {

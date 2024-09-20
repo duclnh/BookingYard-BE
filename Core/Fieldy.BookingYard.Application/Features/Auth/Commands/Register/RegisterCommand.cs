@@ -1,4 +1,4 @@
-using Fieldy.BookingYard.Domain.Enum;
+using Fieldy.BookingYard.Domain.Enums;
 using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Register{

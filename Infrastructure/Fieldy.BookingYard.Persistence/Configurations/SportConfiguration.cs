@@ -1,4 +1,3 @@
-using System;
 using Fieldy.BookingYard.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

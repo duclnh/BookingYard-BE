@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Fieldy.BookingYard.Application.Contracts.Persistence;
 using Fieldy.BookingYard.Application.Models.Paging;
+using Fieldy.BookingYard.Domain.Abstractions.Repositories;
 using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.Feedback.Queries.GetAllFeedback
@@ -19,7 +19,8 @@ namespace Fieldy.BookingYard.Application.Features.Feedback.Queries.GetAllFeedbac
 		public async Task<PagingResult<FeedbackDto>> Handle(GetAllFeedbackQuery request, CancellationToken cancellationToken)
 		{
 			var listFeedback = await _FeedbackRepository.FindAllPaging(
-				requestParams: request.requestParams,
+				currentPage: request.requestParams.CurrentPage,
+				pageSize: request.requestParams.PageSize,
 				expression: x => x.FacilityID == request.FaciliyId,
 				orderBy: x => x.OrderByDescending(x => x.CreatedAt),
 				cancellationToken: cancellationToken);

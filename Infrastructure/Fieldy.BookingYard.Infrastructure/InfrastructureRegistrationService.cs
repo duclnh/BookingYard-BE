@@ -1,5 +1,4 @@
-﻿using Fieldy.BookingYard.Application.Contracts;
-using Fieldy.BookingYard.Application.Contracts.JWT;
+﻿using Fieldy.BookingYard.Application.Abstractions;
 using Fieldy.BookingYard.Application.Models;
 using Fieldy.BookingYard.Infrastructure.Email;
 using Fieldy.BookingYard.Infrastructure.JWT;

@@ -1,7 +1,6 @@
 using System.Linq.Expressions;
-using System.Reflection;
-using Fieldy.BookingYard.Application.Contracts.Persistence;
-using Fieldy.BookingYard.Application.Models.Query;
+using Fieldy.BookingYard.Domain.Abstractions;
+using Fieldy.BookingYard.Domain.Abstractions.Repositories;
 using Fieldy.BookingYard.Persistence.DatabaseContext;
 using Microsoft.EntityFrameworkCore;
 
@@ -63,10 +62,7 @@ namespace Fieldy.BookingYard.Persistence.Repositories
             params Expression<Func<TEntity, object>>[] includes)
         {
             IQueryable<TEntity> query = _dbSet;
-            if (expression != null)
-            {
-                query = query.Where(expression);
-            }
+
             if (includes != null)
             {
                 foreach (var includeProperty in includes)
@@ -74,6 +70,12 @@ namespace Fieldy.BookingYard.Persistence.Repositories
                     query = query.Include(includeProperty);
                 }
             }
+
+            if (expression != null)
+            {
+                query = query.Where(expression);
+            }
+
             if (orderBy != null)
             {
                 query = orderBy(query);
@@ -82,7 +84,39 @@ namespace Fieldy.BookingYard.Persistence.Repositories
         }
 
         public async Task<IPagingList<TEntity>> FindAllPaging(
-            RequestParams requestParams,
+            int currentPage,
+            int pageSize,   
+            Expression<Func<TEntity, bool>>[]? expressions,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
+            CancellationToken cancellationToken = default,
+            params Expression<Func<TEntity, object>>[] includes)
+        {
+            IQueryable<TEntity> query = _dbSet;
+
+            foreach (var includeProperty in includes)
+            {
+                query = query.Include(includeProperty);
+            }
+
+            if (expressions != null && expressions.Any())
+            {
+                foreach (var expression in expressions)
+                {
+                    query = query.Where(expression);
+                }
+            }
+
+            if (orderBy != null)
+            {
+                query = orderBy(query);
+            }
+
+            return await PagingList<TEntity>.CreateAsync(query, currentPage, pageSize, cancellationToken);
+        }
+
+        public async Task<IPagingList<TEntity>> FindAllPaging(
+            int currentPage,
+            int pageSize,
             Expression<Func<TEntity, bool>>? expression = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
             CancellationToken cancellationToken = default,
@@ -90,15 +124,15 @@ namespace Fieldy.BookingYard.Persistence.Repositories
         {
             IQueryable<TEntity> query = _dbSet;
 
-			if (includes != null)
-			{
-				foreach (var includeProperty in includes)
-				{
-					query = query.Include(includeProperty);
-				}
-			}
+            if (includes != null)
+            {
+                foreach (var includeProperty in includes)
+                {
+                    query = query.Include(includeProperty);
+                }
+            }
 
-			if (expression != null)
+            if (expression != null)
             {
                 query = query.Where(expression);
             }
@@ -108,28 +142,9 @@ namespace Fieldy.BookingYard.Persistence.Repositories
                 query = orderBy(query);
             }
 
-            // if (!string.IsNullOrEmpty(requestParams.Search) && requestParams.SearchBy != null)
-            // {
-            //     var param = Expression.Parameter(typeof(TEntity), "x");
-            //     var body = (Expression)param;
-
-            //     foreach (var search in requestParams.SearchBy)
-            //     {
-            //         body = Expression.PropertyOrField(body, search);
-            //     }
-            //     body = Expression.Call(body, "ToLower", Type.EmptyTypes);
-            //     body = Expression.Call(typeof(DbFunctionsExtensions), "Like", Type.EmptyTypes,
-            //         Expression.Constant(EF.Functions), body, Expression.Constant($"%{requestParams.Search}%".ToLower()));
-
-            //     var lambda = Expression.Lambda(body, param);
-
-            //     var queryExpr = Expression.Call(typeof(Queryable), "Where", new[] { typeof(TEntity) }, query.Expression, lambda);
-
-            //     query.Provider.CreateQuery<TEntity>(queryExpr);
-            // }
-
-            return await PagingList<TEntity>.CreateAsync(query, requestParams.CurrentPage, requestParams.PageSize, cancellationToken);
+            return await PagingList<TEntity>.CreateAsync(query, currentPage, pageSize, cancellationToken);
         }
+
 
         public async Task<TEntity?> FindByIdAsync(TKey id, CancellationToken cancellationToken = default, params Expression<Func<TEntity, object>>[] includes)
         {
