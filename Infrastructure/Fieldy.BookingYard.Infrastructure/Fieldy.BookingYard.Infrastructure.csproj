@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Vnpay\" />
+    <Folder Include="VNPAY\" />
   </ItemGroup>
 
 </Project>
