@@ -22,9 +22,9 @@ namespace Fieldy.BookingYard.Application.Features.RegisterPackage.Queries.GetAll
             var listRegisterPackage = await _registerPackageRepository.FindAllPaging(
                 currentPage: request.requestParams.CurrentPage,
                 pageSize: request.requestParams.PageSize,
-                expression: x => (x.Facility != null && x.Facility.Name.ToLower().Trim().Contains(request.requestParams.Search.ToLower().Trim())) ||
-                                 (x.Package != null && x.Package.PackageName.ToLower().Trim().Contains(request.requestParams.Search.ToLower().Trim())),
-                orderBy: x => x.OrderByDescending(x => x.CreatedAt),
+                expression: string.IsNullOrEmpty(request.requestParams.Search) ? null : (x => (x.Facility != null && x.Facility.Name.ToLower().Trim().Contains(request.requestParams.Search.ToLower().Trim())) ||
+								 (x.Package != null && x.Package.PackageName.ToLower().Trim().Contains(request.requestParams.Search.ToLower().Trim()))),
+				orderBy: x => x.OrderByDescending(x => x.CreatedAt),
                 cancellationToken: cancellationToken,
                 includes: new Expression<Func<Domain.Entities.RegisterPackage, object>>[]
                 {

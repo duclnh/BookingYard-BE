@@ -21,11 +21,23 @@ namespace Fieldy.BookingYard.Application.Features.Package.Commands.UpdatePackage
 			if (validationResult.Errors.Any())
 				throw new BadRequestException("Invalid update package", validationResult);
 
-			var package = await _packageRepository.Find(x => x.Id == request.PackageId, cancellationToken);
+			var package = await _packageRepository.Find(x => x.PackageName == request.PackageName && x.Id != request.PackageId, cancellationToken);
+			if (package != null)
+				throw new ConflictException("Package already exists");
+
+			package = await _packageRepository.Find(x => x.Id == request.PackageId, cancellationToken);
 			if (package == null)
 				throw new NotFoundException(nameof(package), request.PackageId);
 
-			package = _mapper.Map<Domain.Entities.Package>(request);
+			/*package = _mapper.Map<Domain.Entities.Package>(request);*/
+			if (!string.IsNullOrEmpty(request.PackageName))
+			{
+				package.PackageName = request.PackageName;
+			}
+			if(!string.IsNullOrEmpty(request.PackageDescription))
+				package.PackageDescription = request.PackageDescription;
+			if(request.PackagePrice != 0)
+				package.PackagePrice = request.PackagePrice;
 			package.ModifiedAt = DateTime.Now;
 			_packageRepository.Update(package);
 

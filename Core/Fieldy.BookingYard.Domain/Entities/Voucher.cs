@@ -19,7 +19,8 @@ namespace Fieldy.BookingYard.Domain.Entities
 		public string? Reason { get; set; }
 		public bool Status { get; set; }
 		public Guid FacilityID { get; set; }
-		public Facility Facility { get; set; }
+		public Facility? Facility { get; set; }
 		public Guid CategorySportID { get; set; }
+		public ICollection<CollectVoucher>? CollectVouchers { get; set; }
 	}
 }
