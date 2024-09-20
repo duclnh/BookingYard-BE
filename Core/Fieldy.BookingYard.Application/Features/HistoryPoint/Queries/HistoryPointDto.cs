@@ -4,6 +4,6 @@
 	{
 		public int HistoryPointID { get; set; }
 		public int Point { get; set; }
-		public DateTime CreatedAt { get; set; }
+		public required string CreatedAt { get; set; }
 	}
 }

@@ -16,9 +16,9 @@ namespace Fieldy.BookingYard.Persistence.Configurations
 			builder.HasData(
 				new Package
 				{
-Id = 1, 
-					PackageName = "Package 1", 
-					PackagePrice = 100000, 
+					Id = 1,
+					PackageName = "Package 1",
+					PackagePrice = 100000,
 					PackageDescription = "Package 1 Description",
 					IsDeleted = false,
 					CreatedAt = DateTime.Now,
@@ -26,14 +26,14 @@ Id = 1,
 				},
 				new Package
 				{
-Id = 2, 
-					PackageName = "Package 2", 
-					PackagePrice = 200000, 
+					Id = 2,
+					PackageName = "Package 2",
+					PackagePrice = 200000,
 					PackageDescription = "Package 2 Description",
 					IsDeleted = false,
 					CreatedAt = DateTime.Now,
 					ModifiedAt = DateTime.Now
-				},
+				}
 				);
 		}
 	}
