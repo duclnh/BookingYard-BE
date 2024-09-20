@@ -1,8 +1,7 @@
-using System;
 using AutoMapper;
-using Fieldy.BookingYard.Application.Contracts;
-using Fieldy.BookingYard.Application.Contracts.Persistence;
+using Fieldy.BookingYard.Application.Abstractions;
 using Fieldy.BookingYard.Application.Exceptions;
+using Fieldy.BookingYard.Domain.Abstractions.Repositories;
 using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.Sport.Commands.CreateSport;

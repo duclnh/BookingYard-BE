@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using Fieldy.BookingYard.Domain.Common;
-using Microsoft.VisualBasic;
+using Fieldy.BookingYard.Domain.Abstractions;
 
 namespace Fieldy.BookingYard.Domain.Entities
 {

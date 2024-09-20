@@ -16,7 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\Fieldy.BookingYard.Application\Fieldy.BookingYard.Application.csproj" />
     <ProjectReference Include="..\..\Core\Fieldy.BookingYard.Domain\Fieldy.BookingYard.Domain.csproj" />
   </ItemGroup>
 

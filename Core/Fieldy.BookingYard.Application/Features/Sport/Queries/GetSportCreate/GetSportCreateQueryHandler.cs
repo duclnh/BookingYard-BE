@@ -1,8 +1,8 @@
-using System;
 using AutoMapper;
-using Fieldy.BookingYard.Application.Contracts.Persistence;
 using Fieldy.BookingYard.Application.Features.Sport.Queries.DTO;
+using Fieldy.BookingYard.Domain.Abstractions.Repositories;
 using MediatR;
+using System.Linq.Expressions;
 
 namespace Fieldy.BookingYard.Application.Features.Sport.Queries.GetSportCreate;
 

@@ -1,7 +1,6 @@
 ﻿using Fieldy.BookingYard.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Fieldy.BookingYard.Persistence.Configurations
 {

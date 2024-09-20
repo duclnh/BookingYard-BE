@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Fieldy.BookingYard.Domain.Common;
-using Fieldy.BookingYard.Domain.Enum;
+using Fieldy.BookingYard.Domain.Abstractions;
+using Fieldy.BookingYard.Domain.Enums;
 
 namespace Fieldy.BookingYard.Domain.Entities
 {

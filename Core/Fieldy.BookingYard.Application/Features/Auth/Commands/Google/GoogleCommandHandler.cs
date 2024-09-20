@@ -1,9 +1,10 @@
 using AutoMapper;
-using Fieldy.BookingYard.Application.Contracts.JWT;
-using Fieldy.BookingYard.Application.Contracts.Persistence;
+using Fieldy.BookingYard.Application.Abstractions;
 using Fieldy.BookingYard.Application.Exceptions;
 using Fieldy.BookingYard.Application.Models.Auth;
 using Fieldy.BookingYard.Application.Models.Jwt;
+using Fieldy.BookingYard.Domain.Abstractions.Repositories;
+using Fieldy.BookingYard.Domain.Enums;
 using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Google
@@ -62,10 +63,10 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Google
 
             userCreate.PasswordHash = string.Empty;
             //add role customer to user    
-            userCreate.Role = Domain.Enum.Role.Customer;
+            userCreate.Role = Role.Customer;
 
             //add gender other to user
-            userCreate.Gender = Domain.Enum.Gender.Other;
+            userCreate.Gender = Gender.Other;
 
             //create new user
             await _userRepository.AddAsync(userCreate);

@@ -1,5 +1,4 @@
-using System;
-using Fieldy.BookingYard.Application.Contracts.Persistence;
+using Fieldy.BookingYard.Domain.Abstractions.Repositories;
 using Fieldy.BookingYard.Domain.Entities;
 using Fieldy.BookingYard.Persistence.DatabaseContext;
 

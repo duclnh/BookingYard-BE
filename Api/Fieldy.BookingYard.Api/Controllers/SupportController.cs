@@ -7,7 +7,7 @@ using Fieldy.BookingYard.Application.Features.Support.Queries.GetStatisticSuppor
 using Fieldy.BookingYard.Application.Models.Paging;
 using Fieldy.BookingYard.Application.Models.Query;
 using Fieldy.BookingYard.Application.Models.Statistic;
-using Fieldy.BookingYard.Domain.Enum;
+using Fieldy.BookingYard.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

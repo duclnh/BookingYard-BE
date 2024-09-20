@@ -1,8 +1,8 @@
-using Fieldy.BookingYard.Application.Contracts;
-using Fieldy.BookingYard.Application.Contracts.JWT;
-using Fieldy.BookingYard.Application.Contracts.Persistence;
+using Fieldy.BookingYard.Application.Abstractions;
 using Fieldy.BookingYard.Application.Exceptions;
 using Fieldy.BookingYard.Application.Models.Auth;
+using Fieldy.BookingYard.Domain.Abstractions.Repositories;
+using Fieldy.BookingYard.Domain.Enums;
 using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.Auth.Queries.Login
@@ -39,7 +39,7 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Queries.Login
                 if (user.IsBanned)
                 throw new BadRequestException("User is banned!");
 
-            if(user.Role != Domain.Enum.Role.Customer)
+            if(user.Role != Role.Customer)
                     throw new BadRequestException("Invalid request");
 
             _logger.LogInformation($"Login Account: {user.Email}");

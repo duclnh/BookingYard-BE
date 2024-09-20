@@ -1,4 +1,5 @@
-﻿using Fieldy.BookingYard.Application.Contracts.Persistence;
+﻿using Fieldy.BookingYard.Domain.Abstractions;
+using Fieldy.BookingYard.Domain.Abstractions.Repositories;
 using Fieldy.BookingYard.Persistence.DatabaseContext;
 using Fieldy.BookingYard.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +24,7 @@ namespace Fieldy.BookingYard.Persistence
             services.AddTransient<IFacilityRepository, FacilityRepository>();
             services.AddTransient<IPackageRepository, PackageRepository>();
             services.AddTransient<IRegisterPackageRepository, RegisterPackageRepository>();
-            services.AddTransient<IDiscountRepository, DiscountRepository>();
+            services.AddTransient<IVoucherRepository, VoucherRepository>();
 			services.AddTransient<IPeakHourRepository, PeakHourRepository>();
 			services.AddTransient<IFacilityTimeRepository, FacilityTimeRepository>();
 			services.AddTransient<IHolidayRepository, HolidayRepository>();

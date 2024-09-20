@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Fieldy.BookingYard.Application.Contracts.Persistence;
 using Fieldy.BookingYard.Application.Models.Paging;
+using Fieldy.BookingYard.Domain.Abstractions.Repositories;
 using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.Package.Queries.GetAllPackage
@@ -19,8 +19,9 @@ namespace Fieldy.BookingYard.Application.Features.Package.Queries.GetAllPackage
         public async Task<PagingResult<PackageDto>> Handle(GetAllPackageQuery request, CancellationToken cancellationToken)
         {
 			var listPackage = await _packageRepository.FindAllPaging(
-                requestParams: request.requestParams,
-				expression: string.IsNullOrEmpty(request.requestParams.Search) ? null : (x => x.PackageName.ToLower().Contains(request.requestParams.Search.ToLower().Trim())),
+                currentPage: request.requestParams.CurrentPage,
+                pageSize: request.requestParams.PageSize,
+                expression: string.IsNullOrEmpty(request.requestParams.Search) ? null : (x => x.PackageName.ToLower().Contains(request.requestParams.Search.ToLower().Trim())),
                 orderBy: x => x.OrderByDescending(x => x.CreatedAt),
                 cancellationToken: cancellationToken);
 

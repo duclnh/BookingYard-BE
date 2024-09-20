@@ -1,7 +1,8 @@
-using Fieldy.BookingYard.Application.Contracts;
-using Fieldy.BookingYard.Application.Contracts.Persistence;
+using Fieldy.BookingYard.Application.Abstractions;
 using Fieldy.BookingYard.Application.Exceptions;
 using Fieldy.BookingYard.Application.Models;
+using Fieldy.BookingYard.Domain.Abstractions.Repositories;
+using Fieldy.BookingYard.Domain.Enums;
 using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Register
@@ -39,7 +40,7 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Register
                 Name = request.Name.Trim(),
                 Email = request.Email.Trim(),
                 Gender = request.gender,
-                Role = Domain.Enum.Role.Customer,
+                Role = Role.Customer,
                 PasswordHash = _utility.Hash(request.Password),
                 VerificationToken = _utility.Hash(generationCode),
             };

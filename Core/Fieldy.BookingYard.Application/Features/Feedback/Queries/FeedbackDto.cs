@@ -1,4 +1,4 @@
-﻿using Fieldy.BookingYard.Domain.Enum;
+﻿using Fieldy.BookingYard.Domain.Enums;
 
 namespace Fieldy.BookingYard.Application.Features.Feedback.Queries
 {

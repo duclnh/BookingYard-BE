@@ -1,7 +1,6 @@
-using System;
 using AutoMapper;
-using Fieldy.BookingYard.Application.Contracts.Persistence;
 using Fieldy.BookingYard.Application.Models.Paging;
+using Fieldy.BookingYard.Domain.Abstractions.Repositories;
 using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.Facility.Queries.GetAllFacilityAdmin;
@@ -20,7 +19,8 @@ public class GetAllFacilityAdminQueryHandler : IRequestHandler<GetAllFacilityAdm
     public async Task<PagingResult<FacilityAdminDTO>> Handle(GetAllFacilityAdminQuery request, CancellationToken cancellationToken)
     {
         var facilities = await _facilityRepository.FindAllPaging(
-           requestParams: request.requestParams,
+           currentPage: request.requestParams.CurrentPage,
+           pageSize: request.requestParams.PageSize,
            expression: null,
            orderBy: null,
            cancellationToken: cancellationToken,

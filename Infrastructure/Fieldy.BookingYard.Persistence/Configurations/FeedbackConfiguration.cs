@@ -1,9 +1,7 @@
 ﻿using Fieldy.BookingYard.Domain.Entities;
-using Fieldy.BookingYard.Domain.Enum;
+using Fieldy.BookingYard.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using System.Reflection.Emit;
 
 namespace Fieldy.BookingYard.Persistence.Configurations
 {

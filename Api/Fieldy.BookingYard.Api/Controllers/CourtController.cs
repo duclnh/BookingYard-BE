@@ -19,19 +19,20 @@ namespace Fieldy.BookingYard.Api.Controllers
         }
 
         [HttpPost]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,CourtOwner")]
         [Produces(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateCourt(
-              [FromBody] CreateCourtCommand command,
+              [FromForm] CreateCourtCommand command,
               CancellationToken cancellationToken = default
        )
         {
 
             var result = await _mediator.Send(command, cancellationToken);
-            return Ok(result);
+           return Created("", result);
         }
     }
 }

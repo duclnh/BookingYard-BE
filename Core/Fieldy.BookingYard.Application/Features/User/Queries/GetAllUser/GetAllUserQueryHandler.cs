@@ -1,6 +1,6 @@
 using AutoMapper;
-using Fieldy.BookingYard.Application.Contracts.Persistence;
 using Fieldy.BookingYard.Application.Models.Paging;
+using Fieldy.BookingYard.Domain.Abstractions.Repositories;
 using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.User.Queries.GetAllUser
@@ -25,7 +25,8 @@ namespace Fieldy.BookingYard.Application.Features.User.Queries.GetAllUser
                 expression: x => x.Name.ToLower().Contains(request.requestParams.Search.ToLower().Trim())
                                 || x.Email.ToLower().Contains(request.requestParams.Search.ToLower().Trim()),
                 orderBy: x => x.OrderByDescending(o => o.CreatedAt),
-                requestParams: request.requestParams,
+                currentPage: request.requestParams.CurrentPage,
+                pageSize: request.requestParams.PageSize,
                 cancellationToken: cancellationToken
                 );
 

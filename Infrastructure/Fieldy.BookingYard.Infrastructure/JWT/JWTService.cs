@@ -1,7 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Fieldy.BookingYard.Application.Contracts.JWT;
+using Fieldy.BookingYard.Application.Abstractions;
 using Fieldy.BookingYard.Application.Models.Jwt;
 using Fieldy.BookingYard.Domain.Entities;
 using Microsoft.AspNetCore.Http;

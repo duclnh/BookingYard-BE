@@ -1,5 +1,5 @@
-using Fieldy.BookingYard.Domain.Common;
-using Fieldy.BookingYard.Domain.Enum;
+using Fieldy.BookingYard.Domain.Abstractions;
+using Fieldy.BookingYard.Domain.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Fieldy.BookingYard.Domain.Entities
