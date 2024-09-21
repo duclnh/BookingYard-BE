@@ -1,6 +1,4 @@
-﻿using Fieldy.BookingYard.Application.Features.Feedback.Queries.GetAllFeedback;
-using Fieldy.BookingYard.Application.Features.Feedback.Queries;
-using Fieldy.BookingYard.Application.Models.Paging;
+﻿using Fieldy.BookingYard.Application.Models.Paging;
 using Fieldy.BookingYard.Application.Models.Query;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

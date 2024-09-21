@@ -9,7 +9,7 @@ namespace Fieldy.BookingYard.Persistence.Repositories
     public class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, TKey>
         where TEntity : class
     {
-        private readonly BookingYardDBContext _dbContext;
+        protected readonly BookingYardDBContext _dbContext;
         private readonly DbSet<TEntity> _dbSet;
         public RepositoryBase(BookingYardDBContext bookingYardDBContext)
         {
@@ -85,7 +85,7 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 
         public async Task<IPagingList<TEntity>> FindAllPaging(
             int currentPage,
-            int pageSize,   
+            int pageSize,
             Expression<Func<TEntity, bool>>[]? expressions,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
             CancellationToken cancellationToken = default,
