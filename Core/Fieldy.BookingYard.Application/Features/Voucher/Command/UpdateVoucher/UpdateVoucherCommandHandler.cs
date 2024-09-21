@@ -21,25 +21,25 @@ namespace Fieldy.BookingYard.Application.Features.Voucher.Command.UpdateVoucher
 			if (validationResult.Errors.Any())
 				throw new BadRequestException("Invalid register Voucher", validationResult);
 
-			var voucherExist = await _voucherRepository.Find(x => x.VoucherName == request.VoucherName, cancellationToken);
-
+			var voucherExist = await _voucherRepository.Find(x => x.VoucherName == request.VoucherName && x.Id != request.VoucherID, cancellationToken);
 			if (voucherExist != null)
 				throw new ConflictException("Voucher already exists");
 
+			voucherExist = await _voucherRepository.Find(x => x.Id == request.VoucherID, cancellationToken);
+			if (voucherExist == null)
+				throw new NotFoundException(nameof(voucherExist), request.VoucherID);
+
 			var voucher = _mapper.Map<Domain.Entities.Voucher>(request);
-
 			if (voucher == null)
-				throw new BadRequestException("Error create Voucher!");
+				throw new BadRequestException("Error update Voucher!");
 
-
-            _voucherRepository.Update(voucher);
-
+			_voucherRepository.Update(voucherExist);
 			var result = await _voucherRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
 
 			if (result < 0)
-				throw new BadRequestException("Create new Voucher fail!");
+				throw new BadRequestException("Update new Voucher fail!");
 
-			return "Create Voucher successfully";
+			return "Update Voucher successfully";
 		}
 	}
 }

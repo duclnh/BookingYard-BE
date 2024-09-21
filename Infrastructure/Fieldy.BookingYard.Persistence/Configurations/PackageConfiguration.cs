@@ -16,7 +16,7 @@ namespace Fieldy.BookingYard.Persistence.Configurations
 			builder.HasData(
 				new Package
 				{
-					Id = 1,
+					Id = Guid.Parse("57562e90-5835-4461-98f5-123cd760e612"),
 					PackageName = "Package 1",
 					PackagePrice = 100000,
 					PackageDescription = "Package 1 Description",
@@ -26,7 +26,7 @@ namespace Fieldy.BookingYard.Persistence.Configurations
 				},
 				new Package
 				{
-					Id = 2,
+					Id = Guid.Parse("57562e90-5835-4461-98f5-321cd7601234"),
 					PackageName = "Package 2",
 					PackagePrice = 200000,
 					PackageDescription = "Package 2 Description",

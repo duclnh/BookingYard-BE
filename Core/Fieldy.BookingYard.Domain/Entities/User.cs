@@ -46,8 +46,9 @@ namespace Fieldy.BookingYard.Domain.Entities
         public int? WardID { get; set; }
 
         public bool IsVerification() => VerificationToken == null;
-        public ICollection<FeedBack> FeedBacks { get; set; }
-        public ICollection<HistoryPoint> HistoryPoints { get; set; }
+        public ICollection<FeedBack>? FeedBacks { get; set; }
+        public ICollection<HistoryPoint>? HistoryPoints { get; set; }
+        public ICollection<CollectVoucher>? CollectVouchers { get; set; }
 
     }
 
