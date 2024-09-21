@@ -15,8 +15,11 @@ namespace Fieldy.BookingYard.Application.MappingProfiles
 			CreateMap<Package, PackageCreate>()
 				.ForMember(dest => dest.PackageId, opt => opt.MapFrom(src => src.Id));
 			CreateMap<CreatePackageCommand, Package>();
-			CreateMap<UpdatePackageCommand, Package>()
-				.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PackageId));
+			/*CreateMap<UpdatePackageCommand, Package>()
+				.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PackageId))
+				.ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
+				.ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+				.ForMember(dest => dest.ModifiedAt, opt => opt.Ignore());*/
 		}
 	}
 }
