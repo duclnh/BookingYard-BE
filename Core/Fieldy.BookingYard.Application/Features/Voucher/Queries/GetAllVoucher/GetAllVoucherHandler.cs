@@ -21,7 +21,7 @@ namespace Fieldy.BookingYard.Application.Features.Voucher.Queries.GetAllVoucher 
 
 			var listVoucher = await _voucherRepository.FindAllPaging(
 				currentPage: request.requestParams.CurrentPage,
-				pageSize: request.requestParams.PageSize,
+				pageSize: Math.Min(request.requestParams.PageSize, 10),
 				expression: string.IsNullOrEmpty(request.requestParams.Search) ? null : (x => x.VoucherName.ToLower().Contains(request.requestParams.Search.ToLower().Trim())),
 				orderBy: x => x.OrderByDescending(x => x.ExpiredDate),
 				cancellationToken: cancellationToken);
