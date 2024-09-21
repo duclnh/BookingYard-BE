@@ -1,6 +1,5 @@
 
 using Fieldy.BookingYard.Domain.Abstractions;
-using Fieldy.BookingYard.Domain.Abstractions.Entities;
 using Fieldy.BookingYard.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,6 +25,7 @@ namespace Fieldy.BookingYard.Persistence.DatabaseContext
         public DbSet<Image> Images { get; set; }
         public DbSet<HistoryPoint> HistoryPoints { get; set; }
         public DbSet<Sport> Sports{ get; set; }
+        public DbSet<Court> Courts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

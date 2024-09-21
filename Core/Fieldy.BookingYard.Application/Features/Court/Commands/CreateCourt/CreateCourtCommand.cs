@@ -12,5 +12,5 @@ public class CreateCourtCommand : IRequest<string>
     public required IFormFile Image360 { get; set; }
     public int NumberPlayer { get; set; }
     public int SportID { get; set; }
-    public decimal Price { get; set; }
+    public decimal CourtPrice { get; set; }
 }

@@ -50,12 +50,14 @@ public class CreateCourtCommandHandler : IRequestHandler<CreateCourtCommand, str
 
         var court = _mapper.Map<Domain.Entities.Court>(request);
         court.Image = await _utilityService.AddFile(request.Image, "court");
+        court.Image360 = await _utilityService.AddFile(request.Image360, "360");
+        court.IsActive = true;
          
         await _courtRepository.AddAsync(court);
         
         var result = await _courtRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
         if (result < 0)
-            throw new BadRequestException("Create facility fail");
+            throw new BadRequestException("Create court fail");
 
         return "Create court successfully";
     }
