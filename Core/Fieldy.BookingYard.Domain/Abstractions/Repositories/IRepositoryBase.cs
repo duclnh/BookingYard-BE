@@ -11,7 +11,7 @@ namespace Fieldy.BookingYard.Domain.Abstractions.Repositories
             CancellationToken cancellationToken = default,
             params Expression<Func<TEntity, object>>[] includes
         );
-        Task<IList<TEntity>> FindAll(
+		Task<IList<TEntity>> FindAll(
            Expression<Func<TEntity, bool>>? expression = null,
            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
            CancellationToken cancellationToken = default,
@@ -51,5 +51,9 @@ namespace Fieldy.BookingYard.Domain.Abstractions.Repositories
         void Remove(TEntity entity);
         void RemoveRange(IEnumerable<TEntity> entities);
         void Update(TEntity entity);
-    }
+		Task<ICollection<TEntity>> GetAll(
+            Expression<Func<TEntity, bool>>? expression = null, 
+            CancellationToken cancellationToken = default
+        );
+	}
 }
