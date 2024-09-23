@@ -49,10 +49,6 @@ namespace Fieldy.BookingYard.Application.MappingProfiles
 					{
 						dest.FacilityID = src.FacilityID;
 					}
-					if (src.CategorySportID != Guid.Empty)
-					{
-						dest.CategorySportID = src.CategorySportID;
-					}
 				});
 		}
 	}
