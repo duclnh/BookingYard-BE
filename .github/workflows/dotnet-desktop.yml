@@ -21,14 +21,15 @@ jobs:
           if [[ "${{github.ref}" == 'refs/heads/dev']]; then
           echo "${{ secrets.ENV_FILE_DEV }}" > .env
           echo "TAGS=${{ vars.VERSION_DEV }}" >> $GITHUB_ENV
-    
+          
+          fi
       - name: build and push docker image docker hub
         uses: elgohr/Publish-Docker-Github-Action@v4
         with:
           name: ${{ vars.IMAGE_NAME }}
           registry: ${{ vars.CONTAINER_REGISTRY }}
-          username: ${{ secrets.GH_USERNAME }}
-          password: ${{ secrets.GH_TOKEN }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
           tags: ${{ env.TAGS }}
           dockerfile: Dockerfile 
       
