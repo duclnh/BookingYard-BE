@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Set Docker env
         run: |
-          if [[ "${{github.ref}" == 'refs/heads/dev']]; then
+          if [[ "${{github.ref}}" == 'refs/heads/dev']]; then
           echo "${{ secrets.ENV_FILE_DEV }}" > .env
           echo "TAGS=${{ vars.VERSION_DEV }}" >> $GITHUB_ENV
           
