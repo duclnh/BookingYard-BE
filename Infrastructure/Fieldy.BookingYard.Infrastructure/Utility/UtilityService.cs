@@ -63,9 +63,10 @@ namespace Fieldy.BookingYard.Infrastructure.Utility
         {
             foreach (var address in addressFile)
             {
-                if (Directory.Exists(address))
+                var path = Path.Combine(_environment.WebRootPath, address);
+                if (Directory.Exists(path))
                 {
-                    Directory.Delete(address);
+                    Directory.Delete(path);
                 }
             }
         }

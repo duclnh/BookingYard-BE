@@ -1,0 +1,35 @@
+name: deploy-vps
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - dev
+      - product
+    
+jobs:
+  build:
+    if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/product'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Setup code
+        uses: actions/checkout@v4
+      
+      - name: Set Docker env
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
+            echo "${{ secrets.ENV_FILE_DEV }}" > .env
+            echo "TAGS=${{ vars.VERSION_DEV }}" >> $GITHUB_ENV
+          fi
+      
+      - name: Build and push Docker image to Docker Hub
+        uses: elgohr/Publish-Docker-Github-Action@v4
+        with:
+          name: ${{ vars.IMAGE_NAME }}
+          registry: ${{ vars.CONTAINER_REGISTRY }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          tags: ${{ env.TAGS }}
+          dockerfile: Dockerfile

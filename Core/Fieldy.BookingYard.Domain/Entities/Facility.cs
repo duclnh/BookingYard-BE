@@ -32,8 +32,8 @@ namespace Fieldy.BookingYard.Domain.Entities
         public ICollection<FacilityTime>? FacilityTimes { get; set; }
         public ICollection<Holiday>? Holidays { get; set; }
         public ICollection<PeakHour>? PeakHours { get; set; }
-		public ICollection<RegisterPackage>? RegisterPackages { get; set; }
-
-	}
+        public ICollection<RegisterPackage>? RegisterPackages { get; set; }
+        public ICollection<Court>? Courts { get; set; }
+    }
 
 }
