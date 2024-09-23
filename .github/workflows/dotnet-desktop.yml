@@ -24,7 +24,7 @@ jobs:
             echo "TAGS=${{ vars.VERSION_DEV }}" >> $GITHUB_ENV
           fi
       
-      - name: Build and push Docker image to Docker Hub
+      - name: Build and push image
         uses: elgohr/Publish-Docker-Github-Action@v4
         with:
           name: ${{ vars.IMAGE_NAME }}
@@ -33,3 +33,32 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
           tags: ${{ env.TAGS }}
           dockerfile: Dockerfile
+
+  deploy:
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up container
+        # id: set-env
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
+            echo "DOCKER_IMAGE=${{ vars.IMAGE_NAME }}:${{ vars.VERSION_DEV }}" >> $GITHUB_ENV
+            echo "CONTAINER_NAME=${{ vars.CONTAINER_NAME_DEV }}" >> $GITHUB_ENV
+            echo "CONTAINER_PORT=${{ vars.CONTAINER_PORT_DEV }}" >> $GITHUB_ENV
+            echo "VOLUME=${{ vars.VOLUME_UPLOAD_FILE_DEV }}" >> $GITHUB_ENV
+          fi
+
+      - name: Deploy package to VPS
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            docker login registry-1.docker.io -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }} --password-stdin
+            docker stop ${{ env.CONTAINER_NAME }} || true
+            docker rm ${{ env.CONTAINER_NAME }}  || true
+            docker rmi ${{ env.DOCKER_IMAGE }}  || true
+            docker pull ${{ env.DOCKER_IMAGE }}
+            docker run -d --name ${{ env.CONTAINER_NAME }} --restart unless-stopped -v ${{ env.VOLUME }}:${{ vars.UPLOAD_FOLDER }} -p ${{ env.CONTAINER_PORT }}:${{ vars.PORT }} ${{ env.DOCKER_IMAGE }}
