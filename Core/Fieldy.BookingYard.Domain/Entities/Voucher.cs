@@ -18,9 +18,10 @@ namespace Fieldy.BookingYard.Domain.Entities
 		public DateTime ExpiredDate { get; set; }
 		public string? Reason { get; set; }
 		public bool Status { get; set; }
-		public Guid FacilityID { get; set; }
+		public Guid? FacilityID { get; set; }
 		public Facility? Facility { get; set; }
-		public Guid CategorySportID { get; set; }
+		public int? SportID { get; set; }
+		public Sport? Sport { get; set; }
 		public ICollection<CollectVoucher>? CollectVouchers { get; set; }
 	}
 }

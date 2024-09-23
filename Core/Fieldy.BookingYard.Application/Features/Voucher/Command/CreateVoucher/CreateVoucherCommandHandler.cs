@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Fieldy.BookingYard.Application.Abstractions;
 using Fieldy.BookingYard.Application.Exceptions;
 using Fieldy.BookingYard.Domain.Abstractions.Repositories;
 using MediatR;
@@ -9,11 +10,13 @@ namespace Fieldy.BookingYard.Application.Features.Voucher.Command.CreateVoucher
 	{
 		private readonly IMapper _mapper;
 		private readonly IVoucherRepository _voucherRepository;
+		private readonly IUtilityService _utilityService;
 
-        public CreateVoucherCommandHandler(IMapper mapper, IVoucherRepository voucherRepository)
+        public CreateVoucherCommandHandler(IMapper mapper, IVoucherRepository voucherRepository, IUtilityService utilityService)
         {
             _mapper = mapper;
             _voucherRepository = voucherRepository;
+			_utilityService = utilityService;
         }
 
         public async Task<string> Handle(CreateVoucherCommand request, CancellationToken cancellationToken)
@@ -29,6 +32,9 @@ namespace Fieldy.BookingYard.Application.Features.Voucher.Command.CreateVoucher
 				throw new ConflictException("Voucher already exists");
 
 			var voucher = _mapper.Map<Domain.Entities.Voucher>(request);
+
+			voucher.Image = await _utilityService.AddFile(request.Image, "voucher");
+			voucher.Status = true;	
 
 			if (voucher == null)
 				throw new BadRequestException("Error create Voucher!");
