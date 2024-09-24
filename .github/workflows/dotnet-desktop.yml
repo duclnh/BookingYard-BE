@@ -69,4 +69,4 @@ jobs:
             fi
 
             sudo docker pull ${{ env.DOCKER_IMAGE }}
-            sudo docker run -d --name ${{ env.CONTAINER_NAME }} --restart unless-stopped --env-file .env -v ${{ env.VOLUME }}:${{ vars.UPLOAD_FOLDER }} -p ${{ env.CONTAINER_PORT }}:${{ vars.PORT }} ${{ env.DOCKER_IMAGE }}
+            sudo docker run -d --name ${{ env.CONTAINER_NAME }} --restart unless-stopped -v ${{ env.VOLUME }}:${{ vars.UPLOAD_FOLDER }} -p ${{ env.CONTAINER_PORT }}:${{ vars.PORT }} ${{ env.DOCKER_IMAGE }}
