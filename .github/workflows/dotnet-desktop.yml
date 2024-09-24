@@ -41,9 +41,10 @@ jobs:
             echo "CONTAINER_PORT=${{ vars.CONTAINER_PORT_DEV }}" >> $GITHUB_ENV
             echo "VOLUME=${{ vars.VOLUME_UPLOAD_FILE_DEV }}" >> $GITHUB_ENV
             
-            echo "ASPNETCORE_URLS=${{ secrets.ASPNETCORE_URLS }}" >> $GITHUB_ENV
-            echo "ASPNETCORE_ENVIRONMENT=${{ secrets.ASPNETCORE_ENVIRONMENT }}" >> $GITHUB_ENV
-            echo "CONNECTSTRING=${{ secrets.CONNECTSTRING }}" >> $GITHUB_ENV
+            echo "ASPNETCORE_URLS=${{ secrets.ASPNETCORE_URLS_DEV }}" >> $GITHUB_ENV
+            echo "ASPNETCORE_ENVIRONMENT=${{ secrets.ASPNETCORE_ENVIRONMENT_DEV }}" >> $GITHUB_ENV
+            echo "CONNECTSTRING=${{ secrets.CONNECTSTRING_DEV }}" >> $GITHUB_ENV
+            echo "NETWORK=${{ secrets.NETWORK_DEV }}" >> $GITHUB_ENV
           fi
           
       - name: Deploy package to VPS
@@ -68,6 +69,7 @@ jobs:
             docker pull ${{ env.DOCKER_IMAGE }}
             docker run -d \
               --name ${{ env.CONTAINER_NAME }} \
+              --network ${{ env.NETWORK }} \
               --restart unless-stopped \
               -v ${{ env.VOLUME }}:${{ vars.UPLOAD_FOLDER }} \
               -p ${{ env.CONTAINER_PORT }}:${{ vars.PORT }} \
