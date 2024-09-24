@@ -23,7 +23,13 @@ jobs:
             echo "${{ secrets.ENV_FILE_DEV }}" > .env
             echo "TAGS=${{ vars.VERSION_DEV }}" >> $GITHUB_ENV
           fi
-
+          
+      - name: Load .env and set environment variables
+        run: |
+          set -a
+          source .env
+          set +a
+          
       - name: Build and push image
         uses: elgohr/Publish-Docker-Github-Action@v4
         with:
