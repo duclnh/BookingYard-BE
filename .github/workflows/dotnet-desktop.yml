@@ -24,11 +24,10 @@ jobs:
             echo "TAGS=${{ vars.VERSION_DEV }}" >> $GITHUB_ENV
           fi
           
-      - name: Load .env and set environment variables
+      - name: Debug Outputs
         run: |
-          set -a
-          source .env
-          set +a
+          cat .env
+          echo "TAGS=${{ env.TAGS }}"
           
       - name: Build and push image
         uses: elgohr/Publish-Docker-Github-Action@v4
