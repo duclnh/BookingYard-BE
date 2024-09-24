@@ -23,11 +23,7 @@ jobs:
             echo "${{ secrets.ENV_FILE_DEV }}" > .env
             echo "TAGS=${{ vars.VERSION_DEV }}" >> $GITHUB_ENV
           fi
-      
-      - name: Show .env content
-        run: |
-           cat .env
-           
+
       - name: Build and push image
         uses: elgohr/Publish-Docker-Github-Action@v4
         with:
@@ -52,7 +48,10 @@ jobs:
             echo "CONTAINER_PORT=${{ vars.CONTAINER_PORT_DEV }}" >> $GITHUB_ENV
             echo "VOLUME=${{ vars.VOLUME_UPLOAD_FILE_DEV }}" >> $GITHUB_ENV
           fi
-
+      - name: Show .env content
+        run: |
+           cat .env
+           
       - name: Deploy package to VPS
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -73,4 +72,4 @@ jobs:
             fi
 
             sudo docker pull ${{ env.DOCKER_IMAGE }}
-            sudo docker run -d --name ${{ env.CONTAINER_NAME }} --restart unless-stopped -v ${{ env.VOLUME }}:${{ vars.UPLOAD_FOLDER }} -p ${{ env.CONTAINER_PORT }}:${{ vars.PORT }} ${{ env.DOCKER_IMAGE }}
+            sudo docker run -d --name ${{ env.CONTAINER_NAME }} --restart unless-stopped --env-file .env -v ${{ env.VOLUME }}:${{ vars.UPLOAD_FOLDER }} -p ${{ env.CONTAINER_PORT }}:${{ vars.PORT }} ${{ env.DOCKER_IMAGE }}
