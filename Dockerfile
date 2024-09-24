@@ -32,7 +32,4 @@ RUN mkdir -p /app/wwwroot
 VOLUME /app/wwwroot
 
 COPY --from=publish /app/publish .
-
-ENV ASPNETCORE_URLS=http://+:80
-
 ENTRYPOINT ["dotnet", "Fieldy.BookingYard.Api.dll"]
