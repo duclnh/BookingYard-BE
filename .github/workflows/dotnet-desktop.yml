@@ -16,15 +16,8 @@ jobs:
     steps:
       - name: Setup code
         uses: actions/checkout@v4
-      
-      - name: Set Docker env
-        run: |
-          if [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
-            echo "${{ secrets.ENV_FILE_DEV }}" > .env
-            echo "TAGS=${{ vars.VERSION_DEV }}" >> $GITHUB_ENV
-          fi
-
-      - name: Build and push image
+    
+      - name: Build and push image 
         uses: elgohr/Publish-Docker-Github-Action@v4
         with:
           name: ${{ vars.IMAGE_NAME }}
@@ -40,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set up container
-        # id: set-env
+
         run: |
           if [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
             echo "DOCKER_IMAGE=${{ vars.IMAGE_NAME }}:${{ vars.VERSION_DEV }}" >> $GITHUB_ENV
@@ -69,4 +62,4 @@ jobs:
             fi
 
             docker pull ${{ env.DOCKER_IMAGE }}
-            docker run -d --name ${{ env.CONTAINER_NAME }} --restart unless-stopped -v ${{ env.VOLUME }}:${{ vars.UPLOAD_FOLDER }} -p ${{ env.CONTAINER_PORT }}:${{ vars.PORT }} ${{ env.DOCKER_IMAGE }}
+            docker run -d ${{ secrets.ENV_FILE_DEV }} --name ${{ env.CONTAINER_NAME }} --restart unless-stopped -v ${{ env.VOLUME }}:${{ vars.UPLOAD_FOLDER }} -p ${{ env.CONTAINER_PORT }}:${{ vars.PORT }} ${{ env.DOCKER_IMAGE }}
