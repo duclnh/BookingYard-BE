@@ -5,29 +5,19 @@ on:
     branches:
       - dev
       - product
-
+    
 jobs:
   build:
     if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/product'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Setup code
         uses: actions/checkout@v4
-
-      - name: Set Docker env
-        run: |
-          if [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
-            echo "${{ secrets.ENV_FILE_DEV }}" > .env
-            echo "TAGS=${{ vars.VERSION_DEV }}" >> $GITHUB_ENV
-          fi
-
-      - name: Check .env File
-        run: |
-          echo "=== .env file content ==="
-          cat .env || echo ".env file not found"
-          echo "========================="
-
-      - name: Build and push image
+    
+      - name: Build and push image 
         uses: elgohr/Publish-Docker-Github-Action@v4
         with:
           name: ${{ vars.IMAGE_NAME }}
@@ -43,22 +33,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set up container
+
         run: |
           if [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
             echo "DOCKER_IMAGE=${{ vars.IMAGE_NAME }}:${{ vars.VERSION_DEV }}" >> $GITHUB_ENV
             echo "CONTAINER_NAME=${{ vars.CONTAINER_NAME_DEV }}" >> $GITHUB_ENV
             echo "CONTAINER_PORT=${{ vars.CONTAINER_PORT_DEV }}" >> $GITHUB_ENV
             echo "VOLUME=${{ vars.VOLUME_UPLOAD_FILE_DEV }}" >> $GITHUB_ENV
-            
           fi
-
-      - name: Debug Deployment
-        run: |
-          echo "DOCKER_IMAGE=${{ env.DOCKER_IMAGE }}"
-          echo "CONTAINER_NAME=${{ env.CONTAINER_NAME }}"
-          echo "CONTAINER_PORT=${{ env.CONTAINER_PORT }}"
-          echo "VOLUME=${{ env.VOLUME }}"
-
+          
       - name: Deploy package to VPS
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -69,17 +52,14 @@ jobs:
             echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login registry-1.docker.io -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
             
             if [[ "$(sudo docker ps -aq -f name=${{ env.CONTAINER_NAME }})" ]]; then
-              sudo docker stop ${{ env.CONTAINER_NAME }}
-              sudo docker rm ${{ env.CONTAINER_NAME }}
+              docker stop ${{ env.CONTAINER_NAME }}
+              docker rm ${{ env.CONTAINER_NAME }}
+            
             fi
 
             if [[ "$(sudo docker images -q ${{ env.DOCKER_IMAGE }})" ]]; then
-              sudo docker rmi ${{ env.DOCKER_IMAGE }}
+              docker rmi ${{ env.DOCKER_IMAGE }}
             fi
 
-            sudo docker pull ${{ env.DOCKER_IMAGE }}
-            sudo docker run -d --name ${{ env.CONTAINER_NAME }} \
-              --restart unless-stopped \
-              -v ${{ env.VOLUME }}:${{ vars.UPLOAD_FOLDER }} \
-              -p ${{ env.CONTAINER_PORT }}:${{ vars.PORT }} \
-              --env-file .env ${{ env.DOCKER_IMAGE }}
+            docker pull ${{ env.DOCKER_IMAGE }}
+            docker run -d ${{ secrets.ENV_FILE_DEV }} --name ${{ env.CONTAINER_NAME }} --restart unless-stopped -v ${{ env.VOLUME }}:${{ vars.UPLOAD_FOLDER }} -p ${{ env.CONTAINER_PORT }}:${{ vars.PORT }} ${{ env.DOCKER_IMAGE }}
