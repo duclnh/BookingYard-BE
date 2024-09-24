@@ -59,14 +59,14 @@ jobs:
             echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login registry-1.docker.io -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
             
             if [[ "$(sudo docker ps -aq -f name=${{ env.CONTAINER_NAME }})" ]]; then
-              sudo docker stop ${{ env.CONTAINER_NAME }}
-              sudo docker rm ${{ env.CONTAINER_NAME }}
+              docker stop ${{ env.CONTAINER_NAME }}
+              docker rm ${{ env.CONTAINER_NAME }}
             
             fi
 
             if [[ "$(sudo docker images -q ${{ env.DOCKER_IMAGE }})" ]]; then
-              sudo docker rmi ${{ env.DOCKER_IMAGE }}
+              docker rmi ${{ env.DOCKER_IMAGE }}
             fi
 
-            sudo docker pull ${{ env.DOCKER_IMAGE }}
-            sudo docker run -d --name ${{ env.CONTAINER_NAME }} --restart unless-stopped -v ${{ env.VOLUME }}:${{ vars.UPLOAD_FOLDER }} -p ${{ env.CONTAINER_PORT }}:${{ vars.PORT }} ${{ env.DOCKER_IMAGE }}
+            docker pull ${{ env.DOCKER_IMAGE }}
+            docker run -d --name ${{ env.CONTAINER_NAME }} --restart unless-stopped -v ${{ env.VOLUME }}:${{ vars.UPLOAD_FOLDER }} -p ${{ env.CONTAINER_PORT }}:${{ vars.PORT }} ${{ env.DOCKER_IMAGE }}
