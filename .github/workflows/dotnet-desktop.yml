@@ -37,10 +37,13 @@ jobs:
         run: |
           if [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
             echo "DOCKER_IMAGE=${{ vars.IMAGE_NAME }}:${{ vars.VERSION_DEV }}" >> $GITHUB_ENV
-            echo "ENVIROMENT=${{ secrets.ENV_FILE_DEV }}" >> $GITHUB_ENV
             echo "CONTAINER_NAME=${{ vars.CONTAINER_NAME_DEV }}" >> $GITHUB_ENV
             echo "CONTAINER_PORT=${{ vars.CONTAINER_PORT_DEV }}" >> $GITHUB_ENV
             echo "VOLUME=${{ vars.VOLUME_UPLOAD_FILE_DEV }}" >> $GITHUB_ENV
+            
+            echo "ASPNETCORE_URLS=${{ secrets.ASPNETCORE_URLS }}" >> $GITHUB_ENV
+            echo "ASPNETCORE_ENVIRONMENT=${{ secrets.ASPNETCORE_ENVIRONMENT }}" >> $GITHUB_ENV
+            echo "CONNECTSTRING=${{ secrets.CONNECTSTRING }}" >> $GITHUB_ENV
           fi
           
       - name: Deploy package to VPS
@@ -68,5 +71,7 @@ jobs:
               --restart unless-stopped \
               -v ${{ env.VOLUME }}:${{ vars.UPLOAD_FOLDER }} \
               -p ${{ env.CONTAINER_PORT }}:${{ vars.PORT }} \
-              ${{ env.ENVIROMENT }}
+              -e "ASPNETCORE_URLS=${{ env.ASPNETCORE_URLS }}" \
+              -e "ASPNETCORE_ENVIRONMENT=${{ env.ASPNETCORE_ENVIRONMENT }}" \
+              -e "ConnectionStrings__DefaultConnectString=${{ env.CONNECTSTRING }}" \
               ${{ env.DOCKER_IMAGE }}
