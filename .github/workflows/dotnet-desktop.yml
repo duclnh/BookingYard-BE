@@ -44,7 +44,6 @@ jobs:
         run: |
           if [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
             echo "DOCKER_IMAGE=${{ vars.IMAGE_NAME }}:${{ vars.VERSION_DEV }}" >> $GITHUB_ENV
-            echo $DOCKER_IMAGE
             echo "CONTAINER_NAME=${{ vars.CONTAINER_NAME_DEV }}" >> $GITHUB_ENV
             echo "CONTAINER_PORT=${{ vars.CONTAINER_PORT_DEV }}" >> $GITHUB_ENV
             echo "VOLUME=${{ vars.VOLUME_UPLOAD_FILE_DEV }}" >> $GITHUB_ENV
@@ -59,15 +58,15 @@ jobs:
           script: |
             echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login registry-1.docker.io -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
             
-            if [[ "$(docker ps -aq -f name=${{ env.CONTAINER_NAME }})" ]]; then
-                docker stop ${{ env.CONTAINER_NAME }}
-                docker rm ${{ env.CONTAINER_NAME }}
+            if [[ "$(sudo docker ps -aq -f name=${{ env.CONTAINER_NAME }})" ]]; then
+              sudo docker stop ${{ env.CONTAINER_NAME }}
+              sudo docker rm ${{ env.CONTAINER_NAME }}
             
             fi
 
-            if [[ "$(docker images -q ${{ env.DOCKER_IMAGE }})" ]]; then
-                docker rmi ${{ env.DOCKER_IMAGE }}
+            if [[ "$(sudo docker images -q ${{ env.DOCKER_IMAGE }})" ]]; then
+              sudo docker rmi ${{ env.DOCKER_IMAGE }}
             fi
 
-            docker pull ${{ env.DOCKER_IMAGE }}
-            docker run -d --name ${{ env.CONTAINER_NAME }} --restart unless-stopped -v ${{ env.VOLUME }}:${{ vars.UPLOAD_FOLDER }} -p ${{ env.CONTAINER_PORT }}:${{ vars.PORT }} ${{ env.DOCKER_IMAGE }}
+            sudo docker pull ${{ env.DOCKER_IMAGE }}
+            sudo docker run -d --name ${{ env.CONTAINER_NAME }} --restart unless-stopped -v ${{ env.VOLUME }}:${{ vars.UPLOAD_FOLDER }} -p ${{ env.CONTAINER_PORT }}:${{ vars.PORT }} ${{ env.DOCKER_IMAGE }}
