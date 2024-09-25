@@ -1,10 +1,10 @@
 namespace Fieldy.BookingYard.Application.Features.Facility.Queries;
 
 public class FacilityAdminDTO {
-    public required Guid FacilityID;
-    public required string OwnerName;
-    public required string Image;
-    public required string FacilityName;
-    public required string Address;
-    public required bool IsActive;
+    public required Guid FacilityID{ get; set; }
+    public required string OwnerName{ get; set; }
+    public required string Image{ get; set; }
+    public required string FacilityName{ get; set; }
+    public required string Address{ get; set; }
+    public required bool IsActive{ get; set; }
 }

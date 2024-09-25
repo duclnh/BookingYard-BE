@@ -1,6 +1,7 @@
 using AutoMapper;
 using Fieldy.BookingYard.Application.Features.Facility.Commands.CreateFacility;
 using Fieldy.BookingYard.Application.Features.Facility.Queries;
+using Fieldy.BookingYard.Application.Features.Facility.Queries.DTO;
 using Fieldy.BookingYard.Domain.Entities;
 
 namespace Fieldy.BookingYard.Application.MappingProfiles;
@@ -21,5 +22,11 @@ public class FacilityProfile : Profile
             .ForMember(x => x.Logo, q => q.Ignore());
 
         CreateMap<Facility, FacilityAdminDTO>();
+
+        CreateMap<Facility, FacilityCustomerDTO>()
+            .ForMember(x => x.FacilityImage, q => q.MapFrom(x => x.Image))
+            .ForMember(x => x.FacilityName, q => q.MapFrom( x=> x.Name))
+            .ForMember(x => x.FacilityAddress, q => q.MapFrom(x => x.FullAddress))
+            .ForMember(x => x.FacilityID, q => q.MapFrom(x => x.Id));
     }
 }

@@ -7,10 +7,9 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 {
 	public class FeedbackRepository : RepositoryBase<FeedBack, int>, IFeedbackRepository
 	{
-		private readonly BookingYardDBContext _dbContext;
 		public FeedbackRepository(BookingYardDBContext bookingYardDBContext) : base(bookingYardDBContext)
 		{
-			_dbContext = bookingYardDBContext;
+
 		}
 
 		public async Task<ICollection<FeedBack>> GetFeedbackByFacilityID(Guid facilityID)
@@ -21,6 +20,28 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 													.Include(x => x.User)
 													.ToListAsync();
 			return result;
+		}
+
+		public async Task<float> GetRatingFacility(Guid facilityID, CancellationToken cancellationToken)
+		{
+			var feedbackData = await _dbContext.Feedbacks
+					.Where(x => x.FacilityID == facilityID)
+					.GroupBy(x => x.FacilityID)
+					.Select(g => new
+					{
+						Count = g.Count(),
+						SumRating = g.Sum(x => x.Rating)
+					})
+					.FirstOrDefaultAsync(cancellationToken);
+
+			// Check if there are any feedbacks to avoid division by zero
+			if (feedbackData == null || feedbackData.Count == 0)
+			{
+				return 0f; // No feedbacks, return 0 rating
+			}
+
+			// Calculate the average rating
+			return (float)feedbackData.SumRating / feedbackData.Count;
 		}
 	}
 }

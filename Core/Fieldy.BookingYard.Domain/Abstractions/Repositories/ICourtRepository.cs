@@ -11,4 +11,6 @@ public interface ICourtRepository : IRepositoryBase<Court, int>
     /// <param name="cancellationToken">The cancellation token to cancel the operation.</param>
     /// <returns>A list of courts associated with the given facility.</returns>
     public Task<IList<Court>> GetAllCourts(Guid FacilityID, CancellationToken cancellationToken = default(CancellationToken));
+    public Task<decimal> GetMinPriceCourt(Guid FacilityID, CancellationToken cancellationToken);
+    public Task<decimal> GetMaxPriceCourt(Guid FacilityID, CancellationToken cancellationToken);
 }
