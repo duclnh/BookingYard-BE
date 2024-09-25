@@ -24,7 +24,7 @@ public class GetAllFacilityAdminQueryHandler : IRequestHandler<GetAllFacilityAdm
            expression: null,
            orderBy: null,
            cancellationToken: cancellationToken,
-            x => x.User != null
+            x => x.User
         );
 
         return PagingResult<FacilityAdminDTO>.Create(

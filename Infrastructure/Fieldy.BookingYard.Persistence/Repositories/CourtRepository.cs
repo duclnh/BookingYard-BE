@@ -20,4 +20,23 @@ public class CourtRepository : RepositoryBase<Court, int>, ICourtRepository
                                     .OrderByDescending(c => c.IsActive)
                                     .ToListAsync(cancellationToken);
     }
+
+    public async Task<decimal> GetMinPriceCourt(Guid FacilityID, CancellationToken cancellationToken)
+    {
+        var court =  await _dbContext.Courts.Where(x => x.FacilityID == FacilityID
+                                            && x.IsActive && x.IsDelete == false)
+                                        .OrderBy(x => x.CourtPrice)
+                                        .FirstOrDefaultAsync(cancellationToken);
+        
+        return court == null ? 0 : court.CourtPrice;
+    }
+     public async Task<decimal> GetMaxPriceCourt(Guid FacilityID, CancellationToken cancellationToken)
+    {
+        var court =  await _dbContext.Courts.Where(x => x.FacilityID == FacilityID
+                                            && x.IsActive && x.IsDelete == false)
+                                        .OrderByDescending(x => x.CourtPrice)
+                                        .FirstOrDefaultAsync(cancellationToken);
+        
+        return court == null ? 0 : court.CourtPrice;
+    }
 }
