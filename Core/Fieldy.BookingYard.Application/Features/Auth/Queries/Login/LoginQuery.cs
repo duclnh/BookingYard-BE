@@ -5,7 +5,7 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Queries.Login
 {
     public class LoginQuery : IRequest<AuthResponse>
     {
-        public string UserName { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
+        public required string UserName { get; set; }
+        public required string Password { get; set; }
     }
 }

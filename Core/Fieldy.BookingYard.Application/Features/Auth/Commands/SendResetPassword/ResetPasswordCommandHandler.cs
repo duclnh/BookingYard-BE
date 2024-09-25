@@ -1,8 +1,7 @@
-using Fieldy.BookingYard.Application.Common;
-using Fieldy.BookingYard.Application.Contracts;
-using Fieldy.BookingYard.Application.Contracts.Persistence;
+using Fieldy.BookingYard.Application.Abstractions;
 using Fieldy.BookingYard.Application.Exceptions;
 using Fieldy.BookingYard.Application.Models;
+using Fieldy.BookingYard.Domain.Abstractions.Repositories;
 using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.Auth.SendResetPassword
@@ -11,31 +10,31 @@ namespace Fieldy.BookingYard.Application.Features.Auth.SendResetPassword
     {
         private readonly IUserRepository _userRepository;
         private readonly IAppLogger<ResetPasswordCommandHandler> _logger;
-        private readonly ICommonService _commonService;
+        private readonly IUtilityService _utility;
 
         private readonly IEmailSender _emailSender;
 
         public ResetPasswordCommandHandler(IUserRepository userRepository,
                                       IAppLogger<ResetPasswordCommandHandler> logger,
-                                      ICommonService commonService,
+                                      IUtilityService utility,
                                       IEmailSender emailSender)
         {
             _userRepository = userRepository;
             _logger = logger;
-            _commonService = commonService;
+            _utility = utility;
             _emailSender = emailSender;
         }
         public async Task<string> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.Get(x => x.Email == request.Email && x.DeleteDate == null, null, cancellationToken);
+            var user = await _userRepository.Find(x => x.Email == request.Email && x.IsDeleted == false, cancellationToken);
 
             if (user == null)
                 throw new NotFoundException(nameof(user), request.Email);
 
             _logger.LogInformation($"{user.Email} call reset password");
 
-            var resetToken = _commonService.GenerationCode();
-            user.ResetToken = _commonService.Hash(resetToken);
+            var resetToken = _utility.GenerationCode();
+            user.ResetToken = _utility.Hash(resetToken);
             user.ExpirationResetToken = DateTime.Now.AddMinutes(15);
             _userRepository.Update(user);
 
@@ -50,7 +49,11 @@ namespace Fieldy.BookingYard.Application.Features.Auth.SendResetPassword
             if (!resultEmail)
                 throw new BadRequestException("Email invalid");
 
-            return await _userRepository.UnitOfWork.SaveChangesAsync(cancellationToken) > 0 ? "Send reset password code successfully" : "Send reset password code fail";
+            var result = await _userRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
+            if(result < 0)
+                throw new BadRequestException("Send reset password code fail!");
+
+            return "Send reset password code successfully" ;
         }
     }
 }

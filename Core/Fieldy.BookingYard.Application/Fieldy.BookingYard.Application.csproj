@@ -12,10 +12,15 @@
 	  <PackageReference Include="FluentValidation" Version="11.4.0" />
 	  <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.4.0" />
 	  <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+	  <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Fieldy.BookingYard.Domain\Fieldy.BookingYard.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Features\Sport\Queries\GetAllSport\" />
   </ItemGroup>   
   
 </Project>

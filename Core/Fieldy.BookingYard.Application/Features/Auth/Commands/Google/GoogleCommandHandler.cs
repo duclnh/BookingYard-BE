@@ -1,11 +1,10 @@
 using AutoMapper;
-using Fieldy.BookingYard.Application.Common;
-using Fieldy.BookingYard.Application.Contracts;
-using Fieldy.BookingYard.Application.Contracts.Persistence;
+using Fieldy.BookingYard.Application.Abstractions;
 using Fieldy.BookingYard.Application.Exceptions;
-using Fieldy.BookingYard.Application.Features.Auth.Commands.Register;
 using Fieldy.BookingYard.Application.Models.Auth;
-using Fieldy.BookingYard.Domain.Entities;
+using Fieldy.BookingYard.Application.Models.Jwt;
+using Fieldy.BookingYard.Domain.Abstractions.Repositories;
+using Fieldy.BookingYard.Domain.Enums;
 using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Google
@@ -13,15 +12,15 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Google
     public class GoogleCommandHandler : IRequestHandler<GoogleCommand, AuthResponse>
     {
         private readonly IUserRepository _userRepository;
-        private readonly ICommonService _commonService;
+        private readonly IJWTService _jwtService;
         private readonly IMapper _mapper;
         public GoogleCommandHandler(IUserRepository userRepository,
-                                    ICommonService commonService,
+                                    IJWTService jwtService,
                                     IMapper mapper)
         {
             _userRepository = userRepository;
             _mapper = mapper;
-            _commonService = commonService;
+            _jwtService = jwtService;
         }
 
         public async Task<AuthResponse> Handle(GoogleCommand request, CancellationToken cancellationToken)
@@ -33,30 +32,44 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Google
                 throw new BadRequestException("Invalid register user by Google", validationResult);
 
             //check email in database if have you user response AuthResponse else create new user
-            var userExist = await _userRepository.Get(x => x.Email == request.Email);
+            var userExist = await _userRepository.Find(x => x.Email == request.Email && x.IsDeleted == false, cancellationToken);
+
+            JWTResponse jwtResult;
+
             if (userExist != null)
             {
-                //check GoogleID exist in database if exist return AuthResponse else update GoogleID to user
-                if (userExist.GoogleID != null)
-                    return _commonService.CreateTokenJWT(userExist);
+                if (!string.IsNullOrEmpty(userExist.UserName))
+                    throw new BadRequestException("This email is already registered.");
 
-                userExist.GoogleID = request.GoogleID;
-                userExist.ImageUrl ??= request.ImageUrl;
-                _userRepository.Update(userExist);
+                if (userExist.IsBanned)
+                    throw new BadRequestException("User is banned!");
+
+                jwtResult = _jwtService.CreateTokenJWT(userExist);
+
+                return new AuthResponse()
+                {
+                    UserID = userExist.Id.ToString(),
+                    Token = jwtResult.Token,
+                    Expiration = jwtResult.Expiration,
+                    Role = userExist.Role.ToString(),
+                    IsVerification = userExist.IsVerification(),
+                };
             }
-            else
-            {
-                //map data GoogleCommand -> User
-                var userCreate = _mapper.Map<User>(request);
-                if (userCreate == null)
-                    throw new BadRequestException("Error system register user by Google");
 
-                //add role customer to user    
-                userCreate.Role = Domain.Enum.Role.Customer;
+            //map data GoogleCommand -> User
+            var userCreate = _mapper.Map<Domain.Entities.User>(request);
+            if (userCreate == null)
+                throw new BadRequestException("Error system register user by Google");
 
-                //create new user
-                await _userRepository.AddAsync(userCreate);
-            }
+            userCreate.PasswordHash = string.Empty;
+            //add role customer to user    
+            userCreate.Role = Role.Customer;
+
+            //add gender other to user
+            userCreate.Gender = Gender.Other;
+
+            //create new user
+            await _userRepository.AddAsync(userCreate);
 
             //save to database
             var result = await _userRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
@@ -64,11 +77,23 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Google
                 throw new BadRequestException("Error system register user by Google");
 
             //get user
-            var user = await _userRepository.Get(x => x.GoogleID == request.GoogleID);
+            var user = await _userRepository.Find(x => x.GoogleID == request.GoogleID);
             if (user == null)
                 throw new NotFoundException(nameof(user), request.GoogleID);
 
-            return _commonService.CreateTokenJWT(user);
+            if (user.IsBanned)
+                throw new BadRequestException("User is banned!");
+
+            jwtResult = _jwtService.CreateTokenJWT(user);
+
+            return new AuthResponse()
+            {
+                UserID = user.Id.ToString(),
+                Token = jwtResult.Token,
+                Expiration = jwtResult.Expiration,
+                Role = user.Role.ToString(),
+                IsVerification = user.IsVerification(),
+            };
         }
     }
 }

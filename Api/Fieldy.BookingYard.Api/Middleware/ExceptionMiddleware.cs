@@ -56,6 +56,16 @@ namespace Fiedly.BookingYard.Api
                         Detail = notFoundException.InnerException?.Message,
                     };
                     break;
+                case ConflictException conflictException:
+                    statusCode = HttpStatusCode.Conflict;
+                    problemDetails = new CustomProblemDetails()
+                    {
+                        Title = conflictException.Message,
+                        Status = (int)statusCode,
+                        Type = nameof(HttpStatusCode.Conflict),
+                        Detail = conflictException.InnerException?.Message,
+                    };
+                    break;
                 default:
                     problemDetails = new CustomProblemDetails()
                     {

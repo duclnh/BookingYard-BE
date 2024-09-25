@@ -1,9 +1,7 @@
-using AutoMapper;
-using Fieldy.BookingYard.Application.Common;
-using Fieldy.BookingYard.Application.Contracts;
-using Fieldy.BookingYard.Application.Contracts.Persistence;
+using Fieldy.BookingYard.Application.Abstractions;
 using Fieldy.BookingYard.Application.Exceptions;
 using Fieldy.BookingYard.Application.Models;
+using Fieldy.BookingYard.Domain.Abstractions.Repositories;
 using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.Auth.Commands.SendVerificationCode
@@ -13,32 +11,32 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.SendVerification
 
         private readonly IUserRepository _userRepository;
         private readonly IAppLogger<SendVerificationCodeCommandHandler> _logger;
-        private readonly ICommonService _commonService;
+        private readonly IUtilityService _utility;
 
         private readonly IEmailSender _emailSender;
 
         public SendVerificationCodeCommandHandler(IUserRepository userRepository,
                                       IAppLogger<SendVerificationCodeCommandHandler> logger,
-                                      ICommonService commonService,
+                                      IUtilityService utility,
                                       IEmailSender emailSender)
         {
             _userRepository = userRepository;
             _logger = logger;
-            _commonService = commonService;
+            _utility = utility;
             _emailSender = emailSender;
         }
         public async Task<string> Handle(SendVerificationCodeCommand request, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.Get(x => x.Id == request.UserID && x.DeleteDate == null, null, cancellationToken);
-            
+            var user = await _userRepository.Find(x => x.Id == request.UserID && x.IsDeleted == false, cancellationToken);
+
             if (user == null)
                 throw new NotFoundException(nameof(user), request.UserID);
 
-            var newVerificationCode = _commonService.GenerationCode();
-            user.VerificationToken = _commonService.Hash(newVerificationCode);
+            var newVerificationCode = _utility.GenerationCode();
+            user.VerificationToken = _utility.Hash(newVerificationCode);
             _userRepository.Update(user);
 
-            EmailMessage email = new ()
+            EmailMessage email = new()
             {
                 To = user.Email,
                 Subject = "Verification Account",
@@ -50,7 +48,12 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.SendVerification
                 throw new BadRequestException("Email invalid");
 
             _logger.LogInformation($"{user.Email} call take new verification code");
-            return  await _userRepository.UnitOfWork.SaveChangesAsync(cancellationToken) > 0 ? "Send verification code successfully" : "Send verification code fail";
+
+            var result = await _userRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
+            if (result < 0)
+                throw new BadRequestException("Send verification code fail");
+                
+            return "Send verification code successfully";
         }
     }
 }

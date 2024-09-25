@@ -1,7 +1,6 @@
-﻿using Fieldy.BookingYard.Application.Common;
-using Fieldy.BookingYard.Application.Contracts;
-using Fieldy.BookingYard.Application.Contracts.Persistence;
+﻿using Fieldy.BookingYard.Application.Abstractions;
 using Fieldy.BookingYard.Application.Exceptions;
+using Fieldy.BookingYard.Domain.Abstractions.Repositories;
 using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.Auth.Commands.VerificationResetPassword
@@ -10,18 +9,20 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.VerificationRese
     {
         private readonly IUserRepository _userRepository;
         private readonly IAppLogger<VerificationResetPasswordCommandHandler> _logger;
-        private readonly ICommonService _commonService;
+        private readonly IUtilityService _utility;
 
-        public VerificationResetPasswordCommandHandler(IUserRepository userRepository, IAppLogger<VerificationResetPasswordCommandHandler> logger, ICommonService commonService)
+        public VerificationResetPasswordCommandHandler(IUserRepository userRepository,
+                                                       IAppLogger<VerificationResetPasswordCommandHandler> logger,
+                                                       IUtilityService utility)
         {
             _userRepository = userRepository;
             _logger = logger;
-            _commonService = commonService;
+            _utility = utility;
         }
 
         public async Task<string> Handle(VerificationResetPasswordCommand request, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.Get(x => x.Email == request.Email, null, cancellationToken);
+            var user = await _userRepository.Find(x => x.Email == request.Email && x.IsDeleted == false, cancellationToken);
 
             if (user == null)
                 throw new NotFoundException(nameof(user), request.Email);
@@ -32,7 +33,7 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.VerificationRese
             if (DateTime.Now > user.ExpirationResetToken)
                 throw new BadRequestException($"{user.Email} expiration rest token");
 
-            var result = _commonService.Verify(request.VerificationCode, user.ResetToken!);
+            var result = _utility.Verify(request.VerificationCode, user.ResetToken!);
 
             if (!result)
                 throw new BadRequestException($"Invalid verification");
