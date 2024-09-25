@@ -11,10 +11,12 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
+using Fieldy.BookingYard.Application.Features.Facility.Queries.FacilityCustomer;
+using Fieldy.BookingYard.Application.Features.Facility.Queries.DTO;
 
 namespace Fieldy.BookingYard.Api.Controllers
 {
-	  [Route("api/facility")]
+    [Route("api/facility")]
     [ApiController]
     [Authorize]
     public class FacilityController : ControllerBase
@@ -40,7 +42,7 @@ namespace Fieldy.BookingYard.Api.Controllers
             var result = await _mediator.Send(command, cancellationToken);
             return Created("", result);
 
-		    }
+        }
 
         [AllowAnonymous]
         [HttpGet("{facilityID}")]
@@ -53,10 +55,11 @@ namespace Fieldy.BookingYard.Api.Controllers
                 [FromRoute] Guid facilityID,
           CancellationToken cancellationToken = default)
         {
-          var result = await _mediator.Send(new GetFacilityDetailQuery(facilityID, cancellationToken));
-          return Ok(result);
+            var result = await _mediator.Send(new GetFacilityDetailQuery(facilityID, cancellationToken));
+            return Ok(result);
         }
 
+        [AllowAnonymous]
         [HttpGet]
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         [Produces(MediaTypeNames.Application.Json)]
@@ -69,6 +72,23 @@ namespace Fieldy.BookingYard.Api.Controllers
            CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(new GetAllFacilityAdminQuery(request), cancellationToken);
+            return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("/api/facility-booking")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(PagingResult<FacilityCustomerDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetAllFacilityCustomer(
+          [FromQuery] RequestParams request,
+          [FromQuery] float? longitude,
+          [FromQuery] float? latitude,
+          CancellationToken cancellationToken = default)
+        {
+            var result = await _mediator.Send(new GetAllFacilityCustomerQuery(request, longitude, latitude), cancellationToken);
             return Ok(result);
         }
     }
