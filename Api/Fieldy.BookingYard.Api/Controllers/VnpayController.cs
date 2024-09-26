@@ -1,12 +1,7 @@
 ﻿using Fieldy.BookingYard.Application.Features.Payment.Commands.CreatePayment;
-using Fieldy.BookingYard.Application.Features.Payment.Dtos;
-using Fieldy.BookingYard.Application.Models.Payment;
-using Fieldy.BookingYard.Application.Models.Vnpay;
-using Fieldy.BookingYard.Domain.Enums;
+using Fieldy.BookingYard.Infrastructure.Vnpay.Response;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using System.Net;
 
 namespace Fieldy.BookingYard.Api.Controllers
@@ -26,10 +21,17 @@ namespace Fieldy.BookingYard.Api.Controllers
 		[ProducesResponseType(typeof(string), 200)]
 		[ProducesResponseType((int)HttpStatusCode.BadRequest)]
 		public async Task<IActionResult> Create([FromBody] CreatePaymentCommand request,
-												[FromQuery] TypePayment? typePayment)
+													CancellationToken cancellationToken = default)
 		{
-			var result = await _mediator.Send(new CreatePaymentCommand(typePayment));
+			var result = await _mediator.Send(request, cancellationToken);
 			return Ok(result);
+		}
+
+		[HttpGet]
+		[Route("vnpay-return")]
+		public async Task<IActionResult> VnpayReturn([FromQuery] VnpayPayResponse response)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

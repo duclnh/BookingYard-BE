@@ -1,16 +1,11 @@
-﻿using Fieldy.BookingYard.Application.Features.Payment.Dtos;
-using Fieldy.BookingYard.Application.Models.Payment;
-using Fieldy.BookingYard.Application.Models.Query;
-using Fieldy.BookingYard.Domain.Enums;
-using MediatR;
+﻿using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.Payment.Commands.CreatePayment
 {
-	public record CreatePaymentCommand(TypePayment? typePayment) : IRequest<string>
+	public record CreatePaymentCommand: IRequest<string>
 	{
-		public Guid BookingID { get; set; }
-		public decimal Amount { get; set; }
-		public DateTime CreatedDate { get; set; }
-		public TypePayment TypePayment { get; set; }
+		public Guid BookingId { get; set; }
+		public int RequiredAmount { get; set; }
+		public string PaymentContent { get; set; } = string.Empty;
 	}
 }

@@ -8,5 +8,8 @@
 		public string HashSecret { get; set; } = string.Empty;
 		public string ReturnUrl { get; set; } = string.Empty;
 		public string PaymentUrl { get; set; } = string.Empty;
+		public string CurrCode { get; set; } = string.Empty;
+		public string Command { get; set; } = string.Empty;
+		public string Locale { get; set; } = string.Empty;
 	}
 }

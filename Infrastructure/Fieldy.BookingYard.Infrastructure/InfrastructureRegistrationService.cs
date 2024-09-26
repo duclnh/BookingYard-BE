@@ -7,6 +7,7 @@ using Fieldy.BookingYard.Infrastructure.JWT;
 using Fieldy.BookingYard.Infrastructure.LoggerAdaptor;
 using Fieldy.BookingYard.Infrastructure.Utility;
 using Fieldy.BookingYard.Infrastructure.Vnpay;
+using Fieldy.BookingYard.Infrastructure.Vnpay.Request;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,7 +25,7 @@ namespace Fieldy.BookingYard.Infrastructure
             services.AddTransient<IJWTService, JWTService>();
             services.AddTransient<IUtilityService, UtilityService>();
 			services.Configure<VnpayConfig>(configuration.GetSection(VnpayConfig.ConfigName));
-			services.AddSingleton<IVnpayService, VnpayService>();
+			services.AddTransient<IVnpayService, VnpayService>();
 			return services;
         }
     }

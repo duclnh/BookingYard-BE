@@ -1,48 +1,36 @@
 ﻿using Fieldy.BookingYard.Application.Abstractions.Vnpay;
 using Fieldy.BookingYard.Application.Models.Vnpay;
 using MediatR;
+using Microsoft.Extensions.Options;
 
 namespace Fieldy.BookingYard.Application.Features.Payment.Commands.CreatePayment
 {
 	public class CreatePaymentCommandHandler : IRequestHandler<CreatePaymentCommand, string>
 	{
-		private readonly IVnpayService _vnpay;
+		private readonly IVnpayService _paymentService;
 		private readonly VnpayConfig _vnpayConfig;
 
-		public CreatePaymentCommandHandler(IVnpayService vnpay)
+		public CreatePaymentCommandHandler(IVnpayService paymentService, IOptions<VnpayConfig> vnpayConfigOptions)
 		{
-			_vnpay = vnpay;
+			_paymentService = paymentService;
+			_vnpayConfig = vnpayConfigOptions.Value;
 		}
 
-		public Task<string> Handle(CreatePaymentCommand request, CancellationToken cancellationToken)
+		public async Task<string> Handle(CreatePaymentCommand request, CancellationToken cancellationToken)
 		{
-			_vnpay.AddRequestData("vnp_Version", _vnpayConfig.Version);
-			_vnpay.AddRequestData("vnp_Command", "pay");
-			_vnpay.AddRequestData("vnp_TmnCode", _vnpayConfig.TmnCode);
-			_vnpay.AddRequestData("vnp_Amount", request.Amount.ToString());
-			if (request.TypePayment == Domain.Enums.TypePayment.VnpayQr)
+			try
 			{
-				_vnpay.AddRequestData("vnp_BankCode", "QRPAY");
+				return _paymentService.CreateRequestUrl(_vnpayConfig.Version,
+								_vnpayConfig.TmnCode, DateTime.Now, request.RequiredAmount, _vnpayConfig.CurrCode ?? string.Empty,
+								"other", request.BookingId.ToString() ?? string.Empty, _vnpayConfig.ReturnUrl, DateTime.Now.Ticks.ToString(), _vnpayConfig.PaymentUrl, _vnpayConfig.HashSecret);
 			}
-			else if (request.TypePayment == Domain.Enums.TypePayment.Vnbank)
+			catch (Exception ex)
 			{
-				_vnpay.AddRequestData("vnp_BankCode", "VNBANK");
+				// Log the exception or handle it as needed
+				Console.WriteLine($"An error occurred: {ex.Message}");
+				// Optionally rethrow the exception or return a default value
+				throw; // or return null;
 			}
-			else
-			{
-				_vnpay.AddRequestData("vnp_BankCode", "INTCARD");
-			}
-			_vnpay.AddRequestData("vnp_CreateDate", request.CreatedDate.ToString("yyyyMMddHHmmss"));
-			_vnpay.AddRequestData("vnp_CurrCode", "VND");
-			_vnpay.AddRequestData("vnp_IpAddr", _vnpay.GetIpAddress());
-			_vnpay.AddRequestData("vnp_Locale", "vn");
-			_vnpay.AddRequestData("vnp_OrderInfo", "Thanh toan don hang:" + request.BookingID);
-			_vnpay.AddRequestData("vnp_OrderType", "other");
-			_vnpay.AddRequestData("vnp_ReturnUrl", _vnpayConfig.ReturnUrl);
-			_vnpay.AddRequestData("vnp_TxnRef", request.BookingID.ToString());
-			string paymentUrl = _vnpay.CreateRequestUrl(_vnpayConfig.PaymentUrl, _vnpayConfig.HashSecret);
-
-			return Task.FromResult(paymentUrl);
 		}
 	}
 }
