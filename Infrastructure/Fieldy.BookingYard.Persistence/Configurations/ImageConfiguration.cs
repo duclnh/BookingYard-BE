@@ -22,7 +22,13 @@ public class ImageConfiguration : IEntityTypeConfiguration<Image>
                Id = 2,
                ImageLink = "/facility/tennis.jfif",
                FacilityID = Guid.Parse("E175DAF6-B5A4-4D0E-544D-08DCD4D409D4"),
-           }
+           },
+            new Image
+            {
+                Id = 3,
+                ImageLink = "/facility/tennis.jfif",
+                FeedbackID = 1
+            }
         );
     }
 }

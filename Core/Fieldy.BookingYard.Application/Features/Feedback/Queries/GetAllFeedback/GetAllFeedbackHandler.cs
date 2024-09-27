@@ -22,7 +22,8 @@ namespace Fieldy.BookingYard.Application.Features.Feedback.Queries.GetAllFeedbac
 				currentPage: request.requestParams.CurrentPage,
 				pageSize: Math.Min(request.requestParams.PageSize, 10),
 				expression: x => x.FacilityID == request.FaciliyId,
-				orderBy: x => x.OrderByDescending(x => x.Rating),
+				orderBy: x => x.OrderByDescending(x => x.CreatedAt),
+				includes: x => x.Images,
 				cancellationToken: cancellationToken);
 
 			return PagingResult<FeedbackDto>.Create(
