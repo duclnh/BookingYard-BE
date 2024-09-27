@@ -13,4 +13,5 @@ public interface ICourtRepository : IRepositoryBase<Court, int>
     public Task<IList<Court>> GetAllCourts(Guid FacilityID, CancellationToken cancellationToken = default(CancellationToken));
     public Task<decimal> GetMinPriceCourt(Guid FacilityID, CancellationToken cancellationToken);
     public Task<decimal> GetMaxPriceCourt(Guid FacilityID, CancellationToken cancellationToken);
+    public Task<IList<string>> GetSports(Guid FacilityID, CancellationToken cancellationToken);
 }

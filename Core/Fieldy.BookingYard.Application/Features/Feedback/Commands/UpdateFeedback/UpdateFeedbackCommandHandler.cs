@@ -25,8 +25,7 @@ namespace Fieldy.BookingYard.Application.Features.Feedback.Commands.UpdateFeedba
 
 			if (Feedback == null)
 				throw new BadRequestException("Error Update Feedback!");
-
-			Feedback.Image = request.Image;
+				
 			Feedback.Content = request.Content;
 			Feedback.Rating = request.Rating;
 			Feedback.TypeFeedback = request.TypeFeedback;

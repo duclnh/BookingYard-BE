@@ -142,7 +142,7 @@ public class FacilityConfiguration : IEntityTypeConfiguration<Facility>
                             ]
                             ",
               StartTime = new TimeSpan(8, 0, 0),
-              EndTime = new TimeSpan(24, 0, 0),
+              EndTime = new TimeSpan(22, 0, 0),
               HolidayPrice =0,
               MonthPrice= 0,
               PeakHourPrice=0,

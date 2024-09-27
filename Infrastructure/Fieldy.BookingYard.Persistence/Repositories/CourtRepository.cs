@@ -23,20 +23,30 @@ public class CourtRepository : RepositoryBase<Court, int>, ICourtRepository
 
     public async Task<decimal> GetMinPriceCourt(Guid FacilityID, CancellationToken cancellationToken)
     {
-        var court =  await _dbContext.Courts.Where(x => x.FacilityID == FacilityID
+        var court = await _dbContext.Courts.Where(x => x.FacilityID == FacilityID
                                             && x.IsActive && x.IsDelete == false)
                                         .OrderBy(x => x.CourtPrice)
                                         .FirstOrDefaultAsync(cancellationToken);
-        
+
         return court == null ? 0 : court.CourtPrice;
     }
-     public async Task<decimal> GetMaxPriceCourt(Guid FacilityID, CancellationToken cancellationToken)
+    public async Task<decimal> GetMaxPriceCourt(Guid FacilityID, CancellationToken cancellationToken)
     {
-        var court =  await _dbContext.Courts.Where(x => x.FacilityID == FacilityID
+        var court = await _dbContext.Courts.Where(x => x.FacilityID == FacilityID
                                             && x.IsActive && x.IsDelete == false)
                                         .OrderByDescending(x => x.CourtPrice)
                                         .FirstOrDefaultAsync(cancellationToken);
-        
+
         return court == null ? 0 : court.CourtPrice;
+    }
+
+    public async Task<IList<string>> GetSports(Guid FacilityID, CancellationToken cancellationToken)
+    {
+
+        return await _dbContext.Courts.Where(c => c.FacilityID == FacilityID && c.IsDelete == false)
+                                    .Include(c => c.Sport)
+                                    .Select(c => c.Sport.SportName)
+                                    .Distinct()
+                                    .ToListAsync(cancellationToken);
     }
 }

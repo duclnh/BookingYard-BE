@@ -29,7 +29,8 @@ public class GetAllFacilityCustomerQueryHandler : IRequestHandler<GetAllFacility
             currentPage: request.request.CurrentPage,
             pageSize: request.request.PageSize,
             expression: x => x.IsDeleted == false,
-            cancellationToken: cancellationToken
+            cancellationToken: cancellationToken,
+            includes: x => x.Courts
         );
         var facilityMapped = _mapper.Map<IList<FacilityCustomerDTO>>(listFacility.Results);
 

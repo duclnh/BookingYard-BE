@@ -11,6 +11,7 @@ namespace Fieldy.BookingYard.Application.Features.Feedback.Queries
 		public int Rating { get; set; }
 		public TypeFeedback TypeFeedback { get; set; }
 		public bool IsShow { get; set; }
+		public List<string>? Images { get; set; }
 		public DateTime CreatedAt { get; set; }
 	}
 }

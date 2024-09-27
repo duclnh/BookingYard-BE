@@ -43,5 +43,35 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 			// Calculate the average rating
 			return (float)feedbackData.SumRating / feedbackData.Count;
 		}
+
+		public async Task<(int one, int two, int three, int four, int five)> GetRatingFacilityStarsCount(Guid facilityID, CancellationToken cancellationToken)
+		{
+			var starCounts = await _dbContext.Feedbacks
+						.Where(x => x.FacilityID == facilityID)
+						.GroupBy(x => x.Rating)
+						.Select(g => new
+						{
+							Star = g.Key,
+							Count = g.Count()
+						})
+						.ToDictionaryAsync(x => x.Star, x => x.Count, cancellationToken);
+
+			var totalFeedbacks = starCounts.Values.Sum();
+
+			if (totalFeedbacks == 0)
+			{
+				return (0, 0, 0, 0, 0);
+			}
+
+			var oneStarPercentage = starCounts.ContainsKey(1) ? (int)Math.Round((float)starCounts[1] / totalFeedbacks * 100) : 0;
+			var twoStarPercentage = starCounts.ContainsKey(2) ? (int)Math.Round((float)starCounts[2] / totalFeedbacks * 100) : 0;
+			var threeStarPercentage = starCounts.ContainsKey(3) ? (int)Math.Round((float)starCounts[3] / totalFeedbacks * 100) : 0;
+			var fourStarPercentage = starCounts.ContainsKey(4) ? (int)Math.Round((float)starCounts[4] / totalFeedbacks * 100) : 0;
+			var fiveStarPercentage = starCounts.ContainsKey(5) ? (int)Math.Round((float)starCounts[5] / totalFeedbacks * 100) : 0;
+			
+			return (oneStarPercentage, twoStarPercentage, threeStarPercentage, fourStarPercentage, fiveStarPercentage);
+		}
+
+
 	}
 }

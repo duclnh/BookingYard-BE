@@ -12,15 +12,22 @@ namespace Fieldy.BookingYard.Application.MappingProfiles
 		public FeedbackProfile()
 		{
 			CreateMap<FeedBack, FeedbackDto>()
-				.ForMember(dest => dest.FeedbackID, opt => opt.MapFrom(src => src.Id));
+				.ForMember(dest => dest.FeedbackID, opt => opt.MapFrom(src => src.Id))
+				.ForMember(dest => dest.Images, opt => opt.MapFrom(src =>
+					src.Images != null ? src.Images.Select(img => img.ImageLink) : new List<string>()
+				));
+
 			CreateMap<CreateFeedbackCommand, FeedBack>();
+
 			CreateMap<UpdateFeedbackCommand, FeedBack>()
 				.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.FeedbackID))
 				.ForMember(dest => dest.FacilityID, opt => opt.Ignore())
 				.ForMember(dest => dest.UserID, opt => opt.Ignore())
 				.ForMember(dest => dest.CreatedAt, opt => opt.Ignore());
 			CreateMap<DeleteFeedbackCommand, FeedBack>()
+
 				.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.FeedbackID));
+
 		}
 	}
 }
