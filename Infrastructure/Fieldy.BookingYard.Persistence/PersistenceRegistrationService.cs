@@ -1,5 +1,6 @@
 ﻿using Fieldy.BookingYard.Domain.Abstractions;
 using Fieldy.BookingYard.Domain.Abstractions.Repositories;
+using Fieldy.BookingYard.Persistence.Configurations;
 using Fieldy.BookingYard.Persistence.DatabaseContext;
 using Fieldy.BookingYard.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +18,7 @@ namespace Fieldy.BookingYard.Persistence
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnectString"));
             });
 
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+			services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddTransient(typeof(IRepositoryBase<,>), typeof(RepositoryBase<,>));
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<ISupportRepository, SupportRepository>();
