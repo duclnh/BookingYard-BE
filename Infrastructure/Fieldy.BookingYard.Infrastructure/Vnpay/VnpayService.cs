@@ -1,6 +1,9 @@
 ﻿using Fieldy.BookingYard.Application.Abstractions.Vnpay;
+using Fieldy.BookingYard.Application.Models.Vnpay;
 using Fieldy.BookingYard.Infrastructure.Vnpay.Request;
+using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using System.Transactions;
 
 namespace Fieldy.BookingYard.Infrastructure.Vnpay
@@ -8,17 +11,19 @@ namespace Fieldy.BookingYard.Infrastructure.Vnpay
 	public class VnpayService : IVnpayService
 	{
 		private readonly IHttpContextAccessor _httpContextAccessor;
-		public VnpayService(IHttpContextAccessor httpContextAccessor)
+		private readonly VnpayConfig _vnpayConfig;
+		public VnpayService(IHttpContextAccessor httpContextAccessor, IOptions<VnpayConfig> vnpayConfigOptions)
 		{
 			_httpContextAccessor = httpContextAccessor;
+			_vnpayConfig = vnpayConfigOptions.Value;
 		}
-		public string CreateRequestUrl(string version, string tmnCode, DateTime createDate,
-			decimal amount, string currCode, string orderType, string orderInfo,
-			string returnUrl, string txnRef, string baseUrl, string secretKey)
+		public string CreateRequestUrl(decimal amount, string orderInfo)
 		{
 			var ipAddress = _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
-			var vnpayPayRequest = new VnpayPayRequest(version, tmnCode, createDate, ipAddress, amount, currCode, orderType, orderInfo, returnUrl, txnRef);
-			return vnpayPayRequest.CreateRequestUrl(baseUrl, secretKey);
+			var vnpayPayRequest = new VnpayPayRequest(_vnpayConfig.Version,
+								_vnpayConfig.TmnCode, DateTime.Now, ipAddress, amount, _vnpayConfig.CurrCode ?? string.Empty,
+								"other", orderInfo ?? string.Empty, _vnpayConfig.ReturnUrl, DateTime.Now.Ticks.ToString());
+			return vnpayPayRequest.CreateRequestUrl(_vnpayConfig.PaymentUrl, _vnpayConfig.HashSecret);
 		}
 	}
 }
