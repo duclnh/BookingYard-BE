@@ -2,6 +2,7 @@
 using Fieldy.BookingYard.Application.Features.Voucher.Command.CreateVoucher;
 using Fieldy.BookingYard.Application.Features.Voucher.Command.UpdateVoucher;
 using Fieldy.BookingYard.Application.Features.Voucher.Queries;
+using Fieldy.BookingYard.Application.Features.Voucher.Queries.DTO;
 using Fieldy.BookingYard.Domain.Entities;
 
 namespace Fieldy.BookingYard.Application.MappingProfiles
@@ -50,6 +51,9 @@ namespace Fieldy.BookingYard.Application.MappingProfiles
 						dest.FacilityID = src.FacilityID;
 					}
 				});
+
+			CreateMap<Voucher, VoucherHomeDTO>()
+				.ForMember(dest => dest.SportName, opt => opt.MapFrom(src => src.Sport.SportName));
 		}
 	}
 }

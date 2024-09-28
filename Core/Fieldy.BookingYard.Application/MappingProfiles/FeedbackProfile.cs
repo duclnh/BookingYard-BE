@@ -33,7 +33,11 @@ namespace Fieldy.BookingYard.Application.MappingProfiles
 				.ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.User.Name))
 				.ForMember(dest => dest.Avatar, opt => opt.MapFrom(src => src.User.ImageUrl))
 				.ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images.Select(x => x.ImageLink)))
-				.ForMember(dest => dest.CreatedAt,opt => opt.MapFrom(src => src.CreatedAt.ToString("dd-MM-yyyy")));
+				.ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt.ToString("dd-MM-yyyy")));
+
+			CreateMap<FeedBack, FeedbackHomeDTO>()
+				.ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.User.Name))
+				.ForMember(dest => dest.Avatar, opt => opt.MapFrom(src => src.User.ImageUrl));
 
 		}
 	}

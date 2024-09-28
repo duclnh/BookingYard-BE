@@ -1,9 +1,12 @@
 ﻿using Fieldy.BookingYard.Application.Features.Voucher.Command.CreateVoucher;
 using Fieldy.BookingYard.Application.Features.Voucher.Command.UpdateVoucher;
 using Fieldy.BookingYard.Application.Features.Voucher.Queries;
+using Fieldy.BookingYard.Application.Features.Voucher.Queries.DTO;
 using Fieldy.BookingYard.Application.Features.Voucher.Queries.GetAllVoucher;
+using Fieldy.BookingYard.Application.Features.Voucher.Queries.GetVoucherHome;
 using Fieldy.BookingYard.Application.Models.Query;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 
@@ -59,6 +62,17 @@ namespace Fieldy.BookingYard.Api.Controllers
 							CancellationToken cancellationToken = default)
 		{
 			var result = await _mediator.Send(new GetAllVoucherQuery(requestParams), cancellationToken);
+			return Ok(result);
+		}
+
+		[AllowAnonymous]
+		[HttpGet("/api/voucher-home")]
+		[Produces(MediaTypeNames.Application.Json)]
+		[ProducesResponseType(typeof(IList<VoucherHomeDTO>), StatusCodes.Status200OK)]
+		[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+		public async Task<IActionResult> GetVoucherHome(CancellationToken cancellationToken = default)
+		{
+			var result = await _mediator.Send(new GetVoucherHomeQuery(), cancellationToken);
 			return Ok(result);
 		}
 	}
