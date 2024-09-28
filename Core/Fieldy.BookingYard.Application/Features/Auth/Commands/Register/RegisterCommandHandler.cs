@@ -51,7 +51,7 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Register
             {
                 To = user.Email,
                 Subject = "Xác nhận tài khoản",
-                Body = generationCode,
+                Body = _emailSender.GetVerificationEmail(generationCode),
             };
             var resultEmail = await _emailSender.SendEmailAsync(email);
 

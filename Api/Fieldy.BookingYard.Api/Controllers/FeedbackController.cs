@@ -5,6 +5,7 @@ using Fieldy.BookingYard.Application.Features.Feedback.Queries;
 using Fieldy.BookingYard.Application.Features.Feedback.Queries.DTO;
 using Fieldy.BookingYard.Application.Features.Feedback.Queries.GetAllFeedback;
 using Fieldy.BookingYard.Application.Features.Feedback.Queries.GetAllFeedBackFacility;
+using Fieldy.BookingYard.Application.Features.Feedback.Queries.GetFeedbackHome;
 using Fieldy.BookingYard.Application.Models.Paging;
 using Fieldy.BookingYard.Application.Models.Query;
 using MediatR;
@@ -83,13 +84,12 @@ namespace Fieldy.BookingYard.Api.Controllers
 			var result = await _mediator.Send(new GetAllFeedbackQuery(requestParams, facilityId), cancellationToken);
 			return Ok(result);
 		}
-		
+
 		[AllowAnonymous]
 		[HttpGet("/api/feedback-facility/{id}")]
 		[Produces(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(typeof(PagingResult<FeedbackFacilityDetailDTO>), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
 		public async Task<IActionResult> GetFeedbackFacility(
 			[FromRoute] Guid id,
@@ -101,17 +101,15 @@ namespace Fieldy.BookingYard.Api.Controllers
 		}
 
 		[AllowAnonymous]
-		[HttpGet("/api/testhost")]
+		[HttpGet("/api/feedback-home")]
 		[Produces(MediaTypeNames.Application.Json)]
-		[ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+		[ProducesResponseType(typeof(IList<FeedbackHomeDTO>), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-		public async Task<IActionResult> TestHost(
-			CancellationToken cancellationToken = default)
+		public async Task<IActionResult> GetFeedBackHome(CancellationToken cancellationToken = default)
 		{
-			var host = $"{Request.Scheme}://{Request.Host}/{Request.PathBase}";
-			return Ok(host);
+			var result = await _mediator.Send(new GetFeedbackHomeQuery(), cancellationToken);
+			return Ok(result);
 		}
 	}
 }

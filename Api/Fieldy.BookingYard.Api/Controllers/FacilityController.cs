@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using Fieldy.BookingYard.Application.Features.Facility.Queries.FacilityCustomer;
 using Fieldy.BookingYard.Application.Features.Facility.Queries.DTO;
+using Fieldy.BookingYard.Application.Features.Facility.Queries.GetFacilityHome;
 
 namespace Fieldy.BookingYard.Api.Controllers
 {
@@ -86,6 +87,19 @@ namespace Fieldy.BookingYard.Api.Controllers
           CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(new GetAllFacilityCustomerQuery(request, longitude, latitude), cancellationToken);
+            return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("/api/facility-home")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(IList<FacilityHomeDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetFacilityHome(CancellationToken cancellationToken = default)
+        {
+            var result = await _mediator.Send(new GetFacilityHomeQuery(), cancellationToken);
             return Ok(result);
         }
     }

@@ -37,5 +37,16 @@ public class FacilityProfile : Profile
                    opt => opt.MapFrom(src => src.StartTime.Equals(new TimeSpan(0, 0, 0)) ? "24:00" : src.StartTime.ToString("hh\\:mm")))
             .ForMember(dest => dest.EndTime,
                    opt => opt.MapFrom(src => src.EndTime.Equals(new TimeSpan(0, 0, 0)) ? "24:00" : src.EndTime.ToString("hh\\:mm")));
+
+        CreateMap<Facility, FacilityHomeDTO>()
+           .ForMember(x => x.FacilityImage, q => q.MapFrom(x => x.Image))
+           .ForMember(x => x.FacilityName, q => q.MapFrom(x => x.Name))
+           .ForMember(x => x.FacilityAddress, q => q.MapFrom(x => x.FullAddress))
+           .ForMember(x => x.FacilityID, q => q.MapFrom(x => x.Id))
+           .ForMember(dest => dest.StartTime,
+                   opt => opt.MapFrom(src => src.StartTime.Equals(new TimeSpan(0, 0, 0)) ? "24:00" : src.StartTime.ToString("hh\\:mm")))
+            .ForMember(dest => dest.EndTime,
+                   opt => opt.MapFrom(src => src.EndTime.Equals(new TimeSpan(0, 0, 0)) ? "24:00" : src.EndTime.ToString("hh\\:mm")));
+
     }
 }

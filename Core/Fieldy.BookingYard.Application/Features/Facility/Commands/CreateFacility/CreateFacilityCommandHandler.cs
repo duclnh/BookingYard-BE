@@ -118,7 +118,7 @@ public class CreateFacilityCommandHandler : IRequestHandler<CreateFacilityComman
         {
             To = user.Email,
             Subject = "Tạo mới cơ sở",
-            Body = "",
+            Body = _emailSender.GetTextRegisterFacility(user.UserName, "Fieldy123456"),
         };
 
         await _emailSender.SendEmailAsync(email);

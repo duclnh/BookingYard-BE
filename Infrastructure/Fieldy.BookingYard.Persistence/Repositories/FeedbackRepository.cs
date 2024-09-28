@@ -1,5 +1,6 @@
 ﻿using Fieldy.BookingYard.Domain.Abstractions.Repositories;
 using Fieldy.BookingYard.Domain.Entities;
+using Fieldy.BookingYard.Domain.Enums;
 using Fieldy.BookingYard.Persistence.DatabaseContext;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,16 +11,6 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 		public FeedbackRepository(BookingYardDBContext bookingYardDBContext) : base(bookingYardDBContext)
 		{
 
-		}
-
-		public async Task<ICollection<FeedBack>> GetFeedbackByFacilityID(Guid facilityID)
-		{
-			var result = await _dbContext.Feedbacks.Where(x => x.FacilityID == facilityID)
-													.Take(10)
-													.OrderByDescending(x => x.Rating)
-													.Include(x => x.User)
-													.ToListAsync();
-			return result;
 		}
 
 		public async Task<float> GetRatingFacility(Guid facilityID, CancellationToken cancellationToken)
@@ -40,8 +31,8 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 				return 0f; // No feedbacks, return 0 rating
 			}
 
-			// Calculate the average rating
-			return (float)feedbackData.SumRating / feedbackData.Count;
+			float averageRating = (float)feedbackData.SumRating / feedbackData.Count;
+			return (float)Math.Round(averageRating, 1, MidpointRounding.AwayFromZero);
 		}
 
 		public async Task<(int one, int two, int three, int four, int five)> GetRatingFacilityStarsCount(Guid facilityID, CancellationToken cancellationToken)
@@ -68,10 +59,19 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 			var threeStarPercentage = starCounts.ContainsKey(3) ? (int)Math.Round((float)starCounts[3] / totalFeedbacks * 100) : 0;
 			var fourStarPercentage = starCounts.ContainsKey(4) ? (int)Math.Round((float)starCounts[4] / totalFeedbacks * 100) : 0;
 			var fiveStarPercentage = starCounts.ContainsKey(5) ? (int)Math.Round((float)starCounts[5] / totalFeedbacks * 100) : 0;
-			
+
 			return (oneStarPercentage, twoStarPercentage, threeStarPercentage, fourStarPercentage, fiveStarPercentage);
 		}
 
-
+		public async Task<IList<FeedBack>> GetTopFeedBack(TypeFeedback typeFeedback, int numberTake, CancellationToken cancellationToken)
+		{
+			return await _dbContext.Feedbacks
+						.Where(x => x.TypeFeedback == typeFeedback && x.IsShow)
+						.OrderByDescending(x => x.Rating)
+						.Include(x => x.User)
+						.Distinct()
+						.Take(numberTake)
+						.ToListAsync(cancellationToken);
+		}
 	}
 }
