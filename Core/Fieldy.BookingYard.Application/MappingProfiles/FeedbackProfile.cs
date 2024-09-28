@@ -3,6 +3,7 @@ using Fieldy.BookingYard.Application.Features.Feedback.Commands.CreateFeedback;
 using Fieldy.BookingYard.Application.Features.Feedback.Commands.DeleteFeedback;
 using Fieldy.BookingYard.Application.Features.Feedback.Commands.UpdateFeedback;
 using Fieldy.BookingYard.Application.Features.Feedback.Queries;
+using Fieldy.BookingYard.Application.Features.Feedback.Queries.DTO;
 using Fieldy.BookingYard.Domain.Entities;
 
 namespace Fieldy.BookingYard.Application.MappingProfiles
@@ -27,6 +28,12 @@ namespace Fieldy.BookingYard.Application.MappingProfiles
 			CreateMap<DeleteFeedbackCommand, FeedBack>()
 
 				.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.FeedbackID));
+
+			CreateMap<FeedBack, FeedbackFacilityDetailDTO>()
+				.ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.User.Name))
+				.ForMember(dest => dest.Avatar, opt => opt.MapFrom(src => src.User.ImageUrl))
+				.ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images.Select(x => x.ImageLink)))
+				.ForMember(dest => dest.CreatedAt,opt => opt.MapFrom(src => src.CreatedAt.ToString("dd-MM-yyyy")));
 
 		}
 	}
