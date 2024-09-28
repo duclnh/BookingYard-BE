@@ -41,8 +41,8 @@ namespace Fieldy.BookingYard.Application.Features.Auth.SendResetPassword
             EmailMessage email = new()
             {
                 To = user.Email,
-                Subject = "Reset Password Account",
-                Body = resetToken,
+                Subject = "Đặt lại mật khẩu",
+                Body = _emailSender.GetResetPasswordEmail(resetToken),
             };
             var resultEmail = await _emailSender.SendEmailAsync(email);
 

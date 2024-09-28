@@ -39,8 +39,8 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.SendVerification
             EmailMessage email = new()
             {
                 To = user.Email,
-                Subject = "Verification Account",
-                Body = newVerificationCode,
+                Subject = "Xác nhận tài khoản",
+                Body = _emailSender.GetVerificationEmail(newVerificationCode),
             };
             var resultEmail = await _emailSender.SendEmailAsync(email);
 
