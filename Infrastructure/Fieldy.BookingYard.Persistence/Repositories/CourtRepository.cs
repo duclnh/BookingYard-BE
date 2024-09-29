@@ -14,7 +14,7 @@ public class CourtRepository : RepositoryBase<Court, int>, ICourtRepository
     public async Task<IList<Court>> GetAllCourts(Guid FacilityID, CancellationToken cancellationToken = default)
     {
 
-        return await _dbContext.Courts.Where(c => c.FacilityID == FacilityID && c.IsDelete == false)
+        return await _dbContext.Courts.AsNoTracking().Where(c => c.FacilityID == FacilityID && c.IsDelete == false)
                                     .Include(c => c.Sport)
                                     .OrderByDescending(c => c.Id)
                                     .OrderByDescending(c => c.IsActive)
@@ -23,7 +23,7 @@ public class CourtRepository : RepositoryBase<Court, int>, ICourtRepository
 
     public async Task<decimal> GetMinPriceCourt(Guid FacilityID, CancellationToken cancellationToken)
     {
-        var court = await _dbContext.Courts.Where(x => x.FacilityID == FacilityID
+        var court = await _dbContext.Courts.AsNoTracking().Where(x => x.FacilityID == FacilityID
                                             && x.IsActive && x.IsDelete == false)
                                         .OrderBy(x => x.CourtPrice)
                                         .FirstOrDefaultAsync(cancellationToken);
@@ -32,7 +32,7 @@ public class CourtRepository : RepositoryBase<Court, int>, ICourtRepository
     }
     public async Task<decimal> GetMaxPriceCourt(Guid FacilityID, CancellationToken cancellationToken)
     {
-        var court = await _dbContext.Courts.Where(x => x.FacilityID == FacilityID
+        var court = await _dbContext.Courts.AsNoTracking().Where(x => x.FacilityID == FacilityID
                                             && x.IsActive && x.IsDelete == false)
                                         .OrderByDescending(x => x.CourtPrice)
                                         .FirstOrDefaultAsync(cancellationToken);
@@ -43,7 +43,7 @@ public class CourtRepository : RepositoryBase<Court, int>, ICourtRepository
     public async Task<IList<string>> GetSports(Guid FacilityID, CancellationToken cancellationToken)
     {
 
-        return await _dbContext.Courts.Where(c => c.FacilityID == FacilityID && c.IsDelete == false)
+        return await _dbContext.Courts.AsNoTracking().Where(c => c.FacilityID == FacilityID && c.IsDelete == false)
                                     .Include(c => c.Sport)
                                     .Select(c => c.Sport.SportName)
                                     .Distinct()

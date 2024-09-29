@@ -16,6 +16,7 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 		public async Task<float> GetRatingFacility(Guid facilityID, CancellationToken cancellationToken)
 		{
 			var feedbackData = await _dbContext.Feedbacks
+					.AsNoTracking()
 					.Where(x => x.FacilityID == facilityID)
 					.GroupBy(x => x.FacilityID)
 					.Select(g => new
@@ -38,6 +39,7 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 		public async Task<(int one, int two, int three, int four, int five)> GetRatingFacilityStarsCount(Guid facilityID, CancellationToken cancellationToken)
 		{
 			var starCounts = await _dbContext.Feedbacks
+						.AsNoTracking()
 						.Where(x => x.FacilityID == facilityID)
 						.GroupBy(x => x.Rating)
 						.Select(g => new
@@ -66,6 +68,7 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 		public async Task<IList<FeedBack>> GetTopFeedBack(TypeFeedback typeFeedback, int numberTake, CancellationToken cancellationToken)
 		{
 			return await _dbContext.Feedbacks
+						.AsNoTracking()
 						.Where(x => x.TypeFeedback == typeFeedback && x.IsShow)
 						.OrderByDescending(x => x.Rating)
 						.Include(x => x.User)

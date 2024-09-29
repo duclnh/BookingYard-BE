@@ -11,11 +11,13 @@ using Fieldy.BookingYard.Application.Features.CollectVoucher.Commands.CreateColl
 using Fieldy.BookingYard.Application.Features.CollectVoucher.Commands.UpdateCollectVoucher;
 using Fieldy.BookingYard.Application.Features.CollectVoucher.Queries.GetAllVoucher;
 using Fieldy.BookingYard.Application.Features.CollectVoucher.Queries;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Fieldy.BookingYard.Api.Controllers
 {
-	[Route("api/[controller]")]
+	[Route("api/collect-voucher")]
 	[ApiController]
+	[Authorize]
 	public class CollectVoucherController : ControllerBase
 	{
 		private readonly IMediator _mediator;
@@ -24,8 +26,9 @@ namespace Fieldy.BookingYard.Api.Controllers
 		{
 			_mediator = mediator;
 		}
-
+		
 		[HttpPost]
+		[Authorize(AuthenticationSchemes = "Bearer", Roles = "Customer")]
 		[Produces(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
