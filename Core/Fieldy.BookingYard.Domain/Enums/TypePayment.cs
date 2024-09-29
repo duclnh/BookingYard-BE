@@ -2,8 +2,8 @@
 {
 	public enum TypePayment
 	{
-		VnpayQr,
-		Vnbank,
-		VnInt
+		Cash,
+		Momo,
+		VNPAY
 	}
 }
