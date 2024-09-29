@@ -13,11 +13,15 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 
 		public async Task<IList<Voucher>> GetVoucherTop(int numberTop, CancellationToken cancellationToken)
 		{
-			return await _dbContext.Vouchers.Where(x => x.Status && !x.IsDeleted)
-									  .OrderByDescending(x => x.CreatedAt)
-									  .Take(numberTop)
-									  .Include(x => x.Sport)
-									  .ToListAsync(cancellationToken);
+			return await _dbContext.Vouchers
+								.AsNoTracking()
+								.Where(x => x.Status && !x.IsDeleted)
+								.OrderByDescending(x => x.CreatedAt)
+								.Take(numberTop)
+								.Include(x => x.Facility)
+								.Include(x => x.Sport)
+								.ToListAsync(cancellationToken);
+
 		}
 	}
 }

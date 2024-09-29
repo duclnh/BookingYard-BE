@@ -14,7 +14,7 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 		}
 		public async Task<IList<Image>> GetImagesByFacilityID(Guid facilityID)
 		{
-			var result = await _dbContext.Images.Where(x => x.FacilityID == facilityID)
+			var result = await _dbContext.Images.AsNoTracking().Where(x => x.FacilityID == facilityID)
 													.Include(x => x.FeedBack)
 													.Include(x => x.Report)
 													.ToListAsync();

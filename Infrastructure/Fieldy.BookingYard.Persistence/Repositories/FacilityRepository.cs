@@ -15,6 +15,7 @@ public class FacilityRepository : RepositoryBase<Facility, Guid>, IFacilityRepos
 	public async Task<IList<Facility>> GetFacilitiesTop(int numberTake, CancellationToken cancellationToken = default)
 	{
 		return await _dbContext.Facilities
+					.AsNoTracking()
 					.Where(x => !x.IsDeleted)
 					.Include(x => x.FeedBacks)
 					.OrderByDescending(x => x.FeedBacks.Average(fb => fb.Rating))

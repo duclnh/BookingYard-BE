@@ -56,7 +56,7 @@ namespace Fieldy.BookingYard.Infrastructure.Email
             return $@"
                 <div style=""font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;"">
                     <div style=""background-color: #f5f5f5; padding: 20px; text-align: center;"">
-                        <img src=""https://www.hamazaki.online/_next/image?url=%2Fassets%2Fimages%2Flogo.png&w=128&q=75"" alt=""Fieldy"" style=""width: 150px; margin-bottom: 10px;"" />
+                        <img src=""https://api.hamazaki.online/logo.png"" alt=""Fieldy"" style=""width: 150px; margin-bottom: 10px;"" />
                         <h1 style=""color: #0056b3; font-size: 24px; margin: 0; margin-top: 20px;"">Chào mừng bạn đến với hệ thống Quản lý sân</h1>
                     </div>
 
@@ -84,7 +84,7 @@ namespace Fieldy.BookingYard.Infrastructure.Email
                             Nếu bạn cần hỗ trợ, vui lòng liên hệ với chúng tôi qua số điện thoại <a href=""tel:09766860068"" style=""color: #0056b3; text-decoration: none;""><strong>09766-860-068</strong></a> hoặc <a href=""https://www.hamazaki.online/contact"" style=""color: #0056b3; text-decoration: none;"">truy cập trang hỗ trợ</a>.
                         </p>
 
-                        <p style=""font-size: 16px; line-height: 1.6;"">Trân trọng cảm ơn,<br>Fieldy Company</p>
+                        <p style=""font-size: 16px; line-height: 1.6;"">Trân trọng cảm ơn,<br>Công ty Fieldy</p>
                     </div>
 
                     <div style=""background-color: #f5f5f5; padding: 10px; text-align: center; color: #777;"">
@@ -99,7 +99,7 @@ namespace Fieldy.BookingYard.Infrastructure.Email
             return $@"
             <div style=""font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;"">
                 <div style=""background-color: #f5f5f5; padding: 20px; text-align: center;"">
-                    <img src=""https://www.hamazaki.online/_next/image?url=%2Fassets%2Fimages%2Flogo.png&w=128&q=75"" alt=""Fieldy"" style=""width: 150px; margin-bottom: 10px;"" />
+                    <img src=""https://api.hamazaki.online/logo.png"" alt=""Fieldy"" style=""width: 150px; margin-bottom: 10px;"" />
                     <h1 style=""color: #0056b3; font-size: 24px; margin: 0; margin-top: 20px;"">Yêu cầu đặt lại mật khẩu</h1>
                 </div>
 
@@ -122,7 +122,7 @@ namespace Fieldy.BookingYard.Infrastructure.Email
                         Để đảm bảo an toàn cho tài khoản của bạn, hãy không chia sẻ mã xác nhận này với bất kỳ ai khác.
                     </p>
 
-                    <p style=""font-size: 16px; line-height: 1.6;"">Trân trọng cảm ơn,<br>Fieldy Company</p>
+                    <p style=""font-size: 16px; line-height: 1.6;"">Trân trọng cảm ơn,<br>Công ty Fieldy</p>
                 </div>
 
                 <div style=""background-color: #f5f5f5; padding: 10px; text-align: center; color: #777;"">
@@ -135,7 +135,7 @@ namespace Fieldy.BookingYard.Infrastructure.Email
             return $@"
                 <div style=""font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;"">
                     <div style=""background-color: #f5f5f5; padding: 20px; text-align: center;"">
-                        <img src=""https://www.hamazaki.online/_next/image?url=%2Fassets%2Fimages%2Flogo.png&w=128&q=75"" alt=""Fieldy"" style=""width: 150px; margin-bottom: 10px;"" />
+                        <img src=""https://api.hamazaki.online/logo.png"" alt=""Fieldy"" style=""width: 150px; margin-bottom: 10px;"" />
                         <h1 style=""color: #0056b3; font-size: 24px; margin: 0; margin-top: 20px;"">Xác nhận tài khoản mới</h1>
                     </div>
 
@@ -154,7 +154,7 @@ namespace Fieldy.BookingYard.Infrastructure.Email
 
                         <p style=""font-size: 16px; line-height: 1.6;"">Nếu bạn không thực hiện đăng ký tài khoản, bạn có thể bỏ qua email này.</p>
 
-                        <p style=""font-size: 16px; line-height: 1.6;"">Trân trọng cảm ơn,<br>Fieldy Company</p>
+                        <p style=""font-size: 16px; line-height: 1.6;"">Trân trọng cảm ơn,<br>Công ty Fieldy</p>
                     </div>
 
                     <div style=""background-color: #f5f5f5; padding: 10px; text-align: center; color: #777;"">

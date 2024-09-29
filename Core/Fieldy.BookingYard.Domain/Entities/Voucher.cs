@@ -18,6 +18,7 @@ namespace Fieldy.BookingYard.Domain.Entities
 		[Column("EndDate")]
 		public DateTime ExpiredDate { get; set; }
 		public string? Reason { get; set; }
+		public int Quantity { get; set; }
 		public bool Status { get; set; }
 		public Guid? FacilityID { get; set; }
 		public Facility? Facility { get; set; }
