@@ -81,7 +81,7 @@ namespace Fieldy.BookingYard.Persistence.Configurations
 					Id = Guid.Parse("03b17c1c-0403-2e08-9ed3-709339dd911c"),
 					Name = "Lưu Gia Phong",
 					Address = "123 Main St, City, Country",
-					UserName = "lengochuynhduc2024",
+					UserName = "lengochuynhduc2030",
 					Email = "luuphong016@gmail.com",
 					Phone = "1234567890",
 					Gender = Gender.Other,
