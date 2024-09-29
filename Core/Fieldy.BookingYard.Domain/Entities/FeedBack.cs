@@ -9,7 +9,7 @@ namespace Fieldy.BookingYard.Domain.Entities
     {
         public Guid UserID { get; set; }
         public User? User { get; set; }
-        public Guid FacilityID { get; set; }
+        public Guid? FacilityID { get; set; }
         public Facility? Facility { get; set; }
         public string? Content { get; set; }
         public int Rating { get; set; }
