@@ -2,6 +2,6 @@
 {
 	public interface IVnpayService
 	{
-		string CreateRequestUrl(decimal amount, string orderInfo);
+		string CreateRequestUrl(decimal amount, string orderInfo, DateTime requestTime);
 	}
 }

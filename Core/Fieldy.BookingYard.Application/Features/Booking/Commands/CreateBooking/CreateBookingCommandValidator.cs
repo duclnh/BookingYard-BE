@@ -7,7 +7,7 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 		public CreateBookingCommandValidator()
 		{
 			RuleFor(x => x.CourtID).NotEmpty().WithMessage("CourtID is required.");
-			RuleFor(x => x.CustomerID).NotEmpty().WithMessage("CustomerID is required.");
+			RuleFor(x => x.UserID).NotEmpty().WithMessage("CustomerID is required.");
 		}
 	}
 }

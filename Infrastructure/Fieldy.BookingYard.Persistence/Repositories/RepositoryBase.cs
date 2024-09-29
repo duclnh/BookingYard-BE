@@ -178,7 +178,7 @@ namespace Fieldy.BookingYard.Persistence.Repositories
         {
             _dbSet.Attach(entity);
             _dbSet.Entry(entity).State = EntityState.Modified;
-        }
+		}
 
         public async Task<ICollection<TEntity>> GetAll(Expression<Func<TEntity, bool>>? expression = null,CancellationToken cancellationToken = default)
         {

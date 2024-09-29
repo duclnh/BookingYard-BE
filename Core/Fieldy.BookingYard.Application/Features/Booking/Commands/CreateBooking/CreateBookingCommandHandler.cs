@@ -24,9 +24,9 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 
 			var booking = _mapper.Map<Domain.Entities.Booking>(request);
 			booking.CreatedAt = DateTime.Now;
-			booking.CreatedBy = request.CustomerID;
+			booking.CreatedBy = request.UserID;
 			booking.ModifiedAt = DateTime.Now;
-			booking.ModifiedBy = request.CustomerID;
+			booking.ModifiedBy = request.UserID;
 			booking.Id = Guid.NewGuid();
 			booking.IsDeleted = false;
 

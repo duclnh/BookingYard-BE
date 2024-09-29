@@ -23,7 +23,7 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Queries.GetUnpaidBooki
 		}
 		public async Task<BookingDetailDto> Handle(GetUnpaidBooking request, CancellationToken cancellationToken)
 		{
-			var booking = await _bookingRepository.Find(x => x.PaymentStatus == false && x.CustomerID == x.CustomerID, cancellationToken);
+			var booking = await _bookingRepository.Find(x => x.PaymentStatus == false && x.UserID == request.userID, cancellationToken);
 			if (booking == null)
 				throw new NotFoundException(nameof(booking), request.userID);
 

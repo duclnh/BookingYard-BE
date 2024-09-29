@@ -29,7 +29,6 @@ namespace Fieldy.BookingYard.Api.Controllers
 			_mediator = mediator;
 		}
 		[HttpPost]
-		[Authorize(AuthenticationSchemes = "Bearer", Roles = "Customer")]
 		[Produces(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
