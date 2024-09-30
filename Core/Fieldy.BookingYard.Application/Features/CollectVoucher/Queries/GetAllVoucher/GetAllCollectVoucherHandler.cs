@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Linq.Expressions;
+using AutoMapper;
 using Fieldy.BookingYard.Application.Features.CollectVoucher.Queries;
 using Fieldy.BookingYard.Application.Features.CollectVoucher.Queries.GetAllVoucher;
 using Fieldy.BookingYard.Application.Models.Paging;
@@ -20,22 +21,38 @@ namespace Fieldy.BookingYard.Application.Features.CollectcollectVoucher.Queries.
 
 		public async Task<PagingResult<CollectVoucherDto>> Handle(GetAllCollectVoucherQuery request, CancellationToken cancellationToken)
 		{
+			Expression<Func<Domain.Entities.CollectVoucher, bool>> expression;
 
-			var listcollectVoucher = await _collectVoucherRepository.FindAllPaging(
+			expression = request.type switch
+			{
+				"outdate" => x => x.UserID == request.UserID && x.Voucher.ExpiredDate < DateTime.Now,
+				"notused" => x => x.UserID == request.UserID && !x.IsUsed,
+				"used" => x => x.UserID == request.UserID && x.IsUsed,
+				_ => x => x.UserID == request.UserID,
+			};
+
+			var listCollectVoucher = await _collectVoucherRepository.FindAllPaging(
 				currentPage: request.requestParams.CurrentPage,
 				pageSize: request.requestParams.PageSize,
-				expression: x => x.UserID == request.UserID,
-				orderBy: x => x.OrderByDescending(x => x.CreatedAt),
-				cancellationToken: cancellationToken);
+				expression: expression,
+				orderBy: x => x.OrderByDescending(c => c.CreatedAt),
+				cancellationToken: cancellationToken,
+				includes: new Expression<Func<Domain.Entities.CollectVoucher, object>>[]
+				{
+			
+					x => x.Voucher,
+					x => x.Voucher.Sport,
+                    x => x.Voucher.Facility,
+                });
 
 			return PagingResult<CollectVoucherDto>.Create(
-			   totalCount: listcollectVoucher.TotalCount,
-			   pageSize: listcollectVoucher.PageSize,
-			   currentPage: listcollectVoucher.CurrentPage,
-			   totalPages: listcollectVoucher.TotalPages,
-			   hasNext: listcollectVoucher.HasNext,
-			   hasPrevious: listcollectVoucher.HasPrevious,
-			   results: _mapper.Map<IList<CollectVoucherDto>>(listcollectVoucher.Results)
+			   totalCount: listCollectVoucher.TotalCount,
+			   pageSize: listCollectVoucher.PageSize,
+			   currentPage: listCollectVoucher.CurrentPage,
+			   totalPages: listCollectVoucher.TotalPages,
+			   hasNext: listCollectVoucher.HasNext,
+			   hasPrevious: listCollectVoucher.HasPrevious,
+			   results: _mapper.Map<IList<CollectVoucherDto>>(listCollectVoucher.Results)
 		   );
 		}
 	}

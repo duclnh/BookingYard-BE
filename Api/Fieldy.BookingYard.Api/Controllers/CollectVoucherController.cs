@@ -55,8 +55,9 @@ namespace Fieldy.BookingYard.Api.Controllers
 			var result = await _mediator.Send(command, cancellationToken);
 			return Ok(result);
 		}
-
-		[HttpGet("{userId}")]
+		
+		[AllowAnonymous]
+		[HttpGet("{id}")]
 		[Produces(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(typeof(CollectVoucherDto), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -64,10 +65,11 @@ namespace Fieldy.BookingYard.Api.Controllers
 		[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
 		public async Task<IActionResult> GetAllVoucher(
 						[FromQuery] RequestParams requestParams,
-						[FromRoute] Guid userId,
+						[FromRoute] Guid id,
+						[FromQuery] string? type,
 							CancellationToken cancellationToken = default)
 		{
-			var result = await _mediator.Send(new GetAllCollectVoucherQuery(requestParams, userId), cancellationToken);
+			var result = await _mediator.Send(new GetAllCollectVoucherQuery(requestParams, id, type), cancellationToken);
 			return Ok(result);
 		}
 	}
