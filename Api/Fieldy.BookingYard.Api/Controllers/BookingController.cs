@@ -2,23 +2,17 @@
 using Fieldy.BookingYard.Application.Features.Booking.Queries.DTO;
 using Fieldy.BookingYard.Application.Features.Booking.Queries.GetAllBookingCustomer;
 using Fieldy.BookingYard.Application.Features.Booking.Queries.GetBookingDetail;
-using Fieldy.BookingYard.Application.Features.Booking.Queries.GetUnpaidBooking;
-using Fieldy.BookingYard.Application.Features.Facility.Commands.CreateFacility;
 using Fieldy.BookingYard.Application.Features.Facility.Queries.DTO;
-using Fieldy.BookingYard.Application.Features.Facility.Queries.FacilityDetail;
-using Fieldy.BookingYard.Application.Features.Feedback.Queries.DTO;
 using Fieldy.BookingYard.Application.Models.Paging;
 using Fieldy.BookingYard.Application.Models.Query;
-using Fieldy.BookingYard.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 
 namespace Fieldy.BookingYard.Api.Controllers
 {
-	[Route("api/[controller]")]
+	[Route("api/booking")]
 	[ApiController]
 	public class BookingController : ControllerBase
 	{
@@ -43,7 +37,7 @@ namespace Fieldy.BookingYard.Api.Controllers
 		}
 
 		[AllowAnonymous]
-		[HttpGet("{id}")]
+		[HttpGet("detail/{id}")]
 		[Produces(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(typeof(FacilityDetailDTO), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -58,9 +52,8 @@ namespace Fieldy.BookingYard.Api.Controllers
 		}
 
 		[HttpGet("{customerId}")]
-		[Authorize(AuthenticationSchemes = "Bearer", Roles = "Customer")]
 		[Produces(MediaTypeNames.Application.Json)]
-		[ProducesResponseType(typeof(PagingResult<BookingDetailDto>), StatusCodes.Status200OK)]
+		[ProducesResponseType(typeof(IList<BookingDetailDto>), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
 		public async Task<IActionResult> GetAllBookingCustomer(
@@ -69,20 +62,6 @@ namespace Fieldy.BookingYard.Api.Controllers
 				CancellationToken cancellationToken = default)
 		{
 			var result = await _mediator.Send(new GetAllBookingCustomerQuery(requestParams, customerId, cancellationToken));
-			return Ok(result);
-		}
-
-		[HttpGet("un-paid/{customerId}")]
-		[Authorize(AuthenticationSchemes = "Bearer", Roles = "Customer")]
-		[Produces(MediaTypeNames.Application.Json)]
-		[ProducesResponseType(typeof(PagingResult<BookingDetailDto>), StatusCodes.Status200OK)]
-		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-		public async Task<IActionResult> GetUnpaidBookingCustomer(
-				[FromRoute] Guid customerId,
-				CancellationToken cancellationToken = default)
-		{
-			var result = await _mediator.Send(new GetUnpaidBooking(customerId, cancellationToken));
 			return Ok(result);
 		}
 	}

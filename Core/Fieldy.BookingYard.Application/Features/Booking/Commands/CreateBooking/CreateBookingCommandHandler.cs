@@ -29,6 +29,8 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 			booking.ModifiedBy = request.UserID;
 			booking.Id = Guid.NewGuid();
 			booking.IsDeleted = false;
+			booking.Status = false;
+			booking.PaymentStatus = false;
 
 
 			if (booking == null)
