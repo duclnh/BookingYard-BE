@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.CollectVoucher.Queries.GetAllVoucher
 {
-	public record GetAllCollectVoucherQuery(RequestParams requestParams, Guid UserID) : IRequest<PagingResult<CollectVoucherDto>>
+	public record GetAllCollectVoucherQuery(RequestParams requestParams, Guid UserID, string? type) : IRequest<PagingResult<CollectVoucherDto>>
 	{
 	}
 }
