@@ -14,6 +14,8 @@ namespace Fieldy.BookingYard.Application.MappingProfiles
 		{
 			CreateMap<FeedBack, FeedbackDto>()
 				.ForMember(dest => dest.FeedbackID, opt => opt.MapFrom(src => src.Id))
+				.ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.User.Name))
+				.ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.User.Phone))
 				.ForMember(dest => dest.Images, opt => opt.MapFrom(src =>
 					src.Images != null ? src.Images.Select(img => img.ImageLink) : new List<string>()
 				));
