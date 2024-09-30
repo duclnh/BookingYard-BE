@@ -70,7 +70,7 @@ namespace Fieldy.BookingYard.Api.Controllers
 			return Ok(result);
 		}
 
-		[HttpGet("{id}")]
+		[HttpGet("/api/feedback-facility-owner/{id}")]
         [AllowAnonymous]
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "CourtOwner")]
 		[Produces(MediaTypeNames.Application.Json)]
