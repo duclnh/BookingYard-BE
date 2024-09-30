@@ -23,6 +23,7 @@ namespace Fieldy.BookingYard.Persistence.Configurations
 					Reason = "Khuyến mãi",
 					Status = true,
 					FacilityID = Guid.Parse("E175DAF6-B5A4-4D0E-544D-08DCD4D409D4"),
+					Quantity = 100,
 					SportID = 1
 				},
 				new Voucher
@@ -37,6 +38,7 @@ namespace Fieldy.BookingYard.Persistence.Configurations
 					Reason = "Khuyến mãi",
 					Status = true,
 					FacilityID = Guid.Parse("E175DAF6-B5A4-4D0E-544D-08DCD4D409D4"),
+					Quantity = 100,
 				}
 			);
 		}

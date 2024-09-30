@@ -6,6 +6,5 @@ namespace Fieldy.BookingYard.Application.Features.Payment.Commands.CreatePayment
 	{
 		public Guid BookingId { get; set; }
 		public int RequiredAmount { get; set; }
-		public string PaymentContent { get; set; } = string.Empty;
 	}
 }

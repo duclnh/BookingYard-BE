@@ -27,6 +27,7 @@ namespace Fieldy.BookingYard.Persistence.DatabaseContext
         public DbSet<Sport> Sports{ get; set; }
         public DbSet<Court> Courts { get; set; }
         public DbSet<CollectVoucher> CollectVouchers { get; set; }
+        public DbSet<Booking> Bookings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

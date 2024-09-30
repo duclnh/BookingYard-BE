@@ -1,8 +1,11 @@
-﻿using Fieldy.BookingYard.Application.Features.Payment.Commands.CreatePayment;
+﻿using Azure.Core;
+using Fieldy.BookingYard.Application.Features.Payment.Commands.CreatePayment;
+using Fieldy.BookingYard.Application.Features.Payment.Queries;
 using Fieldy.BookingYard.Infrastructure.Vnpay.Response;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using System.Threading;
 
 namespace Fieldy.BookingYard.Api.Controllers
 {
@@ -29,9 +32,11 @@ namespace Fieldy.BookingYard.Api.Controllers
 
 		[HttpGet]
 		[Route("vnpay-return")]
-		public async Task<IActionResult> VnpayReturn([FromQuery] VnpayPayResponse response)
+		public async Task<IActionResult> VnpayReturn([FromQuery] GetVnpayReturnQuery response,
+													CancellationToken cancellationToken = default)
 		{
-			throw new NotImplementedException();
+			var result = await _mediator.Send(response, cancellationToken);
+			return Ok(result);
 		}
 	}
 }
