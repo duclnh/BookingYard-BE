@@ -4,7 +4,7 @@ using Fieldy.BookingYard.Application.Features.Feedback.Commands.UpdateFeedback;
 using Fieldy.BookingYard.Application.Features.Feedback.Queries;
 using Fieldy.BookingYard.Application.Features.Feedback.Queries.DTO;
 using Fieldy.BookingYard.Application.Features.Feedback.Queries.GetAllFeedback;
-using Fieldy.BookingYard.Application.Features.Feedback.Queries.GetAllFeedBackFacility;
+using Fieldy.BookingYard.Application.Features.Feedback.Queries.GetAllFeedbackFacility;
 using Fieldy.BookingYard.Application.Features.Feedback.Queries.GetFeedbackHome;
 using Fieldy.BookingYard.Application.Models.Paging;
 using Fieldy.BookingYard.Application.Models.Query;
@@ -71,14 +71,15 @@ namespace Fieldy.BookingYard.Api.Controllers
 		}
 
 		[HttpGet("{id}")]
-		[Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,CourtOwner")]
+        [AllowAnonymous]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "CourtOwner")]
 		[Produces(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(typeof(PagingResult<FeedbackDto>), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
 		public async Task<IActionResult> GetAllFeedback(
-			[FromRoute] Guid? id,
+			[FromRoute] Guid id,
 			[FromQuery] RequestParams requestParams,
 			CancellationToken cancellationToken = default)
 		{
@@ -97,7 +98,7 @@ namespace Fieldy.BookingYard.Api.Controllers
 			[FromQuery] RequestParams requestParams,
 			CancellationToken cancellationToken = default)
 		{
-			var result = await _mediator.Send(new GetFeedBackFacilityQuery(requestParams, id), cancellationToken);
+			var result = await _mediator.Send(new GetAllFeedbackFacilityQuery(requestParams, id), cancellationToken);
 			return Ok(result);
 		}
 
