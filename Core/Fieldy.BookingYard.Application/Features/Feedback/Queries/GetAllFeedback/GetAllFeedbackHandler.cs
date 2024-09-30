@@ -27,17 +27,10 @@ namespace Fieldy.BookingYard.Application.Features.Feedback.Queries.GetAllFeedbac
 		{
 			var user = await _userRepository.Find(x => x.Id == _jWTService.UserID, cancellationToken);
 
-			Expression<Func<Domain.Entities.FeedBack, bool>>? expression = null;
-			
-			if (user != null && user.Role == Role.CourtOwner)
-			{
-				expression =  x => x.FacilityID == request.facilityID;
-			}
-
 			var listFeedback = await _FeedbackRepository.FindAllPaging(
 				currentPage: request.requestParams.CurrentPage,
 				pageSize: request.requestParams.PageSize,
-				expression: expression,
+				expression: x => x.FacilityID == request.facilityID,
 				orderBy: x => x.OrderByDescending(x => x.CreatedAt),
 				includes: x => x.Images,
 				cancellationToken: cancellationToken

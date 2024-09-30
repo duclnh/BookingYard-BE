@@ -4,20 +4,20 @@ using Fieldy.BookingYard.Application.Models.Paging;
 using Fieldy.BookingYard.Domain.Abstractions.Repositories;
 using MediatR;
 
-namespace Fieldy.BookingYard.Application.Features.Feedback.Queries.GetAllFeedBackFacility;
+namespace Fieldy.BookingYard.Application.Features.Feedback.Queries.GetAllFeedbackFacility;
 
-public class GetFeedBackFacilityQueryHandler : IRequestHandler<GetFeedBackFacilityQuery, PagingResult<FeedbackFacilityDetailDTO>>
+public class GetAllFeedbackFacilityQueryHandler : IRequestHandler<GetAllFeedbackFacilityQuery, PagingResult<FeedbackFacilityDetailDTO>>
 {
     private readonly IFeedbackRepository _feedbackRepository;
     private readonly IMapper _mapper;
 
-    public GetFeedBackFacilityQueryHandler(IFeedbackRepository feedbackRepository, IMapper mapper)
+    public GetAllFeedbackFacilityQueryHandler(IFeedbackRepository feedbackRepository, IMapper mapper)
     {
         _feedbackRepository = feedbackRepository;
         _mapper = mapper;
     }
 
-    public async Task<PagingResult<FeedbackFacilityDetailDTO>> Handle(GetFeedBackFacilityQuery request, CancellationToken cancellationToken)
+    public async Task<PagingResult<FeedbackFacilityDetailDTO>> Handle(GetAllFeedbackFacilityQuery request, CancellationToken cancellationToken)
     {
         var feedbackFacilities = await _feedbackRepository.FindAllPaging(
             currentPage: request.RequestParams.CurrentPage,
