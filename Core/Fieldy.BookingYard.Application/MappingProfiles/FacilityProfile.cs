@@ -21,7 +21,10 @@ public class FacilityProfile : Profile
             .ForMember(x => x.Image, q => q.Ignore())
             .ForMember(x => x.Logo, q => q.Ignore());
 
-        CreateMap<Facility, FacilityAdminDTO>();
+        CreateMap<Facility, FacilityAdminDTO>()
+            .ForMember(x => x.Address, q => q.MapFrom(x => x.FullAddress))
+            .ForMember(x => x.OwnerName, q => q.MapFrom(x => x.User.Name))
+            .ForMember(x => x.FacilityName, q => q.MapFrom(x => x.Name));
 
         CreateMap<Facility, FacilityCustomerDTO>()
             .ForMember(x => x.FacilityImage, q => q.MapFrom(x => x.Image))

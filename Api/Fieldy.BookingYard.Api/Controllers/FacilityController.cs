@@ -57,7 +57,6 @@ namespace Fieldy.BookingYard.Api.Controllers
             return Ok(result);
         }
 
-        [AllowAnonymous]
         [HttpGet]
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         [Produces(MediaTypeNames.Application.Json)]
