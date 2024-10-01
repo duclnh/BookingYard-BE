@@ -26,7 +26,7 @@ namespace Fieldy.BookingYard.Application.Features.Voucher.Command.CreateVoucher
 			if (validationResult.Errors.Any())
 				throw new BadRequestException("Invalid register Voucher", validationResult);
 
-			var voucherExist = await _voucherRepository.Find(x => x.Code == request.Code, cancellationToken);
+			var voucherExist = await _voucherRepository.Find(x => x.Code != null && x.Code == request.Code, cancellationToken);
 
 			if (voucherExist != null)
 				throw new ConflictException("Voucher already exists");
