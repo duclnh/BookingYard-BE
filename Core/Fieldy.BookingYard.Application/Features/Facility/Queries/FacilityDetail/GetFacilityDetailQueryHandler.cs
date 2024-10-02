@@ -2,6 +2,7 @@
 using Fieldy.BookingYard.Application.Abstractions;
 using Fieldy.BookingYard.Application.Exceptions;
 using Fieldy.BookingYard.Application.Features.Facility.Queries.DTO;
+using Fieldy.BookingYard.Application.Features.Sport.Queries.DTO;
 using Fieldy.BookingYard.Domain.Abstractions.Repositories;
 using MediatR;
 
@@ -70,8 +71,11 @@ namespace Fieldy.BookingYard.Application.Features.Facility.Queries.FacilityDetai
 			facilityMapped.FacilityMaxPrice = facility.GetMaxPriceCourt();
 			facilityMapped.FacilityRating = await _feedbackRepository.GetRatingFacility(facility.Id, cancellationToken);
 			facilityMapped.NumberFeedback = await _feedbackRepository.CountAsync(x => x.FacilityID == facility.Id, cancellationToken);
-			facilityMapped.Sports = await _courtRepository.GetSports(facility.Id, cancellationToken);
-			
+
+			var sports = await _courtRepository.GetSports(facility.Id, cancellationToken);
+
+			facilityMapped.Sports = _mapper.Map<IList<SportCreateDTO>>(sports);
+
 			var facilityRatingStar = await _feedbackRepository.GetRatingFacilityStarsCount(facility.Id, cancellationToken);
 			facilityMapped.PercentFiveStar = facilityRatingStar.five;
 			facilityMapped.PercentFourStar = facilityRatingStar.four;
