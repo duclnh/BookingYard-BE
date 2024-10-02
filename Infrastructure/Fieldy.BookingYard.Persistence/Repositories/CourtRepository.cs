@@ -40,13 +40,14 @@ public class CourtRepository : RepositoryBase<Court, int>, ICourtRepository
         return court == null ? 0 : court.CourtPrice;
     }
 
-    public async Task<IList<string>> GetSports(Guid FacilityID, CancellationToken cancellationToken)
+    public async Task<IList<Sport?>> GetSports(Guid FacilityID, CancellationToken cancellationToken)
     {
 
-        return await _dbContext.Courts.AsNoTracking().Where(c => c.FacilityID == FacilityID && c.IsDelete == false)
-                                    .Include(c => c.Sport)
-                                    .Select(c => c.Sport.SportName)
-                                    .Distinct()
-                                    .ToListAsync(cancellationToken);
+        return await _dbContext.Courts.AsNoTracking()
+                    .Where(c => c.FacilityID == FacilityID && c.IsDelete == false)
+                    .Include(c => c.Sport)
+                    .Select(c => c.Sport)
+                    .Distinct()
+                    .ToListAsync(cancellationToken);
     }
 }
