@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Fieldy.BookingYard.Application.Abstractions.Vnpay;
+using Fieldy.BookingYard.Application.Exceptions;
 using Fieldy.BookingYard.Domain.Abstractions.Repositories;
 using MediatR;
 
@@ -21,15 +22,15 @@ namespace Fieldy.BookingYard.Application.Features.Payment.Commands.CreatePayment
 			try
 			{
 				var booking = await _bookingRepository.FindByIdAsync(request.BookingId, cancellationToken);
-				/*if(booking == null)
+				if (booking == null)
 				{
 					throw new NotFoundException(nameof(Booking), request.BookingId);
-				}*/
-				/*if(booking.Status == true)
+				}
+				if (booking.Status == true)
 				{
 					throw new BadRequestException("Booking has been paid");
-				}*/
-				if(booking.PaymentCode != null)
+				}
+				if (booking.PaymentCode != null)
 				{
 					return _paymentService.CreateRequestUrl(request.RequiredAmount, booking.PaymentCode, DateTime.Now);
 				}

@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 {
-	public class CreateBookingCommand : IRequest<string>
+	public class CreateBookingCommand : IRequest<Guid>
 	{
 		public required string FullName { get; set; }
 		public required string Phone { get; set; }

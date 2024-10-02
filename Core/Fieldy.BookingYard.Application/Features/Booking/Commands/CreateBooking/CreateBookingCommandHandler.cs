@@ -6,7 +6,7 @@ using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 {
-	public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand, string>
+	public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand, Guid>
 	{
 		private readonly IMapper _mapper;
 		private readonly IBookingRepository _bookingRepository;
@@ -15,7 +15,7 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 			_mapper = mapper;
 			_bookingRepository = bookingRepository;
 		}
-		public async Task<string> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
+		public async Task<Guid> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
 		{
 			var validator = new CreateBookingCommandValidator();
 			var validationResult = await validator.ValidateAsync(request, cancellationToken);
@@ -36,14 +36,12 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 			if (booking == null)
 				throw new BadRequestException("Error create booking!");
 
-			await _bookingRepository.AddAsync(booking);
-
 			var result = await _bookingRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
 
 			if (result < 0)
 				throw new BadRequestException("Create new booking fail!");
 
-			return "Create booking successfully";
+			return booking.Id;
 		}
 	}
 }

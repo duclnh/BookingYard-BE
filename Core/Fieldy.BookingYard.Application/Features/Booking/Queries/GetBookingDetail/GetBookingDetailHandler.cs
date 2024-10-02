@@ -18,7 +18,7 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Queries.GetBookingDeta
 
 		public async Task<BookingDetailDto> Handle(GetBookingDetailQuery request, CancellationToken cancellationToken)
 		{
-			var booking = await _bookingRepository.Find(x => x.Id == request.bookingID, cancellationToken);
+			var booking = await _bookingRepository.Find(request.bookingID, cancellationToken);
 			if (booking == null)
 				throw new NotFoundException(nameof(booking), request.bookingID);
 
