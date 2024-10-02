@@ -30,7 +30,9 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Queries.GetAllBookingF
 				cancellationToken: cancellationToken,
 				includes: new Expression<Func<Domain.Entities.Booking, object>>[]
 				{
-					x => x.Court
+					x => x.Court,
+					x => x.Court.Facility,
+					x => x.Voucher
 				});
 
 			return PagingResult<BookingDetailDto>.Create(
