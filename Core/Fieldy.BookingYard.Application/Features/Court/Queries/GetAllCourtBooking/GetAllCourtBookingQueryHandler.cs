@@ -38,7 +38,7 @@ public class GetAllCourtBookingQueryHandler : IRequestHandler<GetAllCourtBooking
         foreach (var court in courts)
         {
             var bookings = await _bookingRepository.AnyAsync(
-                x => x.CourtID == court.Id && x.BookingDate == request.playDate && (
+                x => x.IsDeleted == false && x.CourtID == court.Id && x.BookingDate == request.playDate && (
                     (x.StartTime < endTime && x.EndTime > startTime)
                 ),
                 cancellationToken: cancellationToken

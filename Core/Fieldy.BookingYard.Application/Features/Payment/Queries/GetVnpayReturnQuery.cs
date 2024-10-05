@@ -2,7 +2,7 @@
 
 namespace Fieldy.BookingYard.Application.Features.Payment.Queries
 {
-	public record GetVnpayReturnQuery : IRequest<string>
+	public record GetVnpayReturnQuery : IRequest<Guid>
 	{
 		public required string vnp_Amount { get; set; }
 		public required string vnp_BankCode { get; set; }
