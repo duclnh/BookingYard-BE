@@ -30,14 +30,18 @@ public class GetAllCourtBookingQueryHandler : IRequestHandler<GetAllCourtBooking
 
         );
 
+        TimeSpan.TryParse(request.startTime, out var startTime);
+        TimeSpan.TryParse(request.endTime, out var endTime);
+
         var availableCourts = new List<Domain.Entities.Court>();
 
         foreach (var court in courts)
         {
             var bookings = await _bookingRepository.AnyAsync(
-                x => x.CourtID == court.Id
-                    && x.StartTime >= request.startTime || x.EndTime <= x.EndTime,
-                cancellationToken
+                x => x.CourtID == court.Id && x.BookingDate == request.playDate && (
+                    (x.StartTime < endTime && x.EndTime > startTime)
+                ),
+                cancellationToken: cancellationToken
             );
 
             if (!bookings)
