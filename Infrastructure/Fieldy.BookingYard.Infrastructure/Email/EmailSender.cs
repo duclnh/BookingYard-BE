@@ -56,7 +56,7 @@ namespace Fieldy.BookingYard.Infrastructure.Email
             return $@"
                 <div style=""font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;"">
                     <div style=""background-color: #f5f5f5; padding: 20px; text-align: center;"">
-                        <img src=src='https://api.hamazaki.online/logo.png' alt=""Fieldy"" style="" width: 150px; margin-bottom: 10px;"" />
+                        <img src='https://api.hamazaki.online/logo.png' alt=""Fieldy"" style="" width: 150px; margin-bottom: 10px;"" />
                         <h1 style=""color: #0056b3; font-size: 24px; margin: 0; margin-top: 20px;"">Chào mừng bạn đến với hệ thống Quản lý sân</h1>
                     </div>
 
@@ -135,7 +135,7 @@ namespace Fieldy.BookingYard.Infrastructure.Email
             return $@"
                 <div style=""font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;"">
                     <div style=""background-color: #f5f5f5; padding: 20px; text-align: center;"">
-                        <img src='https://api.hamazaki.online/logo.png' alt=Fieldy style="" width: 150px; margin-bottom: 10px;"" />
+                        <img src='https://api.hamazaki.online/logo.png' alt=""Fieldy"" style="" width: 150px; margin-bottom: 10px;"" />
                         <h1 style=""color: #0056b3; font-size: 24px; margin: 0; margin-top: 20px;"">Xác nhận tài khoản mới</h1>
                     </div>
 
