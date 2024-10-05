@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 {
-	public class CreateBookingCommand : IRequest<Guid>
+	public class CreateBookingCommand : IRequest<string>
 	{
 		public required string FullName { get; set; }
 		public required string Phone { get; set; }
@@ -12,10 +12,10 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 		public decimal CourtPrice { get; set; }
 		public decimal TotalPrice { get; set; }
 		public Guid UserID { get; set; }
-		public DateTime BookingDate { get; set; }
-		public DateTime StartTime { get; set; }
-		public DateTime EndTime { get; set; }
+		public required string BookingDate { get; set; }
+		public required string StartTime { get; set; }
+		public required string EndTime { get; set; }
 		public Guid? VoucherID { get; set; }
-		public TypePayment PaymentMethod { get; set; }
+		public required string PaymentMethod { get; set; }
 	}
 }

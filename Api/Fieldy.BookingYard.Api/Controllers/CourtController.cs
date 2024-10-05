@@ -2,7 +2,9 @@ using System.Net.Mime;
 using Fieldy.BookingYard.Application.Features.Court;
 using Fieldy.BookingYard.Application.Features.Court.Commands.CreateCourt;
 using Fieldy.BookingYard.Application.Features.Court.Commands.UpdateCourt;
+using Fieldy.BookingYard.Application.Features.Court.Queries.DTO;
 using Fieldy.BookingYard.Application.Features.Court.Queries.GetAllCourt;
+using Fieldy.BookingYard.Application.Features.Court.Queries.GetAllCourtBooking;
 using Fieldy.BookingYard.Application.Features.Court.Queries.GetCourtById;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -85,6 +87,25 @@ namespace Fieldy.BookingYard.Api.Controllers
         )
         {
             var result = await _mediator.Send(new GetCourtByIdQuery(id), cancellationToken);
+            return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("/api/court-booking/{id}")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(IList<CourtBookingDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetCourtBooking(
+             [FromRoute] Guid id,
+             [FromQuery] int sportID,
+             [FromQuery] string playDate,
+             [FromQuery] string startTime,
+             [FromQuery] string endTime,
+             CancellationToken cancellationToken = default
+        )
+        {
+            var result = await _mediator.Send(new GetAllCourtBookingQuery(id, sportID, playDate, startTime, endTime), cancellationToken);
             return Ok(result);
         }
     }
