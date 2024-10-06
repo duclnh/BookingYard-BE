@@ -7,9 +7,10 @@ namespace Fieldy.BookingYard.Domain.Entities
     public class HistoryPoint : EntityBase<int>
 	{
         public Guid UserID { get; set; }
-        public User User{ get; set; }
-        public int Point { get; set; }
+        public User? User{ get; set; }
+        public decimal Point { get; set; }
         public DateTime CreatedAt { get; set; }
+        public string? Content { get; set; }
     }
 
 }

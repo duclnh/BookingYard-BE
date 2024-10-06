@@ -3,8 +3,10 @@ using Fieldy.BookingYard.Application.Abstractions.Vnpay;
 using Fieldy.BookingYard.Application.Exceptions;
 using Fieldy.BookingYard.Application.Features.Feedback.Commands.CreateFeedback;
 using Fieldy.BookingYard.Domain.Abstractions.Repositories;
+using Fieldy.BookingYard.Domain.Entities;
 using Fieldy.BookingYard.Domain.Enums;
 using MediatR;
+using System.Linq.Expressions;
 
 namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 {
@@ -12,12 +14,16 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 	{
 		private readonly IMapper _mapper;
 		private readonly IBookingRepository _bookingRepository;
+		private readonly IHistoryPointRepository _historyPointRepository;
+		private readonly ICollectVoucherRepository _collectVoucherRepository;
 		private readonly IVnpayService _vnpayService;
 
-		public CreateBookingCommandHandler(IMapper mapper, IBookingRepository bookingRepository, IVnpayService vnpayService)
+		public CreateBookingCommandHandler(IMapper mapper, IBookingRepository bookingRepository, IHistoryPointRepository historyPointRepository, ICollectVoucherRepository collectVoucherRepository, IVnpayService vnpayService)
 		{
 			_mapper = mapper;
 			_bookingRepository = bookingRepository;
+			_historyPointRepository = historyPointRepository;
+			_collectVoucherRepository = collectVoucherRepository;
 			_vnpayService = vnpayService;
 		}
 
@@ -29,25 +35,81 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 				throw new BadRequestException("Invalid register booking", validationResult);
 
 			var booking = _mapper.Map<Domain.Entities.Booking>(request);
+			if (booking == null)
+				throw new BadRequestException("Error create booking!");
 			booking.CreatedAt = DateTime.Now;
 			booking.CreatedBy = request.UserID;
 			booking.ModifiedAt = DateTime.Now;
 			booking.ModifiedBy = request.UserID;
+			booking.IsCheckin = false;
+			booking.IsFeedback = false;
 
+			#region Check point is available
+			var historyPoint = await _historyPointRepository.Find(x => x.UserID == request.UserID && x.Point > 0, cancellationToken);
+			if (historyPoint != null)
+			{
+				booking.TotalPrice = request.TotalPrice - historyPoint.Point;
+
+				// Update user points
+				historyPoint.Point = Math.Max(0, historyPoint.Point - request.TotalPrice);
+				_historyPointRepository.Update(historyPoint);
+			}
+			#endregion
+
+			#region Check voucher is available
+			var collectVoucher = await _collectVoucherRepository.Find(expression: x => x.UserID == request.UserID && x.VoucherID == request.VoucherID, 
+																		cancellationToken: cancellationToken,
+																		includes: new Expression<Func<Domain.Entities.CollectVoucher, object>>[]
+																		{
+																			x => x.Voucher
+																		});
+			if (collectVoucher.Voucher != null && booking.TotalPrice > 0)
+			{
+				var percentage = Convert.ToDecimal(collectVoucher.Voucher.Percentage);
+				booking.TotalPrice *= booking.TotalPrice * (1 - (percentage / 100));
+
+				// Mark voucher as used
+				collectVoucher.IsUsed = true;
+				_collectVoucherRepository.Update(collectVoucher);
+			}
+			#endregion
+
+			// Update total price
+			booking.TotalPrice = Math.Max(0, booking.TotalPrice);
+
+			// Add payment code
 			DateTime requestDate = DateTime.Now;
 			booking.PaymentCode = "FIELDY" + requestDate.ToString("yyyyMMddHHmmss");
 
-			if (booking == null)
-				throw new BadRequestException("Error create booking!");
-
 			await _bookingRepository.AddAsync(booking);
 
-			var result = await _bookingRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
+			if (await _bookingRepository.UnitOfWork.SaveChangesAsync(cancellationToken) <= 0)
+			{
+				return new BadRequestException("Create new booking fail!").Message;
+			}
 
-			if (result <= 0)
-				throw new BadRequestException("Create new booking fail!");
+			// Check payment type
+			string? paymentUrl = null;
+			switch (booking.PaymentMethod)
+			{
+				case TypePayment.VnPay:
+					return _vnpayService.CreateRequestUrl(booking.TotalPrice, booking.PaymentCode, requestDate);
+				case TypePayment.Momo:
+					break;
+				case TypePayment.PayPal:
+					break;
+				case TypePayment.ZaloPay:
+					break;
+				default:
+					throw new BadRequestException("Unsupported payment type");
+			}
 
-			return _vnpayService.CreateRequestUrl(booking.TotalPrice, booking.PaymentCode, requestDate);
+			if (string.IsNullOrEmpty(paymentUrl))
+			{
+				throw new BadRequestException("Payment URL could not be created");
+			}
+
+			return paymentUrl;
 		}
 	}
 }
