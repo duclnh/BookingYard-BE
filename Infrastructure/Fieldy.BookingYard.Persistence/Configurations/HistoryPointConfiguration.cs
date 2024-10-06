@@ -8,21 +8,21 @@ namespace Fieldy.BookingYard.Persistence.Configurations
 	{
 		public void Configure(EntityTypeBuilder<HistoryPoint> builder)
 		{
-			builder.Property(x => x.Id).HasColumnName("HistoryPointID");
+			builder.Property(x => x.Id).HasColumnName("HistoryPointID").ValueGeneratedOnAdd();
 
 			builder.HasData(
 				new HistoryPoint
 				{
 					Id = 1,
-					Point = -20,
-					UserID = new Guid("57562e90-5835-4461-98f5-565cd760e6da"),
+					Point = 20,
+					UserID = new Guid("03B17C1C-0403-2E08-9ED3-709339DD911C"),
 					CreatedAt = DateTime.Now
 				},
 				new HistoryPoint
 				{
 					Id = 2,
 					Point = 50,
-					UserID = new Guid("57562e90-5835-4461-98f5-565cd760e6da"),
+					UserID = new Guid("03B17C1C-0403-2E08-9ED3-709339DD911B"),
 					CreatedAt = DateTime.Now
 				}
 			);
