@@ -4,6 +4,8 @@
 	{
 		Cash,
 		Momo,
-		VNPAY
+		VnPay,
+		ZaloPay,
+		PayPal
 	}
 }

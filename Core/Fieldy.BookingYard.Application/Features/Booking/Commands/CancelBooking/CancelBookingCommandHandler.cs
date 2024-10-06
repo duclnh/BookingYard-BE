@@ -26,16 +26,6 @@ public class CancelBookingCommandHandler : IRequestHandler<CancelBookingCommand,
         if (user == null || user.Role != Role.CourtOwner || user.Role != Role.Customer)
             throw new BadRequestException($"You don't have permission");
 
-        var historyPoint = await _historyPointRepository.Find(x => x.UserID == _jWTService.UserID, cancellationToken);
-        if (historyPoint != null)
-        {
-            if (historyPoint.Point > 0)
-            {
-                historyPoint.Point -= 1;
-            }
-            _historyPointRepository.Update(historyPoint);
-        }
-
         var booking = await _bookingRepository.Find(x => x.Id == request.BookingID, cancellationToken);
 		if(booking == null)
             throw new NotFoundException(nameof(booking), request.BookingID);
@@ -43,7 +33,29 @@ public class CancelBookingCommandHandler : IRequestHandler<CancelBookingCommand,
         if (booking.Status == true)
             throw new BadRequestException("Booking is already used");
 
-        booking.Reason = request.Reason;
+		var historyPoint = await _historyPointRepository.Find(x => x.UserID == _jWTService.UserID, cancellationToken);
+		if (historyPoint != null)
+		{
+			historyPoint.Point += booking.TotalPrice;
+			_historyPointRepository.Update(historyPoint);
+		}
+		else
+        {
+            var historyPointEntity = new Domain.Entities.HistoryPoint
+            {
+                Id = 1,
+				UserID = booking.UserID,
+				Point = booking.TotalPrice,
+                CreatedAt = DateTime.Now,
+                Content = "Cancel booking " + booking.PaymentCode,
+			};
+            await _historyPointRepository.AddAsync(historyPointEntity);
+		}
+		var addingPoint = await _historyPointRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
+        if (addingPoint < 0)
+            throw new BadRequestException("Cancel booking fail");
+
+		booking.Reason = request.Reason;
         booking.IsDeleted = true;
         booking.ModifiedAt = DateTime.Now;
         booking.ModifiedBy = _jWTService.UserID;
