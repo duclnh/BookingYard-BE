@@ -40,6 +40,7 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 			booking.ModifiedAt = DateTime.Now;
 			booking.ModifiedBy = request.UserID;
 
+			#region Check point is available
 			var historyPoint = await _historyPointRepository.Find(x => x.UserID == request.UserID && x.Point > 0, cancellationToken);
 			if (historyPoint != null)
 			{
@@ -53,7 +54,9 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 					return new BadRequestException("Cannot use point").Message;
 				}
 			}
+			#endregion
 
+			#region Check voucher is available
 			var collectVoucher = await _collectVoucherRepository.Find(expression: x => x.UserID == request.UserID && x.VoucherID == request.VoucherID, 
 																		cancellationToken: cancellationToken,
 																		includes: new Expression<Func<Domain.Entities.CollectVoucher, object>>[]
@@ -73,9 +76,12 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 					return new BadRequestException("Voucher cannot be used").Message;
 				}
 			}
+			#endregion
 
+			// Update total price
 			booking.TotalPrice = Math.Max(0, booking.TotalPrice);
 
+			// Add payment code
 			DateTime requestDate = DateTime.Now;
 			booking.PaymentCode = "FIELDY" + requestDate.ToString("yyyyMMddHHmmss");
 
@@ -89,6 +95,7 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 			if (result <= 0)
 				throw new BadRequestException("Create new booking fail!");
 
+			// Check payment type
 			string? paymentUrl = null;
 			switch (booking.PaymentMethod)
 			{
