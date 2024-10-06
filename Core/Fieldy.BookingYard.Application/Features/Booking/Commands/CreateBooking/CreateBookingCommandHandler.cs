@@ -35,10 +35,14 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 				throw new BadRequestException("Invalid register booking", validationResult);
 
 			var booking = _mapper.Map<Domain.Entities.Booking>(request);
+			if (booking == null)
+				throw new BadRequestException("Error create booking!");
 			booking.CreatedAt = DateTime.Now;
 			booking.CreatedBy = request.UserID;
 			booking.ModifiedAt = DateTime.Now;
 			booking.ModifiedBy = request.UserID;
+			booking.IsCheckin = false;
+			booking.IsFeedback = false;
 
 			#region Check point is available
 			var historyPoint = await _historyPointRepository.Find(x => x.UserID == request.UserID && x.Point > 0, cancellationToken);
@@ -49,10 +53,6 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 				// Update user points
 				historyPoint.Point = Math.Max(0, historyPoint.Point - request.TotalPrice);
 				_historyPointRepository.Update(historyPoint);
-				if (await _historyPointRepository.UnitOfWork.SaveChangesAsync(cancellationToken) <= 0)
-				{
-					return new BadRequestException("Cannot use point").Message;
-				}
 			}
 			#endregion
 
@@ -63,18 +63,14 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 																		{
 																			x => x.Voucher
 																		});
-			if (collectVoucher != null && booking.TotalPrice > 0)
+			if (collectVoucher.Voucher != null && booking.TotalPrice > 0)
 			{
-				booking.TotalPrice *= (1 - collectVoucher.Voucher.Percentage);
+				var percentage = Convert.ToDecimal(collectVoucher.Voucher.Percentage);
+				booking.TotalPrice *= booking.TotalPrice * (1 - (percentage / 100));
 
 				// Mark voucher as used
 				collectVoucher.IsUsed = true;
 				_collectVoucherRepository.Update(collectVoucher);
-
-				if (await _collectVoucherRepository.UnitOfWork.SaveChangesAsync(cancellationToken) <= 0)
-				{
-					return new BadRequestException("Voucher cannot be used").Message;
-				}
 			}
 			#endregion
 
@@ -85,15 +81,12 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 			DateTime requestDate = DateTime.Now;
 			booking.PaymentCode = "FIELDY" + requestDate.ToString("yyyyMMddHHmmss");
 
-			if (booking == null)
-				throw new BadRequestException("Error create booking!");
-
 			await _bookingRepository.AddAsync(booking);
 
-			var result = await _bookingRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
-
-			if (result <= 0)
-				throw new BadRequestException("Create new booking fail!");
+			if (await _bookingRepository.UnitOfWork.SaveChangesAsync(cancellationToken) <= 0)
+			{
+				return new BadRequestException("Create new booking fail!").Message;
+			}
 
 			// Check payment type
 			string? paymentUrl = null;

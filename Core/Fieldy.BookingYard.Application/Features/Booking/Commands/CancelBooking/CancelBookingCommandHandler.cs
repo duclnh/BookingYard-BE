@@ -30,7 +30,7 @@ public class CancelBookingCommandHandler : IRequestHandler<CancelBookingCommand,
 		if(booking == null)
             throw new NotFoundException(nameof(booking), request.BookingID);
 
-        if (booking.Status == true)
+        if (booking.IsCheckin == true)
             throw new BadRequestException("Booking is already used");
 
 		var historyPoint = await _historyPointRepository.Find(x => x.UserID == _jWTService.UserID, cancellationToken);

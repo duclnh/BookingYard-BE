@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Features\Payment\Commands\" />
     <Folder Include="Features\Sport\Queries\GetAllSport\" />
   </ItemGroup>   
   

@@ -20,16 +20,6 @@ namespace Fieldy.BookingYard.Api.Controllers
 			_mediator = mediator;
 		}
 
-		[HttpPost]
-		[ProducesResponseType(typeof(string), 200)]
-		[ProducesResponseType((int)HttpStatusCode.BadRequest)]
-		public async Task<IActionResult> Create([FromBody] CreatePaymentCommand request,
-													CancellationToken cancellationToken = default)
-		{
-			var result = await _mediator.Send(request, cancellationToken);
-			return Ok(result);
-		}
-
 		[HttpGet]
 		[Route("vnpay-return")]
 		public async Task<IActionResult> VnpayReturn([FromQuery] GetVnpayReturnQuery response,
