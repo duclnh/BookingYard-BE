@@ -28,6 +28,12 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Queries.DTO
 		public string? VoucherName { get; set; }
 		public int Percentage { get; set; }
 		public string? VoucherCode { get; set; }
+		public string? VoucherFacility { get; set; }
+		public string? VoucherStartDate { get; set; }
+		public string? VoucherEndDate { get; set; }
+		public string? VoucherSport { get; set; }
+		public string? Reason { get; set; }
+		public string? SportName { get; set; }
 		public decimal CourtPrice { get; set; }
 		public decimal TotalPrice { get; set; }
 		public bool IsDeleted { get; set; }

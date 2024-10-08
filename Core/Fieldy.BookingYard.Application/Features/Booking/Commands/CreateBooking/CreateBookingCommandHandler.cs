@@ -1,9 +1,8 @@
 ﻿using AutoMapper;
+using AutoMapper.Execution;
 using Fieldy.BookingYard.Application.Abstractions.Vnpay;
 using Fieldy.BookingYard.Application.Exceptions;
-using Fieldy.BookingYard.Application.Features.Feedback.Commands.CreateFeedback;
 using Fieldy.BookingYard.Domain.Abstractions.Repositories;
-using Fieldy.BookingYard.Domain.Entities;
 using Fieldy.BookingYard.Domain.Enums;
 using MediatR;
 using System.Linq.Expressions;
@@ -15,16 +14,26 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 		private readonly IMapper _mapper;
 		private readonly IBookingRepository _bookingRepository;
 		private readonly IHistoryPointRepository _historyPointRepository;
+		private readonly IUserRepository _userRepository;
 		private readonly ICollectVoucherRepository _collectVoucherRepository;
 		private readonly IVnpayService _vnpayService;
+		private readonly ICourtRepository _courtRepository;
 
-		public CreateBookingCommandHandler(IMapper mapper, IBookingRepository bookingRepository, IHistoryPointRepository historyPointRepository, ICollectVoucherRepository collectVoucherRepository, IVnpayService vnpayService)
+		public CreateBookingCommandHandler(IMapper mapper,
+											IBookingRepository bookingRepository,
+											IHistoryPointRepository historyPointRepository,
+											ICollectVoucherRepository collectVoucherRepository,
+											IVnpayService vnpayService,
+											IUserRepository userRepository,
+											ICourtRepository courtRepository)
 		{
 			_mapper = mapper;
 			_bookingRepository = bookingRepository;
 			_historyPointRepository = historyPointRepository;
 			_collectVoucherRepository = collectVoucherRepository;
 			_vnpayService = vnpayService;
+			_userRepository = userRepository;
+			_courtRepository = courtRepository;
 		}
 
 		public async Task<string> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
@@ -34,9 +43,14 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 			if (validationResult.Errors.Any())
 				throw new BadRequestException("Invalid register booking", validationResult);
 
+			var court = await _courtRepository.FindByIdAsync(request.CourtID, cancellationToken);
+			if (court == null)
+				throw new NotFoundException(nameof(court), request.CourtID);
+
 			var booking = _mapper.Map<Domain.Entities.Booking>(request);
 			if (booking == null)
 				throw new BadRequestException("Error create booking!");
+
 			booking.CreatedAt = DateTime.Now;
 			booking.CreatedBy = request.UserID;
 			booking.ModifiedAt = DateTime.Now;
@@ -44,42 +58,65 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 			booking.IsCheckin = false;
 			booking.IsFeedback = false;
 
-			#region Check point is available
-			var historyPoint = await _historyPointRepository.Find(x => x.UserID == request.UserID && x.Point > 0, cancellationToken);
-			if (historyPoint != null)
-			{
-				booking.TotalPrice = request.TotalPrice - historyPoint.Point;
+			booking.TotalPrice = (booking.EndTime.Hours - booking.StartTime.Hours) * court.CourtPrice;
 
-				// Update user points
-				historyPoint.Point = Math.Max(0, historyPoint.Point - request.TotalPrice);
-				_historyPointRepository.Update(historyPoint);
-			}
-			#endregion
+			// Add payment code
+			DateTime requestDate = DateTime.Now;
+			booking.PaymentCode = "FIELDY" + requestDate.ToString("yyyyMMddHHmmss");
+
 
 			#region Check voucher is available
-			var collectVoucher = await _collectVoucherRepository.Find(expression: x => x.UserID == request.UserID && x.VoucherID == request.VoucherID, 
+			var collectVoucher = await _collectVoucherRepository.Find(expression: x => x.UserID == request.UserID && x.Id == request.CollectVoucherID,
 																		cancellationToken: cancellationToken,
 																		includes: new Expression<Func<Domain.Entities.CollectVoucher, object>>[]
 																		{
 																			x => x.Voucher
 																		});
-			if (collectVoucher.Voucher != null && booking.TotalPrice > 0)
+			if (collectVoucher != null && collectVoucher.Voucher != null && booking.TotalPrice > 0)
 			{
 				var percentage = Convert.ToDecimal(collectVoucher.Voucher.Percentage);
-				booking.TotalPrice *= booking.TotalPrice * (1 - (percentage / 100));
+				booking.TotalPrice -= booking.TotalPrice * (percentage / 100);
 
 				// Mark voucher as used
 				collectVoucher.IsUsed = true;
 				_collectVoucherRepository.Update(collectVoucher);
+				booking.VoucherID = collectVoucher.VoucherID;
 			}
 			#endregion
 
+			var user = await _userRepository.FindByIdAsync(request.UserID, cancellationToken);
+
+			if (user == null)
+			{
+				throw new NotFoundException(nameof(user), request.UserID);
+			}
+
+			if (request.Point > 0)
+			{
+
+				user.Point -= (int)request.Point;
+
+				booking.TotalPrice -= (int)request.Point;
+
+				if (user.Point < 0)
+					throw new BadRequestException("Point invalid");
+
+				_userRepository.Update(user);
+
+				var historyPointEntity = new Domain.Entities.HistoryPoint
+				{
+					Id = 0,
+					UserID = booking.UserID,
+					Point = -1 * (int)request.Point,
+					CreatedAt = DateTime.Now,
+					Content = "Đặt lịch " + booking.PaymentCode,
+				};
+
+				await _historyPointRepository.AddAsync(historyPointEntity);
+			}
+
 			// Update total price
 			booking.TotalPrice = Math.Max(0, booking.TotalPrice);
-
-			// Add payment code
-			DateTime requestDate = DateTime.Now;
-			booking.PaymentCode = "FIELDY" + requestDate.ToString("yyyyMMddHHmmss");
 
 			await _bookingRepository.AddAsync(booking);
 
