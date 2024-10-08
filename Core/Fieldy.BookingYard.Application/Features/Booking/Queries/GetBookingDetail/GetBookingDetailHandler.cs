@@ -20,8 +20,10 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Queries.GetBookingDeta
 		{
 			var booking = await _bookingRepository.FindByIdAsync(request.bookingID,
 																cancellationToken,
+																x => x.Voucher,
 																x => x.Court,
-																x => x.Court.Facility);
+																x => x.Court.Facility,
+																x => x.Court.Sport);
 			if (booking == null)
 				throw new NotFoundException(nameof(booking), request.bookingID);
 

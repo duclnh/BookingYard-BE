@@ -62,9 +62,10 @@ namespace Fieldy.BookingYard.Api.Controllers
 		public async Task<IActionResult> GetAllBookingCustomer(
 				[FromQuery] RequestParams requestParams,
 				[FromRoute] Guid customerId,
+				[FromQuery] string type,
 				CancellationToken cancellationToken = default)
 		{
-			var result = await _mediator.Send(new GetAllBookingCustomerQuery(requestParams, customerId, cancellationToken));
+			var result = await _mediator.Send(new GetAllBookingCustomerQuery(requestParams, customerId, type, cancellationToken));
 			return Ok(result);
 		}
 
@@ -82,14 +83,14 @@ namespace Fieldy.BookingYard.Api.Controllers
 			return Ok(result);
 		}
 
-		[HttpPost("cancel-booking")]
+		[HttpPost("/api/cancel-booking")]
 		[Produces(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
 		public async Task<IActionResult> CreateBooking(
-		    [FromBody] CancelBookingCommand command,
-		    CancellationToken cancellationToken = default)
+			[FromBody] CancelBookingCommand command,
+			CancellationToken cancellationToken = default)
 		{
 			var result = await _mediator.Send(command, cancellationToken);
 			return Ok(result);

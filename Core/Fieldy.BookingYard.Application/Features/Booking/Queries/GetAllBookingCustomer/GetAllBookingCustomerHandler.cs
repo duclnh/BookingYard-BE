@@ -5,6 +5,7 @@ using Fieldy.BookingYard.Application.Models.Paging;
 using Fieldy.BookingYard.Domain.Abstractions.Repositories;
 using MediatR;
 using System.Linq.Expressions;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Fieldy.BookingYard.Application.Features.Booking.Queries.GetAllBookingCustomer
 {
@@ -21,17 +22,22 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Queries.GetAllBookingC
 
 		public async Task<PagingResult<CustomerBooking>> Handle(GetAllBookingCustomerQuery request, CancellationToken cancellationToken)
 		{
+			Expression<Func<Domain.Entities.Booking, bool>> expression;
+
+			expression = request.type switch
+			{
+				"cancel" => x => x.UserID == request.userId && x.IsDeleted,
+				"feedback" => x => x.UserID == request.userId && x.IsCheckin && x.IsFeedback == false,
+				_ => x => x.UserID == request.userId,
+			};
 			var listBooking = await _bookingRepository.FindAllPaging(
 				currentPage: request.requestParams.CurrentPage,
 				pageSize: Math.Min(request.requestParams.PageSize, 10),
-				expression: x => x.UserID == request.userId,
+				expression: expression,
 				orderBy: x => x.OrderByDescending(x => x.CreatedAt),
 				cancellationToken: cancellationToken,
-				includes: new Expression<Func<Domain.Entities.Booking, object>>[]
-				{
 					x => x.Court,
-					x => x.Court.Facility,
-				});
+					x => x.Court.Facility);
 
 			return PagingResult<CustomerBooking>.Create(
 			   totalCount: listBooking.TotalCount,
