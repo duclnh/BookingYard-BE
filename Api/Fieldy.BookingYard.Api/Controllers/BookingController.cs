@@ -69,17 +69,17 @@ namespace Fieldy.BookingYard.Api.Controllers
 			return Ok(result);
 		}
 
-		[HttpGet("facility/{facilityId}")]
+		[HttpGet("facility/{id}")]
 		[Produces(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(typeof(IList<BookingDetailDto>), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
 		public async Task<IActionResult> GetAllBookingFacility(
 				[FromQuery] RequestParams requestParams,
-				[FromRoute] Guid facilityId,
+				[FromRoute] Guid id,
 				CancellationToken cancellationToken = default)
 		{
-			var result = await _mediator.Send(new GetAllBookingFacilityQuery(requestParams, facilityId, cancellationToken));
+			var result = await _mediator.Send(new GetAllBookingFacilityQuery(requestParams, id, cancellationToken));
 			return Ok(result);
 		}
 

@@ -21,6 +21,8 @@ namespace Fieldy.BookingYard.Domain.Entities
         public TimeSpan EndTime { get; set; }
         public Guid? VoucherID { get; set; }
         public Voucher? Voucher { get; set; }
+        public int UsedPoint { get; set; }
+        public decimal OwnerPrice { get; set; }
         public bool IsCheckin { get; set; }
         public bool IsFeedback { get; set; }
         public string? Reason { get; set; }

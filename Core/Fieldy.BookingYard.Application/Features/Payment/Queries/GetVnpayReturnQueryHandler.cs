@@ -41,8 +41,6 @@ namespace Fieldy.BookingYard.Application.Features.Payment.Queries
 			}
 			else
 			{
-				_bookingRepository.Remove(booking);
-				await _bookingRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
 				throw new BadRequestException("Payment fail");
 			}
 			//Create transaction

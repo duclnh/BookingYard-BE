@@ -33,10 +33,11 @@ namespace Fieldy.BookingYard.Application.MappingProfiles
 				.ForMember(dest => dest.Percentage, opt => opt.MapFrom(src => src.Voucher != null ? src.Voucher.Percentage : 0))
 				.ForMember(dest => dest.VoucherCode, opt => opt.MapFrom(src => src.Voucher != null ? src.Voucher.Code : null))
 				.ForMember(dest => dest.VoucherFacility, opt => opt.MapFrom(src => src.Voucher != null ? src.Voucher.FacilityID.ToString() : null))
-				.ForMember(dest => dest.VoucherStartDate, opt => opt.MapFrom(src => src.Voucher != null ? src.Voucher.RegisterDate.ToString("dd-MM-yyyy hh\\:mm") : null))
-				.ForMember(dest => dest.VoucherEndDate, opt => opt.MapFrom(src => src.Voucher != null ? src.Voucher.ExpiredDate.ToString("dd-MM-yyyy hh\\:mm") : null))
+				.ForMember(dest => dest.VoucherStartDate, opt => opt.MapFrom(src => src.Voucher != null ? src.Voucher.RegisterDate.ToString("dd-MM-yyyy") : null))
+				.ForMember(dest => dest.VoucherEndDate, opt => opt.MapFrom(src => src.Voucher != null ? src.Voucher.ExpiredDate.ToString("dd-MM-yyyy") : null))
 				.ForMember(dest => dest.VoucherSport, opt => opt.MapFrom(src => src.Voucher != null ? src.Voucher.Sport.SportName : null))
-				.ForMember(dest => dest.SportName, opt => opt.MapFrom(src => src.Court.Sport.SportName));
+				.ForMember(dest => dest.SportName, opt => opt.MapFrom(src => src.Court.Sport.SportName))
+				.ForMember(dest => dest.NumberPlayer, opt => opt.MapFrom(src => src.Court.NumberPlayer));
 
 			CreateMap<Booking, CustomerBooking>()
 				.ForMember(dest => dest.BookingID, opt => opt.MapFrom(src => src.Id))

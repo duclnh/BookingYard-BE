@@ -1,10 +1,5 @@
-﻿using Fieldy.BookingYard.Application.Features.Voucher.Command.CreateVoucher;
-using Fieldy.BookingYard.Application.Features.Voucher.Command.UpdateVoucher;
-using Fieldy.BookingYard.Application.Features.Voucher.Queries.GetAllVoucher;
-using Fieldy.BookingYard.Application.Features.Voucher.Queries;
-using Fieldy.BookingYard.Application.Models.Query;
+﻿using Fieldy.BookingYard.Application.Models.Query;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using Fieldy.BookingYard.Application.Features.CollectVoucher.Commands.CreateCollectVoucher;
@@ -26,7 +21,7 @@ namespace Fieldy.BookingYard.Api.Controllers
 		{
 			_mediator = mediator;
 		}
-		
+
 		[HttpPost]
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = "Customer")]
 		[Produces(MediaTypeNames.Application.Json)]
@@ -55,7 +50,7 @@ namespace Fieldy.BookingYard.Api.Controllers
 			var result = await _mediator.Send(command, cancellationToken);
 			return Ok(result);
 		}
-		
+
 		[AllowAnonymous]
 		[HttpGet("{id}")]
 		[Produces(MediaTypeNames.Application.Json)]
@@ -72,5 +67,6 @@ namespace Fieldy.BookingYard.Api.Controllers
 			var result = await _mediator.Send(new GetAllCollectVoucherQuery(requestParams, id, type), cancellationToken);
 			return Ok(result);
 		}
+
 	}
 }
