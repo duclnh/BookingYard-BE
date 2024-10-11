@@ -18,12 +18,12 @@ namespace Fieldy.BookingYard.Application.Features.Dashboard.Queries
 			var today = DateTime.Today;
 			Expression<Func<Domain.Entities.Booking, bool>> timeBasedExpression = request.typeTimeBased switch
 			{
-				TypeTimeBased.date => x => x.BookingDate.Date == today && x.IsDeleted == (request.typeBooking == 0 ? true : false),
-				TypeTimeBased.week => x => x.BookingDate >= today.AddDays(-(int)today.DayOfWeek) &&
-											 x.BookingDate < today.AddDays(7 - (int)today.DayOfWeek) && x.IsDeleted == (request.typeBooking == 0 ? true : false),
-				TypeTimeBased.month => x => x.BookingDate.Month == today.Month &&
-											 x.BookingDate.Year == today.Year && x.IsDeleted == (request.typeBooking == 0 ? true : false),
-				TypeTimeBased.year => x => x.BookingDate.Year == today.Year && x.IsDeleted == (request.typeBooking == 0 ? true : false),
+				/*TypeTimeBased.date*/ "date" => x => x.BookingDate.Date == today && x.IsDeleted == true,
+				/*TypeTimeBased.week*/ "week" => x => x.BookingDate >= today.AddDays(-(int)today.DayOfWeek) &&
+											 x.BookingDate < today.AddDays(7 - (int)today.DayOfWeek) && x.IsDeleted == true,
+				/*TypeTimeBased.month*/ "month" => x => x.BookingDate.Month == today.Month &&
+											 x.BookingDate.Year == today.Year && x.IsDeleted == true,
+				/*TypeTimeBased.year*/ "year" => x => x.BookingDate.Year == today.Year && x.IsDeleted == true,
 				_ => x => true
 			};
 			var bookings = await _bookingRepository.FindAll(expression: timeBasedExpression,
@@ -34,7 +34,7 @@ namespace Fieldy.BookingYard.Application.Features.Dashboard.Queries
 			var revenueDetail = new RevenueDetail();
 			switch (request.typeTimeBased)
 			{
-				case TypeTimeBased.date:
+				case /*TypeTimeBased.date*/ "date":
 					var revenueByHour = _bookingRepository.GetRevenueByHour();
 					revenueDetail.HourlyDetails = revenueByHour?.Select(r => new HourlyRevenue
 					{
@@ -42,7 +42,7 @@ namespace Fieldy.BookingYard.Application.Features.Dashboard.Queries
 						Amount = r.TotalRevenue
 					}).ToList();
 					break;
-				case TypeTimeBased.week:
+				case /*TypeTimeBased.week*/ "week":
 					var revenueByWeek = _bookingRepository.GetRevenueByWeek();
 					revenueDetail.DayOfWeekDetails = revenueByWeek?.Select(r => new DayOfWeekRevenue
 					{
@@ -50,7 +50,7 @@ namespace Fieldy.BookingYard.Application.Features.Dashboard.Queries
 						Amount = r.TotalRevenue
 					}).ToList();
 					break;
-				case TypeTimeBased.month:
+				case /*TypeTimeBased.month*/ "month":
 					var revenueByDay = _bookingRepository.GetRevenueByDay();
 					revenueDetail.DailyDetails = revenueByDay?.Select(r => new DailyRevenue
 					{
@@ -58,7 +58,7 @@ namespace Fieldy.BookingYard.Application.Features.Dashboard.Queries
 						Amount = r.TotalRevenue
 					}).ToList();
 					break;
-				case TypeTimeBased.year:
+				case /*TypeTimeBased.year*/ "year":
 					var revenueByMonth = _bookingRepository.GetRevenueByMonth();
 					revenueDetail.MonthlyDetails = revenueByMonth?.Select(r => new MonthlyRevenue
 					{

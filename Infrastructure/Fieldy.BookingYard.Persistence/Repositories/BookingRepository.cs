@@ -10,13 +10,13 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 		public BookingRepository(BookingYardDBContext bookingYardDBContext) : base(bookingYardDBContext)
 		{
 		}
-		public List<(TimeOnly Hour, decimal TotalRevenue)> GetRevenueByHour()
+		public List<(TimeSpan Hour, decimal TotalRevenue)> GetRevenueByHour()
 		{
 			var date = DateTime.Now;
 
 			var revenues = _dbContext.Set<Booking>()
 				.Where(b => b.BookingDate.Date == date.Date)
-				.GroupBy(b => new TimeOnly(b.BookingDate.Hour, b.BookingDate.Minute))
+				.GroupBy(b => b.StartTime)
 				.Select(g => new
 				{
 					Hour = g.Key,

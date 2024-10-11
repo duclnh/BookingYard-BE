@@ -24,7 +24,7 @@ namespace Fieldy.BookingYard.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-		public async Task<IActionResult> CreatePayment([FromQuery] GetRevenueQuery command,
+		public async Task<IActionResult> GetRevenue([FromQuery] GetRevenueQuery command,
 														CancellationToken cancellationToken = default)
 		{
 			var getRevenue = await _mediator.Send(command, cancellationToken);

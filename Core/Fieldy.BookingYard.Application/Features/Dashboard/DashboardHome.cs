@@ -19,7 +19,7 @@ namespace Fieldy.BookingYard.Application.Features.Dashboard
 	}
 	public class HourlyRevenue
 	{
-		public TimeOnly Hour { get; set; }
+		public TimeSpan Hour { get; set; }
 		public decimal Amount { get; set; }
 	}
 	public class DayOfWeekRevenue
