@@ -63,7 +63,7 @@ namespace Fieldy.BookingYard.Persistence.Repositories
         {
             IQueryable<TEntity> query = _dbSet;
 
-            if (includes != null)
+            if (includes.Length > 0)
             {
                 foreach (var includeProperty in includes)
                 {

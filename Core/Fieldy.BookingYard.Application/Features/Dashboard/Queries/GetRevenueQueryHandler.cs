@@ -31,6 +31,42 @@ namespace Fieldy.BookingYard.Application.Features.Dashboard.Queries
 																x => x.Court,
 																x => x.Court.Sport,
 															});
+			var revenueDetail = new RevenueDetail();
+			switch (request.typeTimeBased)
+			{
+				case TypeTimeBased.date:
+					var revenueByHour = _bookingRepository.GetRevenueByHour();
+					revenueDetail.HourlyDetails = revenueByHour?.Select(r => new HourlyRevenue
+					{
+						Hour = r.Hour,
+						Amount = r.TotalRevenue
+					}).ToList();
+					break;
+				case TypeTimeBased.week:
+					var revenueByWeek = _bookingRepository.GetRevenueByWeek();
+					revenueDetail.DayOfWeekDetails = revenueByWeek?.Select(r => new DayOfWeekRevenue
+					{
+						Day = r.Date,
+						Amount = r.TotalRevenue
+					}).ToList();
+					break;
+				case TypeTimeBased.month:
+					var revenueByDay = _bookingRepository.GetRevenueByDay();
+					revenueDetail.DailyDetails = revenueByDay?.Select(r => new DailyRevenue
+					{
+						Day = r.Date,
+						Amount = r.TotalRevenue
+					}).ToList();
+					break;
+				case TypeTimeBased.year:
+					var revenueByMonth = _bookingRepository.GetRevenueByMonth();
+					revenueDetail.MonthlyDetails = revenueByMonth?.Select(r => new MonthlyRevenue
+					{
+						Month = r.Month,
+						Amount = r.TotalRevenue
+					}).ToList();
+					break;
+			}
 			var sportsCounts = bookings
 				.GroupBy(b => b.Court.Sport.SportName)
 				.Select(g => new SportCount
@@ -46,6 +82,7 @@ namespace Fieldy.BookingYard.Application.Features.Dashboard.Queries
 				Revenue = totalPrice,
 				TotalBookings = bookings.Count,
 				TotalBookingsCancel = bookings.Count(x => x.IsDeleted == true),
+				DetailsRevenue = revenueDetail,
 				CountBookings = sportsCounts
 			};
 		}
