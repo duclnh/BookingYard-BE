@@ -22,10 +22,45 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Queries.GetAllBookingF
 
 		public async Task<PagingResult<BookingDetailDto>> Handle(GetAllBookingFacilityQuery request, CancellationToken cancellationToken)
 		{
+			List<Expression<Func<Domain.Entities.Booking, bool>>> expressions = new List<Expression<Func<Domain.Entities.Booking, bool>>>
+			{
+				x => x.Court != null && x.Court.FacilityID == request.facilityId
+			};
+
+			if (!string.IsNullOrEmpty(request.sportID))
+			{
+				expressions.Add(x => x.Court.SportID.ToString() == request.sportID);
+			}
+
+			if (!string.IsNullOrEmpty(request.requestParams.Search))
+			{
+				var search = request.requestParams.Search.ToLower().Trim();
+
+				expressions.Add(x => x.Court.CourtName.ToLower().Contains(search) || x.FullName.ToLower().Contains(search));
+
+			}
+
+			switch (request.status)
+			{
+				case "checked":
+					expressions.Add(x => x.IsCheckin == false	);
+					break;
+				case "paid":
+					expressions.Add(x => x.PaymentStatus);
+					break;
+				case "notPayment":
+					expressions.Add(x => x.PaymentStatus == false);
+					break;
+				case "cancel":
+					expressions.Add(x => x.IsDeleted == true);
+					break;
+			}
+			Expression<Func<Domain.Entities.Booking, bool>>[] expressionArray = expressions.ToArray();
+
 			var listBooking = await _bookingRepository.FindAllPaging(
 				currentPage: request.requestParams.CurrentPage,
 				pageSize: Math.Min(request.requestParams.PageSize, 10),
-				expression: x => x.Court != null && x.Court.FacilityID == request.facilityId,
+				expressions: expressionArray,
 				orderBy: x => x.OrderByDescending(x => x.CreatedAt),
 				cancellationToken: cancellationToken,
 				includes: new Expression<Func<Domain.Entities.Booking, object>>[]

@@ -83,9 +83,23 @@ namespace Fieldy.BookingYard.Api.Controllers
           [FromQuery] RequestParams request,
           [FromQuery] float? longitude,
           [FromQuery] float? latitude,
+          [FromQuery] string? sportID,
+          [FromQuery] string? provinceID,
+          [FromQuery] string? districtID,
+          [FromQuery] string? distance,
+          [FromQuery] string? orderBy,
+          [FromQuery] string? price,
           CancellationToken cancellationToken = default)
         {
-            var result = await _mediator.Send(new GetAllFacilityCustomerQuery(request, longitude, latitude), cancellationToken);
+            var result = await _mediator.Send(new GetAllFacilityCustomerQuery(request,
+                                                                                longitude,
+                                                                                latitude,
+                                                                                sportID,
+                                                                                provinceID,
+                                                                                districtID,
+                                                                                distance,
+                                                                                orderBy,
+                                                                                price), cancellationToken);
             return Ok(result);
         }
 

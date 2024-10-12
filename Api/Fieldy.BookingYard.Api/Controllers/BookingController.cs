@@ -77,9 +77,11 @@ namespace Fieldy.BookingYard.Api.Controllers
 		public async Task<IActionResult> GetAllBookingFacility(
 				[FromQuery] RequestParams requestParams,
 				[FromRoute] Guid id,
+				[FromQuery] string? SportID,
+				[FromQuery] string? Status,
 				CancellationToken cancellationToken = default)
 		{
-			var result = await _mediator.Send(new GetAllBookingFacilityQuery(requestParams, id, cancellationToken));
+			var result = await _mediator.Send(new GetAllBookingFacilityQuery(requestParams, id, SportID, Status, cancellationToken));
 			return Ok(result);
 		}
 
