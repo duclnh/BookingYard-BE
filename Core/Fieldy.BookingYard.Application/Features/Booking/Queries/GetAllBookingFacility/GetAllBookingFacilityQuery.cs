@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.Booking.Queries.GetAllBookingFacility
 {
-	public record GetAllBookingFacilityQuery(RequestParams requestParams, Guid facilityId, CancellationToken cancellation) : IRequest<PagingResult<BookingDetailDto>>
+	public record GetAllBookingFacilityQuery(RequestParams requestParams, Guid facilityId, string? sportID, string? status, CancellationToken cancellation) : IRequest<PagingResult<BookingDetailDto>>
 	{
 	}
 }
