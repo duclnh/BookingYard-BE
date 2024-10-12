@@ -59,6 +59,7 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 			booking.IsFeedback = false;
 
 			booking.TotalPrice = (booking.EndTime.Hours - booking.StartTime.Hours) * court.CourtPrice;
+			booking.OwnerPrice = booking.TotalPrice;
 
 			// Add payment code
 			DateTime requestDate = DateTime.Now;
@@ -68,13 +69,16 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 			#region Check voucher is available
 			var collectVoucher = await _collectVoucherRepository.Find(expression: x => x.UserID == request.UserID && x.Id == request.CollectVoucherID,
 																		cancellationToken: cancellationToken,
-																		includes: new Expression<Func<Domain.Entities.CollectVoucher, object>>[]
-																		{
-																			x => x.Voucher
-																		});
+																		x => x.Voucher
+																		);
 			if (collectVoucher != null && collectVoucher.Voucher != null && booking.TotalPrice > 0)
 			{
 				var percentage = Convert.ToDecimal(collectVoucher.Voucher.Percentage);
+				if (court.FacilityID == collectVoucher.Voucher.FacilityID)
+				{
+					booking.OwnerPrice -= booking.TotalPrice * (percentage / 100);
+				}
+
 				booking.TotalPrice -= booking.TotalPrice * (percentage / 100);
 
 				// Mark voucher as used
@@ -101,6 +105,8 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 				if (user.Point < 0)
 					throw new BadRequestException("Point invalid");
 
+				booking.UsedPoint = request.Point;
+
 				_userRepository.Update(user);
 
 				var historyPointEntity = new Domain.Entities.HistoryPoint
@@ -117,6 +123,9 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 
 			// Update total price
 			booking.TotalPrice = Math.Max(0, booking.TotalPrice);
+
+			//-15% for corporation
+			booking.OwnerPrice = booking.OwnerPrice * ((decimal)85 / 100);
 
 			await _bookingRepository.AddAsync(booking);
 

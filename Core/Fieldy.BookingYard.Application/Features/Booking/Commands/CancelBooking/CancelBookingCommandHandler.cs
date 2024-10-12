@@ -13,19 +13,22 @@ public class CancelBookingCommandHandler : IRequestHandler<CancelBookingCommand,
     private readonly IHistoryPointRepository _historyPointRepository;
     private readonly IBookingRepository _bookingRepository;
     private readonly ICourtRepository _courtRepository;
+    private readonly ICollectVoucherRepository _collectVoucherRepository;
 
 
     public CancelBookingCommandHandler(IJWTService jWTService,
                                         IUserRepository userRepository,
                                         IBookingRepository bookingRepository,
                                         ICourtRepository courtRepository,
-                                        IHistoryPointRepository historyPointRepository)
+                                        IHistoryPointRepository historyPointRepository,
+                                        ICollectVoucherRepository collectVoucherRepository)
     {
         _jWTService = jWTService;
         _userRepository = userRepository;
         _historyPointRepository = historyPointRepository;
         _bookingRepository = bookingRepository;
         _courtRepository = courtRepository;
+        _collectVoucherRepository = collectVoucherRepository;
     }
 
     public async Task<string> Handle(CancelBookingCommand request, CancellationToken cancellationToken)
@@ -40,6 +43,17 @@ public class CancelBookingCommandHandler : IRequestHandler<CancelBookingCommand,
 
         if (booking == null)
             throw new NotFoundException(nameof(booking), request.BookingID);
+
+        if (booking.VoucherID != null)
+        {
+            var collectVoucher = await _collectVoucherRepository.Find(x => x.VoucherID == booking.VoucherID && x.UserID
+            == booking.UserID, cancellationToken);
+            if (collectVoucher != null)
+            {
+                collectVoucher.IsUsed = false;
+                _collectVoucherRepository.Update(collectVoucher);
+            }
+        }
 
         if (user.Role == Role.Customer && user.Id != booking.UserID)
             throw new BadRequestException($"You don't have permission");
@@ -57,13 +71,18 @@ public class CancelBookingCommandHandler : IRequestHandler<CancelBookingCommand,
         if (booking.User != null)
         {
             booking.User.Point += (int)booking.TotalPrice;
+            if (booking.UsedPoint > 0)
+            {
+                booking.User.Point += booking.UsedPoint;
+            }
             _userRepository.Update(booking.User);
         }
+
         var historyPointEntity = new Domain.Entities.HistoryPoint
         {
             Id = 0,
             UserID = booking.UserID,
-            Point = (int)booking.TotalPrice,
+            Point = booking.UsedPoint > 0 ? (int)booking.TotalPrice + booking.UsedPoint : (int)booking.TotalPrice,
             CreatedAt = DateTime.Now,
             Content = "Huỷ đặt lịch " + booking.PaymentCode,
         };
@@ -79,6 +98,7 @@ public class CancelBookingCommandHandler : IRequestHandler<CancelBookingCommand,
         var result = await _bookingRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
         if (result < 0)
             throw new BadRequestException("Cancel booking fail");
+
         return "Cancel booking success";
     }
 }

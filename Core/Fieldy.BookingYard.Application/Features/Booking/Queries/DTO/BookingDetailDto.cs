@@ -34,6 +34,9 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Queries.DTO
 		public string? VoucherSport { get; set; }
 		public string? Reason { get; set; }
 		public string? SportName { get; set; }
+		public int UsedPoint { get; set; }
+		public int NumberPlayer { get; set; }
+		public decimal OwnerPrice { get; set; }
 		public decimal CourtPrice { get; set; }
 		public decimal TotalPrice { get; set; }
 		public bool IsDeleted { get; set; }
