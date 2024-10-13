@@ -1,6 +1,4 @@
-using System;
-using System.Security.Cryptography.X509Certificates;
-using AutoMapper;
+using System.Linq.Expressions;
 using Fieldy.BookingYard.Application.Features.Facility.Queries.DTO;
 using Fieldy.BookingYard.Application.Models.Paging;
 using Fieldy.BookingYard.Domain.Abstractions.Repositories;
@@ -13,43 +11,137 @@ public class GetAllFacilityCustomerQueryHandler : IRequestHandler<GetAllFacility
     private readonly IFacilityRepository _facilityRepository;
     private readonly IFeedbackRepository _feedbackRepository;
     private readonly ICourtRepository _courtRepository;
-    private readonly IMapper _mapper;
 
-    public GetAllFacilityCustomerQueryHandler(IFacilityRepository facilityRepository, IFeedbackRepository feedbackRepository, ICourtRepository courtRepository, IMapper mapper)
+
+    public GetAllFacilityCustomerQueryHandler(IFacilityRepository facilityRepository, IFeedbackRepository feedbackRepository, ICourtRepository courtRepository)
     {
         _facilityRepository = facilityRepository;
         _feedbackRepository = feedbackRepository;
         _courtRepository = courtRepository;
-        _mapper = mapper;
     }
 
     public async Task<PagingResult<FacilityCustomerDTO>> Handle(GetAllFacilityCustomerQuery request, CancellationToken cancellationToken)
     {
-        var listFacility = await _facilityRepository.FindAllPaging(
-            currentPage: request.request.CurrentPage,
-            pageSize: request.request.PageSize,
-            expression: x => x.IsDeleted == false,
+        List<Expression<Func<Domain.Entities.Facility, bool>>> expressions = new List<Expression<Func<Domain.Entities.Facility, bool>>>
+        {
+            x => x.IsDeleted == false
+        };
+
+        Func<IQueryable<Domain.Entities.Facility>, IOrderedQueryable<Domain.Entities.Facility>> orderBy = x => x.OrderByDescending(x => x.CreatedAt); ;
+
+        if (!string.IsNullOrEmpty(request.ProvinceID))
+        {
+            expressions.Add(x => x.ProvinceID.ToString() == request.ProvinceID);
+        }
+
+        if (!string.IsNullOrEmpty(request.DistrictID))
+        {
+            expressions.Add(x => x.DistrictID.ToString() == request.DistrictID);
+        }
+
+        if (!string.IsNullOrEmpty(request.RequestParams.Search))
+        {
+            string searchTerm = request.RequestParams.Search.ToLower().Trim();
+            expressions.Add(x => x.Name.ToLower().Contains(searchTerm)
+                                || x.Address.ToLower().Contains(searchTerm));
+        }
+
+        if (!string.IsNullOrEmpty(request.SportID))
+        {
+            expressions.Add(x => x.Courts.Any(x => x.SportID.ToString() == request.SportID));
+        }
+
+        if (!string.IsNullOrEmpty(request.Price) &&
+              decimal.TryParse(request.Price, out decimal priceSearch))
+        {
+            expressions.Add(x => x.Courts.Min(x => x.CourtPrice) < priceSearch);
+        }
+
+        switch (request.OrderBy)
+        {
+            case "priceAsc":
+                orderBy = x => x.OrderBy(f => f.Courts.Min(c => c.CourtPrice));
+                break;
+
+            case "priceDesc":
+                orderBy = x => x.OrderByDescending(f => f.Courts.Min(c => c.CourtPrice));
+                break;
+
+        }
+
+        Expression<Func<Domain.Entities.Facility, bool>>[] expressionArray = expressions.ToArray();
+
+        var listFacility = await _facilityRepository.FindAllFacility(
+            expressions: expressionArray,
+            orderBy: orderBy,
             cancellationToken: cancellationToken,
             includes: x => x.Courts
         );
-        var facilityMapped = _mapper.Map<IList<FacilityCustomerDTO>>(listFacility.Results);
 
-        foreach (var facility in facilityMapped)
+        List<FacilityCustomerDTO> facilityCustomers = new List<FacilityCustomerDTO>();
+        foreach (var facility in listFacility)
         {
-            facility.FacilityMinPrice = await _courtRepository.GetMinPriceCourt(facility.FacilityID, cancellationToken);
-            facility.FacilityMaxPrice = await _courtRepository.GetMaxPriceCourt(facility.FacilityID, cancellationToken);
-            facility.FacilityRating = await _feedbackRepository.GetRatingFacility(facility.FacilityID, cancellationToken);
+            facilityCustomers.Add(
+                new FacilityCustomerDTO
+                {
+                    FacilityID = facility.Id,
+                    FacilityImage = facility.Image,
+                    FacilityName = facility.Name,
+                    FacilityAddress = facility.FullAddress,
+                    FacilityRating = await _feedbackRepository.GetRatingFacility(facility.Id, cancellationToken),
+                    FacilityMinPrice = await _courtRepository.GetMinPriceCourt(facility.Id, cancellationToken),
+                    FacilityMaxPrice = await _courtRepository.GetMaxPriceCourt(facility.Id, cancellationToken),
+                    FacilityDistance = CalculateDistance(facility.Latitude, facility.Longitude, request.Latitude ?? 0, request.Longitude ?? 0)
+                }
+            ); ;
         }
 
+        if (!string.IsNullOrEmpty(request.Distance) &&
+              double.TryParse(request.Distance, out double distance))
+        {
+            facilityCustomers.Where(x => x.FacilityDistance <= distance);
+        }
+
+        switch (request.OrderBy)
+        {
+            case "distanceAsc":
+                facilityCustomers.OrderBy(x => x.FacilityDistance);
+                break;
+
+            case "distanceDesc":
+                facilityCustomers.OrderByDescending(x => x.FacilityDistance);
+                break;
+        }
+
+        facilityCustomers = facilityCustomers.Skip((request.RequestParams.CurrentPage - 1) * request.RequestParams.PageSize).Take(request.RequestParams.PageSize).ToList();
+
+
         return PagingResult<FacilityCustomerDTO>.Create(
-               totalCount: listFacility.TotalCount,
-               pageSize: listFacility.PageSize,
-               currentPage: listFacility.CurrentPage,
-               totalPages: listFacility.TotalPages,
-               hasNext: listFacility.HasNext,
-               hasPrevious: listFacility.HasPrevious,
-               results: facilityMapped
+               totalCount: listFacility.Count,
+               pageSize: request.RequestParams.PageSize,
+               currentPage: request.RequestParams.CurrentPage,
+               totalPages: (int)Math.Ceiling(listFacility.Count / (double)request.RequestParams.PageSize),
+               hasNext: request.RequestParams.CurrentPage > 1,
+               hasPrevious: (int)Math.Ceiling(listFacility.Count / (double)request.RequestParams.PageSize) - request.RequestParams.CurrentPage > 0,
+               results: facilityCustomers
            );
 
     }
+    private double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
+    {
+        if (lat2 == 0 || lon2 == 0)
+            return 0;
+
+        var R = 6371;
+        var dLat = (lat2 - lat1) * Math.PI / 180;
+        var dLon = (lon2 - lon1) * Math.PI / 180;
+        var a =
+            Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
+            Math.Cos(lat1 * Math.PI / 180) * Math.Cos(lat2 * Math.PI / 180) *
+            Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
+        var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+        var distance = R * c;
+        return distance;
+    }
+
 }
