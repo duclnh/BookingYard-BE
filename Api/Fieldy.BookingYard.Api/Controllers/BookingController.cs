@@ -4,6 +4,7 @@ using Fieldy.BookingYard.Application.Features.Booking.Queries.DTO;
 using Fieldy.BookingYard.Application.Features.Booking.Queries.GetAllBookingCustomer;
 using Fieldy.BookingYard.Application.Features.Booking.Queries.GetAllBookingFacility;
 using Fieldy.BookingYard.Application.Features.Booking.Queries.GetBookingDetail;
+using Fieldy.BookingYard.Application.Features.Booking.Queries.GetQrCode;
 using Fieldy.BookingYard.Application.Features.Facility.Queries.DTO;
 using Fieldy.BookingYard.Application.Models.Paging;
 using Fieldy.BookingYard.Application.Models.Query;
@@ -95,6 +96,19 @@ namespace Fieldy.BookingYard.Api.Controllers
 			CancellationToken cancellationToken = default)
 		{
 			var result = await _mediator.Send(command, cancellationToken);
+			return Ok(result);
+		}
+
+		[HttpGet("/api/qrcode-booking/{id}")]
+		[ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+		public async Task<IActionResult> GetQrCode(
+			[FromRoute] Guid id,
+			CancellationToken cancellationToken = default)
+		{
+			var result = await _mediator.Send(new GetQrCodeQuery(id), cancellationToken);
 			return Ok(result);
 		}
 	}

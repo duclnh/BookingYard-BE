@@ -2,6 +2,8 @@
 using Fieldy.BookingYard.Application.Abstractions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
+using System.Drawing;
 
 namespace Fieldy.BookingYard.Infrastructure.Utility
 {
@@ -66,9 +68,36 @@ namespace Fieldy.BookingYard.Infrastructure.Utility
                 var path = Path.Combine(_environment.WebRootPath, address);
                 if (Directory.Exists(path))
                 {
-                    Directory.Delete(path);
+                    Directory.Delete(path, true);
                 }
             }
         }
+
+        public string CreateQrCode(string paymentCode, string name, string email, string phone)
+        {
+            var logoPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "logo.png");
+            System.DrawingCore.Bitmap logo = new System.DrawingCore.Bitmap(logoPath);
+            var qrGenerator = new QRCoder.QRCodeGenerator();
+            var qrCodeData = qrGenerator.CreateQrCode(
+                JsonConvert.SerializeObject(new
+                {
+                    paymentCode,
+                    name,
+                    email,
+                    phone,
+                }, Formatting.Indented),
+                QRCoder.QRCodeGenerator.ECCLevel.Q
+             );
+            var qrCode = new QRCoder.QRCode(qrCodeData);
+            var qrCodeImage = qrCode.GetGraphic(10, System.DrawingCore.Color.Black, System.DrawingCore.Color.White, logo, 25); // 10 là kích thước của QR code
+
+            MemoryStream ms = new MemoryStream();
+            qrCodeImage.Save(ms, System.DrawingCore.Imaging.ImageFormat.Png);
+            byte[] qrCodeBytes = ms.ToArray();
+
+            var imageBase64 = Convert.ToBase64String(qrCodeBytes);
+            return $"data:image/png;base64,{imageBase64}";
+        }
+
     }
 }

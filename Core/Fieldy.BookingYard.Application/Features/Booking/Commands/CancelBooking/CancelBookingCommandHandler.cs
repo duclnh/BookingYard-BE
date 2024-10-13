@@ -37,7 +37,7 @@ public class CancelBookingCommandHandler : IRequestHandler<CancelBookingCommand,
         if (user == null)
             throw new NotFoundException(nameof(user), _jWTService.UserID);
 
-        var booking = await _bookingRepository.Find(x => x.Id == request.BookingID,
+        var booking = await _bookingRepository.Find(x => x.Id == request.BookingID || x.PaymentCode == request.PaymentCode,
                                                     cancellationToken,
                                                     x => x.User);
 
@@ -68,7 +68,7 @@ public class CancelBookingCommandHandler : IRequestHandler<CancelBookingCommand,
         if (booking.IsCheckin == true)
             throw new BadRequestException("Booking is already used");
 
-        if (booking.User != null)
+        if (booking.User != null && booking.UsedPoint > 0)
         {
             booking.User.Point += (int)booking.TotalPrice;
             if (booking.UsedPoint > 0)

@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Fieldy.BookingYard.Domain.Abstractions.Repositories;
 using Fieldy.BookingYard.Domain.Entities;
 using Fieldy.BookingYard.Persistence.DatabaseContext;
@@ -10,6 +11,31 @@ public class FacilityRepository : RepositoryBase<Facility, Guid>, IFacilityRepos
 	public FacilityRepository(BookingYardDBContext bookingYardDBContext) : base(bookingYardDBContext)
 	{
 
+	}
+
+	public async Task<IList<Facility>> FindAllFacility(Expression<Func<Facility, bool>>[]? expressions = null, Func<IQueryable<Facility>, IOrderedQueryable<Facility>>? orderBy = null, CancellationToken cancellationToken = default, params Expression<Func<Facility, object>>[] includes)
+	{
+		IQueryable<Facility> query = _dbContext.Facilities;
+
+		foreach (var includeProperty in includes)
+		{
+			query = query.Include(includeProperty);
+		}
+
+		if (expressions != null && expressions.Any())
+		{
+			foreach (var expression in expressions)
+			{
+				query = query.Where(expression);
+			}
+		}
+
+		if (orderBy != null)
+		{
+			query = orderBy(query);
+		}
+
+		return await query.ToListAsync();
 	}
 
 	public async Task<IList<Facility>> GetFacilitiesTop(int numberTake, CancellationToken cancellationToken = default)

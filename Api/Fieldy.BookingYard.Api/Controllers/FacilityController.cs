@@ -81,8 +81,8 @@ namespace Fieldy.BookingYard.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAllFacilityCustomer(
           [FromQuery] RequestParams request,
-          [FromQuery] float? longitude,
-          [FromQuery] float? latitude,
+          [FromQuery] double? longitude,
+          [FromQuery] double? latitude,
           [FromQuery] string? sportID,
           [FromQuery] string? provinceID,
           [FromQuery] string? districtID,

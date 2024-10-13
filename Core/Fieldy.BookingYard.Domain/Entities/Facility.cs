@@ -64,45 +64,45 @@ namespace Fieldy.BookingYard.Domain.Entities
 
 
 
-                    // Sort the days based on the order defined in the dictionary
-                    List<int> openDayOrders = FacilityTimes.Select(day => dayTranslations[day.Time].order).OrderBy(order => order).ToList();
+            // Sort the days based on the order defined in the dictionary
+            List<int> openDayOrders = FacilityTimes.Select(day => dayTranslations[day.Time].order).OrderBy(order => order).ToList();
 
-                    List<string> result = new List<string>();
+            List<string> result = new List<string>();
 
-                    // Check if all 7 days are selected (Monday to Sunday)
-                    if (openDayOrders.SequenceEqual(Enumerable.Range(1, 7)))
-                    {
-                        return "Thứ 2 đến Chủ Nhật";
-                    }
+            // Check if all 7 days are selected (Monday to Sunday)
+            if (openDayOrders.SequenceEqual(Enumerable.Range(1, 7)))
+            {
+                return "Thứ 2 đến Chủ Nhật";
+            }
 
-                    // Group consecutive and non-consecutive days
-                    int start = 0;
-                    while (start < openDayOrders.Count)
-                    {
-                        int end = start;
+            // Group consecutive and non-consecutive days
+            int start = 0;
+            while (start < openDayOrders.Count)
+            {
+                int end = start;
 
-                        // Find the range of consecutive days
-                        while (end + 1 < openDayOrders.Count && openDayOrders[end + 1] == openDayOrders[end] + 1)
-                        {
-                            end++;
-                        }
+                // Find the range of consecutive days
+                while (end + 1 < openDayOrders.Count && openDayOrders[end + 1] == openDayOrders[end] + 1)
+                {
+                    end++;
+                }
 
-                        // Handle ranges of consecutive days
-                        if (end > start)
-                        {
-                            result.Add($"{dayTranslations.First(d => d.Value.order == openDayOrders[start]).Value.name} đến {dayTranslations.First(d => d.Value.order == openDayOrders[end]).Value.name}");
-                        }
-                        else
-                        {
-                            // If it's not a range, just add the single day
-                            result.Add(dayTranslations.First(d => d.Value.order == openDayOrders[start]).Value.name);
-                        }
+                // Handle ranges of consecutive days
+                if (end > start)
+                {
+                    result.Add($"{dayTranslations.First(d => d.Value.order == openDayOrders[start]).Value.name} đến {dayTranslations.First(d => d.Value.order == openDayOrders[end]).Value.name}");
+                }
+                else
+                {
+                    // If it's not a range, just add the single day
+                    result.Add(dayTranslations.First(d => d.Value.order == openDayOrders[start]).Value.name);
+                }
 
-                        // Move to the next group
-                        start = end + 1;
-                    }
+                // Move to the next group
+                start = end + 1;
+            }
 
-                    // Join the results with comma and return
+            // Join the results with comma and return
             return string.Join(", ", result);
         }
     }

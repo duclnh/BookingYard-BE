@@ -9,5 +9,5 @@ public class FacilityCustomerDTO
    public required float FacilityRating { get; set; }
    public required decimal FacilityMinPrice { get; set; }
    public required decimal FacilityMaxPrice { get; set; }
-   public string? FacilityDistance { get; set; }
+   public double FacilityDistance { get; set; }
 }

@@ -6,15 +6,15 @@ using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.Facility.Queries.FacilityCustomer;
 
-public record class GetAllFacilityCustomerQuery(RequestParams request,
-                                                float? longitude,
-                                                float? latitude,
-                                                string? sportID,
-                                                string? provinceID,
-                                                string? districtID,
-                                                string? distance,
-                                                string? orderBy,
-                                                string? price) : IRequest<PagingResult<FacilityCustomerDTO>>
+public record class GetAllFacilityCustomerQuery(RequestParams RequestParams,
+                                                double? Longitude,
+                                                double? Latitude,
+                                                string? SportID,
+                                                string? ProvinceID,
+                                                string? DistrictID,
+                                                string? Distance,
+                                                string? OrderBy,
+                                                string? Price) : IRequest<PagingResult<FacilityCustomerDTO>>
 {
 
 }

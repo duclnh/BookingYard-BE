@@ -17,5 +17,7 @@ namespace Fieldy.BookingYard.Application.Abstractions
         public Task<string> AddFile(IFormFile fileUpload, string folder);
 
         public void RemoveFile(List<string> addressFile);
+
+        public string CreateQrCode(string paymentCode, string name, string email, string phone);
     };
 }
