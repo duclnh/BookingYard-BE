@@ -39,6 +39,8 @@ namespace Fieldy.BookingYard.Application.Features.Voucher.Command.CreateVoucher
 			}
 			voucher.SportID = request.SportID == 0 ? null : request.SportID;
 			voucher.Status = true;
+			voucher.RegisterDate = voucher.RegisterDate.Add(new TimeSpan(0, 0, 0));
+			voucher.ExpiredDate = voucher.ExpiredDate.Add(new TimeSpan(23, 59, 59));
 
 			if (voucher == null)
 				throw new BadRequestException("Error create Voucher!");
@@ -50,7 +52,7 @@ namespace Fieldy.BookingYard.Application.Features.Voucher.Command.CreateVoucher
 			if (result < 0)
 				throw new BadRequestException("Create new Voucher fail!");
 
-			return "Create Discount successfully";
+			return "Create Voucher successfully";
 		}
 	}
 }

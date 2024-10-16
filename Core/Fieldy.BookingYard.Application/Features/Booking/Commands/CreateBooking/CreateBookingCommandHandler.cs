@@ -16,6 +16,7 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 		private readonly IHistoryPointRepository _historyPointRepository;
 		private readonly IUserRepository _userRepository;
 		private readonly ICollectVoucherRepository _collectVoucherRepository;
+		private readonly IVoucherRepository _voucherRepository;
 		private readonly IVnpayService _vnpayService;
 		private readonly ICourtRepository _courtRepository;
 
@@ -25,7 +26,8 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 											ICollectVoucherRepository collectVoucherRepository,
 											IVnpayService vnpayService,
 											IUserRepository userRepository,
-											ICourtRepository courtRepository)
+											ICourtRepository courtRepository,
+											IVoucherRepository voucherRepository)
 		{
 			_mapper = mapper;
 			_bookingRepository = bookingRepository;
@@ -34,6 +36,7 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 			_vnpayService = vnpayService;
 			_userRepository = userRepository;
 			_courtRepository = courtRepository;
+			_voucherRepository = voucherRepository;
 		}
 
 		public async Task<string> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
@@ -66,27 +69,63 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 			booking.PaymentCode = "FIELDY" + requestDate.ToString("yyyyMMddHHmmss");
 
 
-			#region Check voucher is available
-			var collectVoucher = await _collectVoucherRepository.Find(expression: x => x.UserID == request.UserID && x.Id == request.CollectVoucherID,
-																		cancellationToken: cancellationToken,
-																		x => x.Voucher
-																		);
-			if (collectVoucher != null && collectVoucher.Voucher != null && booking.TotalPrice > 0)
+			if (request.CollectVoucherID != null)
 			{
-				var percentage = Convert.ToDecimal(collectVoucher.Voucher.Percentage);
-				if (court.FacilityID == collectVoucher.Voucher.FacilityID)
+				var collectVoucher = await _collectVoucherRepository.Find(expression: x => x.UserID == request.UserID && x.Id == request.CollectVoucherID,
+																			cancellationToken: cancellationToken,
+																			x => x.Voucher
+																			);
+				if (collectVoucher != null && collectVoucher.Voucher != null && booking.TotalPrice > 0)
 				{
-					booking.OwnerPrice -= booking.TotalPrice * (percentage / 100);
+					var percentage = Convert.ToDecimal(collectVoucher.Voucher.Percentage);
+					if (court.FacilityID == collectVoucher.Voucher.FacilityID)
+					{
+						booking.OwnerPrice -= booking.TotalPrice * (percentage / 100);
+					}
+
+					booking.TotalPrice -= booking.TotalPrice * (percentage / 100);
+
+					// Mark voucher as used
+					collectVoucher.IsUsed = true;
+					_collectVoucherRepository.Update(collectVoucher);
+					booking.VoucherID = collectVoucher.VoucherID;
+				}
+			}
+
+			if (request.VoucherID != null)
+			{
+				var voucher = await _voucherRepository.Find(x => x.Id == request.VoucherID, cancellationToken);
+				var voucherExist = await _bookingRepository.Find(x => x.UserID == request.UserID && x.VoucherID == request.VoucherID && x.IsDeleted == false, cancellationToken);
+				if (voucherExist != null)
+					throw new BadRequestException("You used this voucher");
+
+				if (voucher == null)
+					throw new NotFoundException(nameof(voucher), request.VoucherID);
+
+				if (voucher.Quantity - 1 < 0)
+					throw new BadRequestException("Voucher quantity outStock");
+
+				if (voucher.ExpiredDate < DateTime.Now)
+					throw new BadRequestException("Voucher expired");
+
+				if (voucher.RegisterDate > DateTime.Now)
+					throw new BadRequestException("Voucher not start");
+
+				voucher.Quantity -= 1;
+
+				if (booking.TotalPrice > 0)
+				{
+					var percentage = Convert.ToDecimal(voucher.Percentage);
+					if (court.FacilityID == voucher.FacilityID)
+					{
+						booking.OwnerPrice -= booking.TotalPrice * (percentage / 100);
+					}
+
+					booking.TotalPrice -= booking.TotalPrice * (percentage / 100);
 				}
 
-				booking.TotalPrice -= booking.TotalPrice * (percentage / 100);
-
-				// Mark voucher as used
-				collectVoucher.IsUsed = true;
-				_collectVoucherRepository.Update(collectVoucher);
-				booking.VoucherID = collectVoucher.VoucherID;
+				_voucherRepository.Update(voucher);
 			}
-			#endregion
 
 			var user = await _userRepository.FindByIdAsync(request.UserID, cancellationToken);
 
