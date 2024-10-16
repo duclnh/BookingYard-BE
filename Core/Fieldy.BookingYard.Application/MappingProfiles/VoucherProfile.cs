@@ -15,7 +15,7 @@ namespace Fieldy.BookingYard.Application.MappingProfiles
 				.ForMember(dest => dest.VoucherID, opt => opt.MapFrom(src => src.Id))
 				.ForMember(dest => dest.RegisterDate, opt => opt.MapFrom(src => src.RegisterDate.ToString("dd-MM-yyyy HH:ss:mm")))
 				.ForMember(dest => dest.ExpiredDate, opt => opt.MapFrom(src => src.ExpiredDate.ToString("dd-MM-yyyy HH:ss:mm")));
-				
+
 			CreateMap<CreateVoucherCommand, Voucher>();
 			CreateMap<UpdateVoucherCommand, Voucher>()
 				.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.VoucherID))
@@ -59,6 +59,13 @@ namespace Fieldy.BookingYard.Application.MappingProfiles
 				.ForMember(dest => dest.SportName, opt => opt.MapFrom(src => src.Sport.SportName))
 				.ForMember(dest => dest.FacilityName, opt => opt.MapFrom(src => src.Facility.Name))
 				.ForMember(dest => dest.VoucherID, opt => opt.MapFrom(src => src.Id));
+
+			CreateMap<Voucher, VoucherBookingDTO>()
+				.ForMember(dest => dest.RegisterDate, opt => opt.MapFrom(src => src.RegisterDate.ToString("dd-MM-yyyy")))
+				.ForMember(dest => dest.ExpiredDate, opt => opt.MapFrom(src => src.ExpiredDate.ToString("dd-MM-yyyy")))
+				.ForMember(dest => dest.FacilityName, opt => opt.MapFrom(src => src.Facility.Name))
+				.ForMember(dest => dest.VoucherID, opt => opt.MapFrom(src => src.Id));
+
 		}
 	}
 }

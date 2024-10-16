@@ -4,6 +4,7 @@ using Fieldy.BookingYard.Application.Features.Voucher.Queries;
 using Fieldy.BookingYard.Application.Features.Voucher.Queries.DTO;
 using Fieldy.BookingYard.Application.Features.Voucher.Queries.GetAllVoucher;
 using Fieldy.BookingYard.Application.Features.Voucher.Queries.GetAllVoucherFacility;
+using Fieldy.BookingYard.Application.Features.Voucher.Queries.GetVoucherByID;
 using Fieldy.BookingYard.Application.Features.Voucher.Queries.GetVoucherHome;
 using Fieldy.BookingYard.Application.Models.Query;
 using MediatR;
@@ -91,6 +92,21 @@ namespace Fieldy.BookingYard.Api.Controllers
 							CancellationToken cancellationToken = default)
 		{
 			var result = await _mediator.Send(new GetAllVoucherFacilityQuery(requestParams, id), cancellationToken);
+			return Ok(result);
+		}
+
+		[AllowAnonymous]
+		[HttpGet("/api/voucher-code/{code}")]
+		[Produces(MediaTypeNames.Application.Json)]
+		[ProducesResponseType(typeof(VoucherDTO), StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+		public async Task<IActionResult> GetVoucherCode(
+						[FromRoute] string code,
+							CancellationToken cancellationToken = default)
+		{
+			var result = await _mediator.Send(new GetVoucherByIDQuery(code), cancellationToken);
 			return Ok(result);
 		}
 	}

@@ -7,7 +7,7 @@
 		public string? Image { get; set; }
 		public int Percentage { get; set; }
 		public string? VoucherDescription { get; set; }
-		public int quantity { get; set; }
+		public int Quantity { get; set; }
 		public required string RegisterDate { get; set; }
 		public required string ExpiredDate { get; set; }
 		public string? Reason { get; set; }

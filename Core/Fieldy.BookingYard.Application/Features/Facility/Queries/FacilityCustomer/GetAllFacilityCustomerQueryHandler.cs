@@ -43,7 +43,7 @@ public class GetAllFacilityCustomerQueryHandler : IRequestHandler<GetAllFacility
         {
             string searchTerm = request.RequestParams.Search.ToLower().Trim();
             expressions.Add(x => x.Name.ToLower().Contains(searchTerm)
-                                || x.Address.ToLower().Contains(searchTerm));
+                                || x.FullAddress.ToLower().Contains(searchTerm));
         }
 
         if (!string.IsNullOrEmpty(request.SportID))
@@ -64,7 +64,7 @@ public class GetAllFacilityCustomerQueryHandler : IRequestHandler<GetAllFacility
                 break;
 
             case "priceDesc":
-                orderBy = x => x.OrderByDescending(f => f.Courts.Min(c => c.CourtPrice));
+                orderBy = x => x.OrderByDescending(f => f.Courts.Max(c => c.CourtPrice));
                 break;
 
         }
@@ -93,36 +93,62 @@ public class GetAllFacilityCustomerQueryHandler : IRequestHandler<GetAllFacility
                     FacilityMaxPrice = await _courtRepository.GetMaxPriceCourt(facility.Id, cancellationToken),
                     FacilityDistance = CalculateDistance(facility.Latitude, facility.Longitude, request.Latitude ?? 0, request.Longitude ?? 0)
                 }
-            ); ;
+            );
+            facilityCustomers.Add(
+               new FacilityCustomerDTO
+               {
+                   FacilityID = facility.Id,
+                   FacilityImage = facility.Image,
+                   FacilityName = facility.Name,
+                   FacilityAddress = facility.FullAddress,
+                   FacilityRating = await _feedbackRepository.GetRatingFacility(facility.Id, cancellationToken),
+                   FacilityMinPrice = await _courtRepository.GetMinPriceCourt(facility.Id, cancellationToken),
+                   FacilityMaxPrice = await _courtRepository.GetMaxPriceCourt(facility.Id, cancellationToken),
+                   FacilityDistance = 1.49209357181156954
+               }
+           );
+            facilityCustomers.Add(
+               new FacilityCustomerDTO
+               {
+                   FacilityID = facility.Id,
+                   FacilityImage = facility.Image,
+                   FacilityName = facility.Name,
+                   FacilityAddress = facility.FullAddress,
+                   FacilityRating = await _feedbackRepository.GetRatingFacility(facility.Id, cancellationToken),
+                   FacilityMinPrice = await _courtRepository.GetMinPriceCourt(facility.Id, cancellationToken),
+                   FacilityMaxPrice = await _courtRepository.GetMaxPriceCourt(facility.Id, cancellationToken),
+                   FacilityDistance = 2.49209357181156954
+               }
+           );
         }
 
         if (!string.IsNullOrEmpty(request.Distance) &&
               double.TryParse(request.Distance, out double distance))
         {
-            facilityCustomers.Where(x => x.FacilityDistance <= distance);
+            facilityCustomers = facilityCustomers.Where(x => x.FacilityDistance <= distance).ToList();
         }
 
         switch (request.OrderBy)
         {
             case "distanceAsc":
-                facilityCustomers.OrderBy(x => x.FacilityDistance);
+                facilityCustomers = facilityCustomers.OrderBy(x => x.FacilityDistance).ToList();
                 break;
 
             case "distanceDesc":
-                facilityCustomers.OrderByDescending(x => x.FacilityDistance);
+                facilityCustomers = facilityCustomers.OrderByDescending(x => x.FacilityDistance).ToList();
                 break;
         }
 
         facilityCustomers = facilityCustomers.Skip((request.RequestParams.CurrentPage - 1) * request.RequestParams.PageSize).Take(request.RequestParams.PageSize).ToList();
 
-
+        var count = listFacility.Count - facilityCustomers.Count == 0 ? listFacility.Count - (listFacility.Count - facilityCustomers.Count) : listFacility.Count;
         return PagingResult<FacilityCustomerDTO>.Create(
-               totalCount: listFacility.Count,
+               totalCount: count,
                pageSize: request.RequestParams.PageSize,
                currentPage: request.RequestParams.CurrentPage,
-               totalPages: (int)Math.Ceiling(listFacility.Count / (double)request.RequestParams.PageSize),
+               totalPages: (int)Math.Ceiling(count / (double)request.RequestParams.PageSize),
                hasNext: request.RequestParams.CurrentPage > 1,
-               hasPrevious: (int)Math.Ceiling(listFacility.Count / (double)request.RequestParams.PageSize) - request.RequestParams.CurrentPage > 0,
+               hasPrevious: (int)Math.Ceiling(count / (double)request.RequestParams.PageSize) - request.RequestParams.CurrentPage > 0,
                results: facilityCustomers
            );
 

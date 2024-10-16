@@ -16,6 +16,7 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 		public required string StartTime { get; set; }
 		public required string EndTime { get; set; }
 		public Guid? CollectVoucherID { get; set; }
+		public Guid? VoucherID { get; set; }
 		public int Point { get; set; }
 		public required string PaymentMethod { get; set; }
 	}
