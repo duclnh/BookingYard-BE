@@ -77,14 +77,8 @@ namespace Fieldy.BookingYard.Infrastructure.Utility
 
         public string CreateQrCode(string paymentCode, string name, string email, string phone)
         {
-            _logger.LogInformation("_environment.WebRootPath: " + _environment.WebRootPath);
-            _logger.LogInformation("Directory.GetCurrentDirectory(): " + Directory.GetCurrentDirectory());
             var logoPath = Path.Combine(_environment.WebRootPath, "logo.png");
-
-
-            _logger.LogInformation("_environment.WebRootPath1: " + Path.Combine(_environment.WebRootPath, "logo.png"));
-            _logger.LogInformation("Directory.GetCurrentDirectory()2: " + Path.Combine(Directory.GetCurrentDirectory(), "logo.png"));
-            _logger.LogInformation("Directory.GetCurrentDirectory()3: " + Path.Combine(_environment.ContentRootPath, "logo.png"));
+            _logger.LogInformation(Directory.Exists(logoPath) ? $"{logoPath}" : "");
             System.DrawingCore.Bitmap logo = new System.DrawingCore.Bitmap(logoPath);
             var qrGenerator = new QRCoder.QRCodeGenerator();
             var qrCodeData = qrGenerator.CreateQrCode(
