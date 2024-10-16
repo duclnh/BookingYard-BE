@@ -1,4 +1,5 @@
 ﻿using Fieldy.BookingYard.Application.Features.Dashboard.Queries;
+using Fieldy.BookingYard.Application.Features.Dashboard.Queries.GetRevenueCourtOwner;
 using Fieldy.BookingYard.Application.Features.Package.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -25,6 +26,19 @@ namespace Fieldy.BookingYard.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
 		public async Task<IActionResult> GetRevenue([FromQuery] GetRevenueQuery command,
+														CancellationToken cancellationToken = default)
+		{
+			var getRevenue = await _mediator.Send(command, cancellationToken);
+			return Ok(getRevenue);
+		}
+
+		[HttpGet("revenue/court-owner")]
+		[Produces(MediaTypeNames.Application.Json)]
+		[ProducesResponseType(typeof(GetRevenueCourtOwnerQuery), StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+		public async Task<IActionResult> GetRevenueCourtOwner([FromQuery] GetRevenueCourtOwnerQuery command,
 														CancellationToken cancellationToken = default)
 		{
 			var getRevenue = await _mediator.Send(command, cancellationToken);
