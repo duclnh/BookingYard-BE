@@ -94,32 +94,6 @@ public class GetAllFacilityCustomerQueryHandler : IRequestHandler<GetAllFacility
                     FacilityDistance = CalculateDistance(facility.Latitude, facility.Longitude, request.Latitude ?? 0, request.Longitude ?? 0)
                 }
             );
-            facilityCustomers.Add(
-               new FacilityCustomerDTO
-               {
-                   FacilityID = facility.Id,
-                   FacilityImage = facility.Image,
-                   FacilityName = facility.Name,
-                   FacilityAddress = facility.FullAddress,
-                   FacilityRating = await _feedbackRepository.GetRatingFacility(facility.Id, cancellationToken),
-                   FacilityMinPrice = await _courtRepository.GetMinPriceCourt(facility.Id, cancellationToken),
-                   FacilityMaxPrice = await _courtRepository.GetMaxPriceCourt(facility.Id, cancellationToken),
-                   FacilityDistance = 1.49209357181156954
-               }
-           );
-            facilityCustomers.Add(
-               new FacilityCustomerDTO
-               {
-                   FacilityID = facility.Id,
-                   FacilityImage = facility.Image,
-                   FacilityName = facility.Name,
-                   FacilityAddress = facility.FullAddress,
-                   FacilityRating = await _feedbackRepository.GetRatingFacility(facility.Id, cancellationToken),
-                   FacilityMinPrice = await _courtRepository.GetMinPriceCourt(facility.Id, cancellationToken),
-                   FacilityMaxPrice = await _courtRepository.GetMaxPriceCourt(facility.Id, cancellationToken),
-                   FacilityDistance = 2.49209357181156954
-               }
-           );
         }
 
         if (!string.IsNullOrEmpty(request.Distance) &&
