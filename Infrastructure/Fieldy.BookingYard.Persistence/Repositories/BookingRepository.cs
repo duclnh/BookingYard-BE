@@ -25,7 +25,7 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 				.Select(x => (x.Hour, x.TotalRevenue))
 				.ToList(); 
 			
-			var allHours = Enumerable.Range(0, 24)
+			var allHours = Enumerable.Range(0, date.Hour)
 							 .Select(hour => new TimeSpan(hour, 0, 0))
 							 .ToHashSet();
 			var existingHours = new HashSet<TimeSpan>(revenues.Select(r => r.Hour));
@@ -37,11 +37,12 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 			return revenues.OrderBy(r => r.Hour).ToList();
 		}
 
-		public List<(DateOnly Date, decimal TotalRevenue)> GetRevenueByWeek()
+		public List<(string Date, decimal TotalRevenue)> GetRevenueByWeek()
 		{
 			var date = DateTime.Now;
-			var startOfWeek = date.Date.AddDays(-(int)date.DayOfWeek);
-			var endOfWeek = startOfWeek.AddDays(7);
+			var startOfWeek = date.Date.AddDays(-(int)date.DayOfWeek + 1);
+			//var endOfWeek = startOfWeek.AddDays(7);
+			var endOfWeek = date.Date;
 
 			var revenues = _dbContext.Set<Booking>()
 				.Where(b => b.BookingDate >= startOfWeek && b.BookingDate < endOfWeek && b.IsDeleted == false)
@@ -55,7 +56,7 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 				.Select(x => (x.Date, x.TotalRevenue))
 				.ToList(); 
 			
-			var allDates = Enumerable.Range(0, 7)
+			var allDates = Enumerable.Range(0, (endOfWeek - startOfWeek).Days + 1)
 							 .Select(offset => startOfWeek.AddDays(offset))
 							 .Select(date => DateOnly.FromDateTime(date))
 							 .ToHashSet();
@@ -64,8 +65,12 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 			{
 				revenues.Add((missingDate, 0.00m));
 			}
+			revenues.OrderBy(r => r.Date).ToList();
 
-			return revenues.OrderBy(r => r.Date).ToList();
+			List<(string Date, decimal TotalRevenue)> convertedList = revenues
+			.Select(x => (x.Date.ToString("dddd"), x.TotalRevenue))
+			.ToList();
+			return convertedList;
 		}
 
 
@@ -73,10 +78,10 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 		{
 			var date = DateTime.Now;
 			var startOfMonth = new DateTime(date.Year, date.Month, 1);
-			var endOfMonth = startOfMonth.AddMonths(1);
+			var endOfMonth = date.Date;
 
 			var revenues = _dbContext.Set<Booking>()
-				.Where(b => b.BookingDate >= startOfMonth && b.BookingDate < endOfMonth && b.IsDeleted == false)
+				.Where(b => b.BookingDate >= startOfMonth && b.BookingDate <= endOfMonth && b.IsDeleted == false)
 				.GroupBy(b => b.BookingDate.Day)
 				.Select(g => new
 				{
@@ -87,9 +92,10 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 				.Select(x => (x.Date, x.TotalRevenue))
 			.ToList();
 
-			
-			int daysInMonth = DateTime.DaysInMonth(date.Year, date.Month);
-			var allDates = Enumerable.Range(1, daysInMonth)
+
+			//int daysInMonth = DateTime.DaysInMonth(date.Year, date.Month);
+			int numberOfDays = (endOfMonth - startOfMonth).Days + 1;
+			var allDates = Enumerable.Range(1, numberOfDays)
 									 .Select(day => new DateOnly(date.Year, date.Month, day))
 									 .ToHashSet();
 			var existingDates = new HashSet<DateOnly>(revenues.Select(r => r.Date));
@@ -119,7 +125,7 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 				.ToList();
 
 			int monthsInYear = 12;
-			for (int i = 1; i <= monthsInYear; i++)
+			for (int i = 1; i <= date.Month; i++)
 			{
 				if (!revenues.Any(r => r.Month == i))
 				{

@@ -24,7 +24,7 @@ namespace Fieldy.BookingYard.Application.Features.Dashboard
 	}
 	public class DayOfWeekRevenue
 	{
-		public DateOnly Day { get; set; }
+		public string Day { get; set; }
 		public decimal Amount { get; set; }
 	}
 
