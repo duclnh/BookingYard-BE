@@ -78,7 +78,7 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 			var endOfWeek = date.Date;
 
 			var revenues = new List<(DateOnly Date, decimal TotalRevenue)>();
-
+			var all = _dbContext.Bookings.ToList();
 			if (facilityId == Guid.Empty)
 			{
 				revenues = _dbContext.Set<Booking>()

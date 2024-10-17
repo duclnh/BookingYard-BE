@@ -16,11 +16,13 @@ namespace Fieldy.BookingYard.Application.Features.Dashboard.Queries
 		public async Task<DashboardHome> Handle(GetRevenueQuery request, CancellationToken cancellationToken)
 		{
 			var today = DateTime.Today;
+			var startOfWeek = today.AddDays(-(int)today.DayOfWeek + 1);
+			var endOfWeek = startOfWeek.AddDays(7);
 			Expression<Func<Domain.Entities.Booking, bool>> timeBasedExpression = request.typeTimeBased switch
 			{
 				/*TypeTimeBased.date*/ "date" => x => x.BookingDate.Date == today && x.IsDeleted == false,
-				/*TypeTimeBased.week*/ "week" => x => x.BookingDate >= today.AddDays(-(int)today.DayOfWeek) &&
-											 x.BookingDate < today.AddDays(7 - (int)today.DayOfWeek) && x.IsDeleted == false,
+				/*TypeTimeBased.week*/ "week" => x => x.BookingDate >= startOfWeek &&
+											 x.BookingDate < endOfWeek && x.IsDeleted == false,
 				/*TypeTimeBased.month*/ "month" => x => x.BookingDate.Month == today.Month &&
 											 x.BookingDate.Year == today.Year && x.IsDeleted == false,
 				/*TypeTimeBased.year*/ "year" => x => x.BookingDate.Year == today.Year && x.IsDeleted == false,
