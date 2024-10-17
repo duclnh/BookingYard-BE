@@ -72,12 +72,12 @@ namespace Fiedly.BookingYard.Api.Controllers
         [HttpGet]
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         [Produces(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(PagingResult<UserDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagingResult<UserAdminDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAllUser(
-            [FromHeader] RequestParams requestParams,
+            [FromQuery] RequestParams requestParams,
             CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(new GetALlUserQuery(requestParams), cancellationToken);
