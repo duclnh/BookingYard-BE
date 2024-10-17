@@ -51,5 +51,7 @@ public class FacilityProfile : Profile
             .ForMember(dest => dest.EndTime,
                    opt => opt.MapFrom(src => src.EndTime.Equals(new TimeSpan(0, 0, 0)) ? "24:00" : src.EndTime.ToString("hh\\:mm")));
 
+        CreateMap<Facility, FacilityPositionDTO>();
+    
     }
 }
