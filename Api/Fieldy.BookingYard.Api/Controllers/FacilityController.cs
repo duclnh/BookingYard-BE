@@ -11,6 +11,8 @@ using System.Net.Mime;
 using Fieldy.BookingYard.Application.Features.Facility.Queries.FacilityCustomer;
 using Fieldy.BookingYard.Application.Features.Facility.Queries.DTO;
 using Fieldy.BookingYard.Application.Features.Facility.Queries.GetFacilityHome;
+using Fieldy.BookingYard.Application.Features.Facility.Queries.GetAllProvince;
+using Fieldy.BookingYard.Application.Features.Facility.Queries.GetAllFacilityPosition;
 
 namespace Fieldy.BookingYard.Api.Controllers
 {
@@ -113,6 +115,34 @@ namespace Fieldy.BookingYard.Api.Controllers
         public async Task<IActionResult> GetFacilityHome(CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(new GetFacilityHomeQuery(), cancellationToken);
+            return Ok(result);
+        }
+
+        [HttpGet("/api/facility-province")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(IList<int>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetFacilityProvince(
+           CancellationToken cancellationToken = default)
+        {
+            var result = await _mediator.Send(new GetAllProvinceQuery(), cancellationToken);
+            return Ok(result);
+        }
+
+        [HttpGet("/api/facility-position")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(IList<FacilityPositionDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetFacilityPosition(
+           CancellationToken cancellationToken = default)
+        {
+            var result = await _mediator.Send(new GetAllFacilityPositionQuery(), cancellationToken);
             return Ok(result);
         }
     }

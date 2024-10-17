@@ -48,4 +48,13 @@ public class FacilityRepository : RepositoryBase<Facility, Guid>, IFacilityRepos
 					.Take(numberTake)
 					.ToListAsync(cancellationToken);
 	}
+
+    public async Task<IList<int>> GetFacilityProvince(CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Facilities.AsNoTracking()
+											.Where(x => x.IsDeleted == false)
+											.Select(x => x.ProvinceID)
+											.Distinct()
+											.ToListAsync();
+    }
 }
