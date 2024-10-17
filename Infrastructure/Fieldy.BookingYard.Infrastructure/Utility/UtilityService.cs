@@ -78,7 +78,6 @@ namespace Fieldy.BookingYard.Infrastructure.Utility
         public string CreateQrCode(string paymentCode, string name, string email, string phone)
         {
             var logoPath = Path.Combine(_environment.WebRootPath, "logo.png");
-            _logger.LogInformation(Directory.Exists(logoPath) ? $"{logoPath}" : "");
             System.DrawingCore.Bitmap logo = new System.DrawingCore.Bitmap(logoPath);
             var qrGenerator = new QRCoder.QRCodeGenerator();
             var qrCodeData = qrGenerator.CreateQrCode(
@@ -92,7 +91,7 @@ namespace Fieldy.BookingYard.Infrastructure.Utility
                 QRCoder.QRCodeGenerator.ECCLevel.Q
              );
             var qrCode = new QRCoder.QRCode(qrCodeData);
-            var qrCodeImage = qrCode.GetGraphic(10, System.DrawingCore.Color.Black, System.DrawingCore.Color.White, logo, 25); // 10 là kích thước của QR code
+            var qrCodeImage = qrCode.GetGraphic(10, System.DrawingCore.Color.Black, System.DrawingCore.Color.White, logo, 25);
 
             MemoryStream ms = new MemoryStream();
             qrCodeImage.Save(ms, System.DrawingCore.Imaging.ImageFormat.Png);

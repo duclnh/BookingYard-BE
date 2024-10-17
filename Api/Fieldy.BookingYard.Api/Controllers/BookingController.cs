@@ -72,7 +72,7 @@ namespace Fieldy.BookingYard.Api.Controllers
 
 		[HttpGet("facility/{id}")]
 		[Produces(MediaTypeNames.Application.Json)]
-		[ProducesResponseType(typeof(IList<BookingDetailDto>), StatusCodes.Status200OK)]
+		[ProducesResponseType(typeof(PagingResult<BookingDetailDto>), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
 		public async Task<IActionResult> GetAllBookingFacility(
@@ -83,6 +83,21 @@ namespace Fieldy.BookingYard.Api.Controllers
 				CancellationToken cancellationToken = default)
 		{
 			var result = await _mediator.Send(new GetAllBookingFacilityQuery(requestParams, id, SportID, Status, cancellationToken));
+			return Ok(result);
+		}
+
+		[AllowAnonymous]
+		[HttpGet]
+		[Produces(MediaTypeNames.Application.Json)]
+		[ProducesResponseType(typeof(PagingResult<BookingDetailDto>), StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+		public async Task<IActionResult> GetAllBookings(
+				[FromQuery] RequestParams requestParams,
+				[FromQuery] string? Status,
+				CancellationToken cancellationToken = default)
+		{
+			var result = await _mediator.Send(new GetAllBookingAdminQuery(requestParams, Status), cancellationToken);
 			return Ok(result);
 		}
 
