@@ -15,7 +15,7 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 		{
 			return await _dbContext.Vouchers
 								.AsNoTracking()
-								.Where(x => x.Status && !x.IsDeleted)
+								.Where(x => x.Status && !x.IsDeleted && x.Code == null)
 								.OrderByDescending(x => x.CreatedAt)
 								.Take(numberTop)
 								.Include(x => x.Facility)

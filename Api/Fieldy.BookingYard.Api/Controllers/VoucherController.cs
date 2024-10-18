@@ -41,13 +41,12 @@ namespace Fieldy.BookingYard.Api.Controllers
 		}
 
 		[HttpPut]
-		[Produces(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
 		public async Task<IActionResult> UpdateVoucher(
-						[FromBody] UpdateVoucherCommand command,
+						[FromForm] UpdateVoucherCommand command,
 									CancellationToken cancellationToken = default)
 		{
 			var result = await _mediator.Send(command, cancellationToken);

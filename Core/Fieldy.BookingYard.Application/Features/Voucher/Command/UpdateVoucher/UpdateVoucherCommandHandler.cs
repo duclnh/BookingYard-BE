@@ -12,7 +12,7 @@ namespace Fieldy.BookingYard.Application.Features.Voucher.Command.UpdateVoucher
 		public UpdateVoucherCommandHandler(IMapper mapper, IVoucherRepository voucherRepository)
 		{
 			_mapper = mapper;
-            _voucherRepository = voucherRepository;
+			_voucherRepository = voucherRepository;
 		}
 		public async Task<string> Handle(UpdateVoucherCommand request, CancellationToken cancellationToken)
 		{
@@ -29,9 +29,18 @@ namespace Fieldy.BookingYard.Application.Features.Voucher.Command.UpdateVoucher
 			if (voucherExist == null)
 				throw new NotFoundException(nameof(voucherExist), request.VoucherID);
 
-			var voucher = _mapper.Map<Domain.Entities.Voucher>(request);
-			if (voucher == null)
-				throw new BadRequestException("Error update Voucher!");
+			voucherExist.VoucherDescription = request.VoucherDescription ?? voucherExist.VoucherDescription;
+			voucherExist.Quantity = request.Quantity ?? voucherExist.Quantity;
+			voucherExist.Code = request.Code ?? voucherExist.Code;
+			voucherExist.ExpiredDate = request.ExpiredDate ?? voucherExist.ExpiredDate;
+
+			voucherExist.VoucherName = request.VoucherName ?? voucherExist.VoucherName;
+			voucherExist.Image = request.Image ?? voucherExist.Image;
+			voucherExist.Percentage = request.Percentage ?? voucherExist.Percentage;
+			voucherExist.RegisterDate = request.RegisterDate ?? voucherExist.RegisterDate;
+			voucherExist.Reason = request.Reason ?? voucherExist.Reason;
+			voucherExist.Status = request.Status ?? voucherExist.Status;
+			voucherExist.SportID = request.SportID == 0 ? null : request.SportID;
 
 			_voucherRepository.Update(voucherExist);
 			var result = await _voucherRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
