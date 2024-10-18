@@ -12,5 +12,11 @@
 		public required string ExpiredDate { get; set; }
 		public string? Reason { get; set; }
 		public bool Status { get; set; }
+		public string? CreateDate { get; set; }
+		public int SportID { get; set; }
+		public string? Code { get; set; }	
+		public bool IsDeleted { get; set; }
+		public bool IsStarted { get; set; }
+		public bool IsEnded { get; set; }
 	}
 }

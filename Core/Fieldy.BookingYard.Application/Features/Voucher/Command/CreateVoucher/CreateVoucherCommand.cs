@@ -13,7 +13,7 @@ namespace Fieldy.BookingYard.Application.Features.Voucher.Command.CreateVoucher
 		// public string? VoucherDescription { get; set; }
 		public DateTime RegisterDate { get; set; }
 		public DateTime ExpiredDate { get; set; }
-		public Guid FacilityID { get; set; }
+		public Guid? FacilityID { get; set; }
 		public int? SportID { get; set; }
 	}
 }
