@@ -20,5 +20,6 @@ namespace Fieldy.BookingYard.Application.Features.User.Queries.DTO
         public string? FacilityName { get; set; }
         public string? FacilityImage { get; set; }
         public Guid? FacilityID { get; set; }
+        public bool IsFeedback { get; set; }
     }
 }

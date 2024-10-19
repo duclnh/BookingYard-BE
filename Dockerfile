@@ -1,4 +1,6 @@
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS base
+RUN apt-get update && apt-get install -y libgdiplus libc6-dev
+RUN ln -s /usr/lib/libgdiplus.so /usr/lib/gdiplus.dll
 WORKDIR /app
 EXPOSE 80
 

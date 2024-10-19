@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using AutoMapper;
 using Fieldy.BookingYard.Application.Models.Paging;
 using Fieldy.BookingYard.Domain.Abstractions.Repositories;
+using Fieldy.BookingYard.Domain.Enums;
 using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.User.Queries.GetAllUser
@@ -20,15 +21,47 @@ namespace Fieldy.BookingYard.Application.Features.User.Queries.GetAllUser
         }
         public async Task<PagingResult<UserAdminDTO>> Handle(GetALlUserQuery request, CancellationToken cancellationToken)
         {
-            Expression<Func<Domain.Entities.User, bool>> expression = x => true;
+            List<Expression<Func<Domain.Entities.User, bool>>> expressions = new List<Expression<Func<Domain.Entities.User, bool>>>{
+                x => x.Role != Role.Admin,
+            };
             if (!string.IsNullOrEmpty(request.requestParams.Search))
             {
-                expression = x => x.Name.ToLower().Contains(request.requestParams.Search.ToLower().Trim())
-                                || x.Email.ToLower().Contains(request.requestParams.Search.ToLower().Trim());
+                expressions.Add(
+                     x => x.Name.ToLower().Contains(request.requestParams.Search.ToLower().Trim())
+                                || x.Phone.ToLower().Contains(request.requestParams.Search.ToLower().Trim())
+                );
             }
 
+            switch (request.OrderBy)
+            {
+                case "owner":
+                    expressions.Add(
+                         x => x.Role == Role.CourtOwner
+                     );
+                    break;
+
+                case "customer":
+                    expressions.Add(
+                         x => x.Role == Role.Customer
+                     );
+                    break;
+
+                case "active":
+                    expressions.Add(
+                         x => !x.IsDeleted);
+                    break;
+
+                case "deleted":
+                    expressions.Add(
+                     x => x.IsDeleted
+                 );
+                    break;
+            }
+
+            Expression<Func<Domain.Entities.User, bool>>[] expressionArray = expressions.ToArray();
+
             var list = await _userRepository.FindAllPaging(
-                expression: expression,
+                expressions: expressionArray,
                 orderBy: x => x.OrderByDescending(o => o.CreatedAt),
                 currentPage: request.requestParams.CurrentPage,
                 pageSize: request.requestParams.PageSize,

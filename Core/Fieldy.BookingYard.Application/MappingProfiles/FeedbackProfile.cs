@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Fieldy.BookingYard.Application.Features.Feedback.Commands.CreateFeedback;
+using Fieldy.BookingYard.Application.Features.Feedback.Commands.CreateFeedbackCourtOwner;
 using Fieldy.BookingYard.Application.Features.Feedback.Commands.DeleteFeedback;
 using Fieldy.BookingYard.Application.Features.Feedback.Commands.UpdateFeedback;
 using Fieldy.BookingYard.Application.Features.Feedback.Queries;
@@ -20,7 +21,18 @@ namespace Fieldy.BookingYard.Application.MappingProfiles
 					src.Images != null ? src.Images.Select(img => img.ImageLink) : new List<string>()
 				));
 
+			CreateMap<FeedBack, FeedbackAdminDTO>()
+				.ForMember(dest => dest.FeedbackID, opt => opt.MapFrom(src => src.Id))
+				.ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.User.Name))
+				.ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.User.Phone))
+				.ForMember(dest => dest.FacilityID, opt => opt.MapFrom(src => src.FacilityID))
+				.ForMember(dest => dest.FacilityName, opt => opt.MapFrom(src => src.Facility.Name))
+				.ForMember(dest => dest.Images, opt => opt.MapFrom(src =>
+					src.Images != null ? src.Images.Select(img => img.ImageLink) : new List<string>()
+				));
+
 			CreateMap<CreateFeedbackCommand, FeedBack>();
+			CreateMap<CreateFeedbackCourtOwnerCommand, FeedBack>();
 
 			CreateMap<UpdateFeedbackCommand, FeedBack>()
 				.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.FeedbackID))

@@ -39,6 +39,8 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Queries.DTO
 		public decimal OwnerPrice { get; set; }
 		public decimal CourtPrice { get; set; }
 		public decimal TotalPrice { get; set; }
+		public bool IsCheckIn { get; set; }
+		public bool IsFeedback { get; set; }
 		public bool IsDeleted { get; set; }
 	}
 }

@@ -1,9 +1,11 @@
 ﻿using Fieldy.BookingYard.Application.Features.Feedback.Commands.CreateFeedback;
+using Fieldy.BookingYard.Application.Features.Feedback.Commands.CreateFeedbackCourtOwner;
 using Fieldy.BookingYard.Application.Features.Feedback.Commands.DeleteFeedback;
 using Fieldy.BookingYard.Application.Features.Feedback.Commands.UpdateFeedback;
 using Fieldy.BookingYard.Application.Features.Feedback.Queries;
 using Fieldy.BookingYard.Application.Features.Feedback.Queries.DTO;
 using Fieldy.BookingYard.Application.Features.Feedback.Queries.GetAllFeedback;
+using Fieldy.BookingYard.Application.Features.Feedback.Queries.GetAllFeedbackAdmin;
 using Fieldy.BookingYard.Application.Features.Feedback.Queries.GetAllFeedbackFacility;
 using Fieldy.BookingYard.Application.Features.Feedback.Queries.GetFeedbackHome;
 using Fieldy.BookingYard.Application.Models.Paging;
@@ -34,7 +36,21 @@ namespace Fieldy.BookingYard.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
 		public async Task<IActionResult> CreateFeedback(
-			[FromBody] CreateFeedbackCommand command,
+			[FromForm] CreateFeedbackCommand command,
+			CancellationToken cancellationToken = default)
+		{
+			var result = await _mediator.Send(command, cancellationToken);
+			return Created(string.Empty, result);
+		}
+
+		[HttpPost("/api/feedback-owner")]
+		[Produces(MediaTypeNames.Application.Json)]
+		[ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+		public async Task<IActionResult> CreateFeedbackOwnerCourt(
+			[FromBody] CreateFeedbackCourtOwnerCommand command,
 			CancellationToken cancellationToken = default)
 		{
 			var result = await _mediator.Send(command, cancellationToken);
@@ -71,8 +87,8 @@ namespace Fieldy.BookingYard.Api.Controllers
 		}
 
 		[HttpGet("/api/feedback-facility-owner/{id}")]
-        [AllowAnonymous]
-        [Authorize(AuthenticationSchemes = "Bearer", Roles = "CourtOwner")]
+		[AllowAnonymous]
+		[Authorize(AuthenticationSchemes = "Bearer", Roles = "CourtOwner")]
 		[Produces(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(typeof(PagingResult<FeedbackDto>), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -111,6 +127,21 @@ namespace Fieldy.BookingYard.Api.Controllers
 		public async Task<IActionResult> GetFeedBackHome(CancellationToken cancellationToken = default)
 		{
 			var result = await _mediator.Send(new GetFeedbackHomeQuery(), cancellationToken);
+			return Ok(result);
+		}
+
+		[HttpGet]
+		[Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+		[Produces(MediaTypeNames.Application.Json)]
+		[ProducesResponseType(typeof(PagingResult<FeedbackFacilityDetailDTO>), StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+		public async Task<IActionResult> GetAllFeedbackAdmin(
+			[FromQuery] RequestParams requestParams,
+			[FromQuery] string? orderBy,
+			CancellationToken cancellationToken = default)
+		{
+			var result = await _mediator.Send(new GetAllFeedbackAdminQuery(requestParams, orderBy), cancellationToken);
 			return Ok(result);
 		}
 	}

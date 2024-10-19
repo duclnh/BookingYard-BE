@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
 using Fieldy.BookingYard.Application.Features.Booking.Queries.DTO;
-using Fieldy.BookingYard.Application.Features.Feedback.Queries;
 using Fieldy.BookingYard.Application.Models.Paging;
 using Fieldy.BookingYard.Domain.Abstractions.Repositories;
 using MediatR;
 using System.Linq.Expressions;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Fieldy.BookingYard.Application.Features.Booking.Queries.GetAllBookingCustomer
 {

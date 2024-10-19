@@ -14,6 +14,7 @@ namespace Fieldy.BookingYard.Application.MappingProfiles
 
 			CreateMap<Booking, BookingDetailDto>()
 				.ForMember(dest => dest.BookingID, opt => opt.MapFrom(src => src.Id))
+				.ForMember(dest => dest.IsCheckIn, opt => opt.MapFrom(src => src.IsCheckin))
 				.ForMember(dest => dest.FacilityID, opt => opt.MapFrom(src => src.Court != null ? src.Court.FacilityID : Guid.Empty))
 				.ForMember(dest => dest.FacilityName, opt => opt.MapFrom(src => src.Court != null ? (src.Court.Facility != null ? src.Court.Facility.Name : null) : null))
 				.ForMember(dest => dest.FacilityLogo, opt => opt.MapFrom(src => src.Court != null ? (src.Court.Facility != null ? src.Court.Facility.Logo : null) : null))
