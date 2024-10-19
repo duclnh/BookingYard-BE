@@ -1,3 +1,4 @@
+using Fieldy.BookingYard.Application.Features.User.Commands.BanUser;
 using Fieldy.BookingYard.Application.Features.User.Commands.UpdateUser;
 using Fieldy.BookingYard.Application.Features.User.Queries;
 using Fieldy.BookingYard.Application.Features.User.Queries.DTO;
@@ -78,9 +79,10 @@ namespace Fiedly.BookingYard.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAllUser(
             [FromQuery] RequestParams requestParams,
+            [FromQuery] string? orderBy,
             CancellationToken cancellationToken = default)
         {
-            var result = await _mediator.Send(new GetALlUserQuery(requestParams), cancellationToken);
+            var result = await _mediator.Send(new GetALlUserQuery(requestParams, orderBy), cancellationToken);
             return Ok(result);
         }
 
@@ -99,5 +101,19 @@ namespace Fiedly.BookingYard.Api.Controllers
             return Ok(result);
         }
 
+        [HttpDelete]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> DeleteUser(
+                    [FromBody] BanUserCommand command,
+                    CancellationToken cancellationToken = default)
+        {
+            var result = await _mediator.Send(command, cancellationToken);
+            return Ok(result);
+        }
     }
 }

@@ -7,23 +7,22 @@ namespace Fieldy.BookingYard.Application.Features.Feedback.Commands.DeleteFeedba
 {
 	public class DeleteFeedbackCommandHandler : IRequestHandler<DeleteFeedbackCommand, string>
 	{
-		private readonly IMapper _mapper;
-		private readonly IFeedbackRepository _FeedbackRepository;
-		public DeleteFeedbackCommandHandler(IMapper mapper, IFeedbackRepository FeedbackRepository)
+		private readonly IFeedbackRepository _feedbackRepository;
+		public DeleteFeedbackCommandHandler(IFeedbackRepository feedbackRepository)
 		{
-			_mapper = mapper;
-			_FeedbackRepository = FeedbackRepository;
+			_feedbackRepository = feedbackRepository;
 		}
 		public async Task<string> Handle(DeleteFeedbackCommand request, CancellationToken cancellationToken)
 		{
-			var Feedback = _mapper.Map<Domain.Entities.FeedBack>(request);
+			var feedback = await _feedbackRepository.FindByIdAsync(request.FeedbackID, cancellationToken);
 
-			if (Feedback == null)
+			if (feedback == null)
 				throw new BadRequestException("Error Delete Feedback!");
 
-			_FeedbackRepository.Remove(Feedback);
+			feedback.IsShow = !feedback.IsShow;
+			_feedbackRepository.Update(feedback);
 
-			var result = await _FeedbackRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
+			var result = await _feedbackRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
 
 			if (result < 0)
 				throw new BadRequestException("Delete Feedback fail!");

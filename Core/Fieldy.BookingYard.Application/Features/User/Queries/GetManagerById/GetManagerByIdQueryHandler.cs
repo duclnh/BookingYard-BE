@@ -10,12 +10,14 @@ namespace Fieldy.BookingYard.Application.Features.User.Queries.GetManagerById
     {
         private readonly IUserRepository _userRepository;
         private readonly IFacilityRepository _facilityRepository;
+        private readonly IFeedbackRepository _feedbackRepository;
         private readonly IMapper _mapper;
 
-        public GetManagerByIdQueryHandler(IUserRepository userRepository, IFacilityRepository facilityRepository, IMapper mapper)
+        public GetManagerByIdQueryHandler(IUserRepository userRepository, IFacilityRepository facilityRepository, IFeedbackRepository feedbackRepository, IMapper mapper)
         {
             _userRepository = userRepository;
             _facilityRepository = facilityRepository;
+            _feedbackRepository = feedbackRepository;
             _mapper = mapper;
         }
 
@@ -29,11 +31,21 @@ namespace Fieldy.BookingYard.Application.Features.User.Queries.GetManagerById
             var facility = await _facilityRepository.Find(x => x.UserID == user.Id, cancellationToken);
 
             var response = _mapper.Map<ManagerDTO>(user);
-            if(facility != null)
+            if (facility != null)
             {
+                var isFeedback = await _feedbackRepository.AnyAsync(x => x.FacilityID == facility.Id, cancellationToken);
                 response.FacilityName = facility.Name;
                 response.FacilityID = facility.Id;
+                // .AddMonths(-1)
                 response.FacilityImage = facility.Logo ?? facility.Image;
+                if (DateTime.Now >= facility.CreatedAt)
+                {
+                    response.IsFeedback = isFeedback;
+                }
+                else
+                {
+                    response.IsFeedback = true;
+                }
             }
 
             return response;

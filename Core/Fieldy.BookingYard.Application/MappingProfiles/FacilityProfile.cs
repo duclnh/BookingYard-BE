@@ -22,6 +22,7 @@ public class FacilityProfile : Profile
             .ForMember(x => x.Logo, q => q.Ignore());
 
         CreateMap<Facility, FacilityAdminDTO>()
+            .ForMember(x => x.FacilityID, q => q.MapFrom(x => x.Id))
             .ForMember(x => x.Address, q => q.MapFrom(x => x.FullAddress))
             .ForMember(x => x.OwnerName, q => q.MapFrom(x => x.User.Name))
             .ForMember(x => x.FacilityName, q => q.MapFrom(x => x.Name));
@@ -52,6 +53,6 @@ public class FacilityProfile : Profile
                    opt => opt.MapFrom(src => src.EndTime.Equals(new TimeSpan(0, 0, 0)) ? "24:00" : src.EndTime.ToString("hh\\:mm")));
 
         CreateMap<Facility, FacilityPositionDTO>();
-    
+
     }
 }
