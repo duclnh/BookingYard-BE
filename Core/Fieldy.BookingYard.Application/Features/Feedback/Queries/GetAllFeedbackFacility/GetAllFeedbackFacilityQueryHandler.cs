@@ -2,6 +2,7 @@ using AutoMapper;
 using Fieldy.BookingYard.Application.Features.Feedback.Queries.DTO;
 using Fieldy.BookingYard.Application.Models.Paging;
 using Fieldy.BookingYard.Domain.Abstractions.Repositories;
+using Fieldy.BookingYard.Domain.Enums;
 using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.Feedback.Queries.GetAllFeedbackFacility;
@@ -22,7 +23,7 @@ public class GetAllFeedbackFacilityQueryHandler : IRequestHandler<GetAllFeedback
         var feedbackFacilities = await _feedbackRepository.FindAllPaging(
             currentPage: request.RequestParams.CurrentPage,
             pageSize: request.RequestParams.PageSize,
-            expression: x => x.FacilityID == request.FacilityID
+            expression: x => x.FacilityID == request.FacilityID && x.TypeFeedback == TypeFeedback.Customer
                             && x.IsShow == true,
             orderBy: x => x.OrderByDescending(q => q.CreatedAt),
             cancellationToken: cancellationToken,
