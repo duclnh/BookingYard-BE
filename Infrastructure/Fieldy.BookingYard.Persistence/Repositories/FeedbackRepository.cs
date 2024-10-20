@@ -17,7 +17,7 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 		{
 			var feedbackData = await _dbContext.Feedbacks
 					.AsNoTracking()
-					.Where(x => x.FacilityID == facilityID)
+					.Where(x => x.FacilityID == facilityID && x.TypeFeedback == TypeFeedback.Customer)
 					.GroupBy(x => x.FacilityID)
 					.Select(g => new
 					{
@@ -40,7 +40,7 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 		{
 			var starCounts = await _dbContext.Feedbacks
 						.AsNoTracking()
-						.Where(x => x.FacilityID == facilityID)
+						.Where(x => x.FacilityID == facilityID && x.TypeFeedback == TypeFeedback.Customer)
 						.GroupBy(x => x.Rating)
 						.Select(g => new
 						{
