@@ -4,6 +4,7 @@ using Fieldy.BookingYard.Application.Exceptions;
 using Fieldy.BookingYard.Application.Features.Facility.Queries.DTO;
 using Fieldy.BookingYard.Application.Features.Sport.Queries.DTO;
 using Fieldy.BookingYard.Domain.Abstractions.Repositories;
+using Fieldy.BookingYard.Domain.Enums;
 using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.Facility.Queries.FacilityDetail
@@ -70,7 +71,7 @@ namespace Fieldy.BookingYard.Application.Features.Facility.Queries.FacilityDetai
 			facilityMapped.FacilityMinPrice = facility.GetMinPriceCourt();
 			facilityMapped.FacilityMaxPrice = facility.GetMaxPriceCourt();
 			facilityMapped.FacilityRating = await _feedbackRepository.GetRatingFacility(facility.Id, cancellationToken);
-			facilityMapped.NumberFeedback = await _feedbackRepository.CountAsync(x => x.FacilityID == facility.Id, cancellationToken);
+			facilityMapped.NumberFeedback = await _feedbackRepository.CountAsync(x => x.FacilityID == facility.Id && x.TypeFeedback == TypeFeedback.Customer, cancellationToken);
 
 			var sports = await _courtRepository.GetSports(facility.Id, cancellationToken);
 
