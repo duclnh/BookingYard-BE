@@ -1,6 +1,4 @@
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS base
-RUN apt-get update && apt-get install -y libgdiplus libc6-dev
-RUN ln -s /usr/lib/libgdiplus.so /usr/lib/gdiplus.dll
 WORKDIR /app
 EXPOSE 80
 
@@ -32,6 +30,6 @@ FROM base AS final
 WORKDIR /app
 RUN mkdir -p /app/wwwroot
 VOLUME /app/wwwroot
-
+RUN apt-get update && apt-get install -y libgdiplus libc6-dev
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Fieldy.BookingYard.Api.dll"]

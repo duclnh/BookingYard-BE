@@ -24,7 +24,7 @@ public class ScanBookingQueryHandler : IRequestHandler<ScanBookingQuery, PagingR
     {
         var bookings = await _bookingRepository.FindAllPaging(
                 currentPage: request.RequestParams.CurrentPage,
-                pageSize: Math.Min(request.RequestParams.PageSize, 10),
+                pageSize: request.RequestParams.PageSize,
                 expression: x => (x.PaymentCode == request.Code || x.Email == request.Email || x.Phone == request.Phone)
                                     && x.Court.FacilityID == request.FacilityID
                                     && !x.IsDeleted,
