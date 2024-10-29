@@ -1,4 +1,5 @@
 using Fieldy.BookingYard.Application.Abstractions;
+using Fieldy.BookingYard.Application.Abstractions.Hub;
 using Fieldy.BookingYard.Application.Exceptions;
 using Fieldy.BookingYard.Domain.Abstractions.Repositories;
 using Fieldy.BookingYard.Domain.Enums;
@@ -14,6 +15,7 @@ public class CancelBookingCommandHandler : IRequestHandler<CancelBookingCommand,
     private readonly IBookingRepository _bookingRepository;
     private readonly ICourtRepository _courtRepository;
     private readonly ICollectVoucherRepository _collectVoucherRepository;
+    private readonly INotificationService _notificationService;
 
 
     public CancelBookingCommandHandler(IJWTService jWTService,
@@ -21,7 +23,8 @@ public class CancelBookingCommandHandler : IRequestHandler<CancelBookingCommand,
                                         IBookingRepository bookingRepository,
                                         ICourtRepository courtRepository,
                                         IHistoryPointRepository historyPointRepository,
-                                        ICollectVoucherRepository collectVoucherRepository)
+                                        ICollectVoucherRepository collectVoucherRepository,
+                                        INotificationService notificationService)
     {
         _jWTService = jWTService;
         _userRepository = userRepository;
@@ -29,6 +32,7 @@ public class CancelBookingCommandHandler : IRequestHandler<CancelBookingCommand,
         _bookingRepository = bookingRepository;
         _courtRepository = courtRepository;
         _collectVoucherRepository = collectVoucherRepository;
+        _notificationService = notificationService;
     }
 
     public async Task<string> Handle(CancelBookingCommand request, CancellationToken cancellationToken)
@@ -39,7 +43,9 @@ public class CancelBookingCommandHandler : IRequestHandler<CancelBookingCommand,
 
         var booking = await _bookingRepository.Find(x => x.Id == request.BookingID || x.PaymentCode == request.PaymentCode,
                                                     cancellationToken,
-                                                    x => x.User);
+                                                    x => x.User,
+                                                    x => x.Court,
+                                                    x => x.Court.Facility);
 
         if (booking == null)
             throw new NotFoundException(nameof(booking), request.BookingID);
@@ -98,6 +104,15 @@ public class CancelBookingCommandHandler : IRequestHandler<CancelBookingCommand,
         var result = await _bookingRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
         if (result < 0)
             throw new BadRequestException("Cancel booking fail");
+
+        if (user.Role != Role.Customer)
+        {
+            await _notificationService.SendNotificationCancelBooking(booking.UserID.ToString(), booking.PaymentCode ?? "", booking.Id.ToString(), cancellationToken);
+        }
+        else
+        {
+            await _notificationService.SendNotificationCancelBooking(booking.Court?.Facility?.UserID.ToString() ?? "", booking.PaymentCode ?? "", booking.Id.ToString(), cancellationToken);
+        }
 
         return "Cancel booking success";
     }

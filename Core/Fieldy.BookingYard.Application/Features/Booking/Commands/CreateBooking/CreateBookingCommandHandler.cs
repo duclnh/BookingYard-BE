@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.Execution;
+using Fieldy.BookingYard.Application.Abstractions.Hub;
 using Fieldy.BookingYard.Application.Abstractions.Vnpay;
 using Fieldy.BookingYard.Application.Exceptions;
 using Fieldy.BookingYard.Domain.Abstractions.Repositories;
@@ -19,6 +20,7 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 		private readonly IVoucherRepository _voucherRepository;
 		private readonly IVnpayService _vnpayService;
 		private readonly ICourtRepository _courtRepository;
+		private readonly INotificationService _notificationService;
 
 		public CreateBookingCommandHandler(IMapper mapper,
 											IBookingRepository bookingRepository,
@@ -27,7 +29,8 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 											IVnpayService vnpayService,
 											IUserRepository userRepository,
 											ICourtRepository courtRepository,
-											IVoucherRepository voucherRepository)
+											IVoucherRepository voucherRepository,
+											INotificationService notificationService)
 		{
 			_mapper = mapper;
 			_bookingRepository = bookingRepository;
@@ -37,6 +40,7 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 			_userRepository = userRepository;
 			_courtRepository = courtRepository;
 			_voucherRepository = voucherRepository;
+			_notificationService = notificationService;
 		}
 
 		public async Task<string> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
@@ -46,7 +50,7 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 			if (validationResult.Errors.Any())
 				throw new BadRequestException("Invalid register booking", validationResult);
 
-			var court = await _courtRepository.FindByIdAsync(request.CourtID, cancellationToken);
+			var court = await _courtRepository.FindByIdAsync(request.CourtID, cancellationToken, x => x.Facility);
 			if (court == null)
 				throw new NotFoundException(nameof(court), request.CourtID);
 
@@ -172,7 +176,7 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Commands.CreateBooking
 			{
 				return new BadRequestException("Create new booking fail!").Message;
 			}
-
+			await _notificationService.SendNotificationCreateBooking(court.Facility.UserID.ToString() ?? "", "Create Successfully", cancellationToken);
 			// Check payment type
 			string? paymentUrl = null;
 			switch (booking.PaymentMethod)

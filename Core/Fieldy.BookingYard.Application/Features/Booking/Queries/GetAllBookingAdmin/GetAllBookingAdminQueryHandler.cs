@@ -52,7 +52,7 @@ namespace Fieldy.BookingYard.Application.Features.Booking.Queries.GetAllBookingF
 
 			var listBooking = await _bookingRepository.FindAllPaging(
 				currentPage: request.requestParams.CurrentPage,
-				pageSize: Math.Min(request.requestParams.PageSize, 10),
+				pageSize: request.requestParams.PageSize,
 				expressions: expressionArray,
 				orderBy: x => x.OrderByDescending(x => x.CreatedAt),
 				cancellationToken: cancellationToken,

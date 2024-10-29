@@ -2,6 +2,7 @@ using Fiedly.BookingYard.Api;
 using Fiedly.BookingYard.Api.Configurations;
 using Fieldy.BookingYard.Application;
 using Fieldy.BookingYard.Infrastructure;
+using Fieldy.BookingYard.Infrastructure.Hubs;
 using Fieldy.BookingYard.Persistence;
 using Serilog;
 
@@ -28,9 +29,10 @@ builder.Services.AddControllers();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("all", builder => builder.AllowAnyOrigin()
+    options.AddPolicy("all", builder => builder.WithOrigins("http://localhost:3000", "https://www.fieldy.online")
                                                .AllowAnyHeader()
-                                               .AllowAnyMethod());
+                                               .AllowAnyMethod()
+                                               .AllowCredentials());
 });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -58,5 +60,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<NotificationHub>("/notifications");
 
 app.Run();
