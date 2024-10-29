@@ -1,11 +1,14 @@
 
-using System.DrawingCore;
-using System.DrawingCore.Imaging;
+using SixLabors.ImageSharp;
+
 using Fieldy.BookingYard.Application.Abstractions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using QRCoder;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
 
 namespace Fieldy.BookingYard.Infrastructure.Utility
 {
@@ -79,28 +82,50 @@ namespace Fieldy.BookingYard.Infrastructure.Utility
 
         public string CreateQrCode(string paymentCode, string name, string email, string phone)
         {
+            var base64String = "";
             var logoPath = Path.Combine(_environment.WebRootPath, "logo.png");
-            Bitmap logo = new Bitmap(logoPath);
-            var qrGenerator = new QRCoder.QRCodeGenerator();
-            var qrCodeData = qrGenerator.CreateQrCode(
-                JsonConvert.SerializeObject(new
+            using (var qrGenerator = new QRCodeGenerator())
+            using (var qrCodeData = qrGenerator.CreateQrCode(JsonConvert.SerializeObject(new
+            {
+                paymentCode,
+                name,
+                email,
+                phone,
+            }, Formatting.Indented), QRCodeGenerator.ECCLevel.Q))
+            using (var qrCode = new PngByteQRCode(qrCodeData))
+            {
+                // Generate the QR code as a byte array
+                byte[] qrCodeImage = qrCode.GetGraphic(20);
+                using (var qrCodeImageStream = new MemoryStream(qrCodeImage))
+                using (var qrCodeImageSharp = Image.Load<Rgba32>(qrCodeImageStream))
                 {
-                    paymentCode,
-                    name,
-                    email,
-                    phone,
-                }, Formatting.Indented),
-                QRCoder.QRCodeGenerator.ECCLevel.Q
-             );
-            var qrCode = new QRCoder.QRCode(qrCodeData);
-            var qrCodeImage = qrCode.GetGraphic(10, Color.Black, Color.White, logo, 25);
+                    // Load the logo
+                    using (var logo = Image.Load<Rgba32>(logoPath))
+                    {
+                        // Resize logo to fit in the QR code
+                        logo.Mutate(x => x.Resize(new Size(60, 60))); // Resize as needed
 
-            MemoryStream ms = new MemoryStream();
-            qrCodeImage.Save(ms, ImageFormat.Png);
-            byte[] qrCodeBytes = ms.ToArray();
+                        // Calculate position to place logo at the center
+                        var logoX = (qrCodeImageSharp.Width - logo.Width) / 2;
+                        var logoY = (qrCodeImageSharp.Height - logo.Height) / 2;
 
-            var imageBase64 = Convert.ToBase64String(qrCodeBytes);
-            return $"data:image/png;base64,{imageBase64}";
+                        // Draw the logo on top of the QR code
+                        qrCodeImageSharp.Mutate(x => x.DrawImage(logo, new Point(logoX, logoY), 1f));
+                    }
+
+                    // Save the final QR code with logo as a byte array
+                    using (var finalImageStream = new MemoryStream())
+                    {
+                        qrCodeImageSharp.SaveAsPng(finalImageStream);
+                        var finalImageBytes = finalImageStream.ToArray();
+
+                        // Convert to Base64 string for JSON response
+                        base64String = Convert.ToBase64String(finalImageBytes);
+
+                    }
+                }
+            }
+            return $"data:image/png;base64,{base64String}";
         }
 
     }
