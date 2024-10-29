@@ -1,4 +1,6 @@
 
+using System.DrawingCore;
+using System.DrawingCore.Imaging;
 using Fieldy.BookingYard.Application.Abstractions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -78,7 +80,7 @@ namespace Fieldy.BookingYard.Infrastructure.Utility
         public string CreateQrCode(string paymentCode, string name, string email, string phone)
         {
             var logoPath = Path.Combine(_environment.WebRootPath, "logo.png");
-            System.DrawingCore.Bitmap logo = new System.DrawingCore.Bitmap(logoPath);
+            Bitmap logo = new Bitmap(logoPath);
             var qrGenerator = new QRCoder.QRCodeGenerator();
             var qrCodeData = qrGenerator.CreateQrCode(
                 JsonConvert.SerializeObject(new
@@ -91,10 +93,10 @@ namespace Fieldy.BookingYard.Infrastructure.Utility
                 QRCoder.QRCodeGenerator.ECCLevel.Q
              );
             var qrCode = new QRCoder.QRCode(qrCodeData);
-            var qrCodeImage = qrCode.GetGraphic(10, System.DrawingCore.Color.Black, System.DrawingCore.Color.White, logo, 25);
+            var qrCodeImage = qrCode.GetGraphic(10, Color.Black, Color.White, logo, 25);
 
             MemoryStream ms = new MemoryStream();
-            qrCodeImage.Save(ms, System.DrawingCore.Imaging.ImageFormat.Png);
+            qrCodeImage.Save(ms, ImageFormat.Png);
             byte[] qrCodeBytes = ms.ToArray();
 
             var imageBase64 = Convert.ToBase64String(qrCodeBytes);

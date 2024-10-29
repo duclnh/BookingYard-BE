@@ -30,6 +30,6 @@ FROM base AS final
 WORKDIR /app
 RUN mkdir -p /app/wwwroot
 VOLUME /app/wwwroot
-RUN apt-get update && apt-get install -y libgdiplus libc6-dev
+
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Fieldy.BookingYard.Api.dll"]
