@@ -21,12 +21,12 @@ namespace Fieldy.BookingYard.Application.Features.Dashboard.Queries
 			var endOfWeek = startOfWeek.AddDays(7);
 			Expression<Func<Domain.Entities.Booking, bool>> timeBasedExpression = request.typeTimeBased switch
 			{
-				/*TypeTimeBased.date*/ "date" => x => x.BookingDate.Date == today,
-				/*TypeTimeBased.week*/ "week" => x => x.BookingDate >= startOfWeek &&
+				/*TypeTimeBased.date*/ "date" => x => x.BookingDate.Date == today && x.PaymentStatus,
+				/*TypeTimeBased.week*/ "week" => x => x.BookingDate >= startOfWeek && x.PaymentStatus &&
 											 x.BookingDate < endOfWeek,
-				/*TypeTimeBased.month*/ "month" => x => x.BookingDate.Month == today.Month &&
+				/*TypeTimeBased.month*/ "month" => x => x.BookingDate.Month == today.Month && x.PaymentStatus &&
 											 x.BookingDate.Year == today.Year,
-				/*TypeTimeBased.year*/ "year" => x => x.BookingDate.Year == today.Year,
+				/*TypeTimeBased.year*/ "year" => x => x.BookingDate.Year == today.Year && x.PaymentStatus,
 				_ => x => false
 			};
 			var bookings = await _bookingRepository.FindAll(expression: timeBasedExpression,

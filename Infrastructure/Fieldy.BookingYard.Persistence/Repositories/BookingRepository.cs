@@ -20,7 +20,7 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 			if (facilityId == Guid.Empty)
 			{
 				revenues = _dbContext.Set<Booking>()
-				.Where(b => b.BookingDate.Date == date.Date && b.IsDeleted == false)
+				.Where(b => b.BookingDate.Date == date.Date && !b.IsDeleted && b.PaymentStatus)
 				.GroupBy(b => b.StartTime)
 				.Select(g => new
 				{
@@ -44,7 +44,7 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 			{
 				revenues = _dbContext.Set<Booking>()
 				.Include(b => b.Court)
-				.Where(b => b.BookingDate.Date == date.Date && b.IsDeleted == false && b.Court.FacilityID == facilityId)
+				.Where(b => b.BookingDate.Date == date.Date && !b.IsDeleted && b.Court.FacilityID == facilityId && b.PaymentStatus)
 				.GroupBy(b => b.StartTime)
 				.Select(g => new
 				{
@@ -86,7 +86,7 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 			if (facilityId == Guid.Empty)
 			{
 				revenues = _dbContext.Set<Booking>()
-							.Where(b => b.BookingDate >= startOfWeek && b.IsDeleted == false)
+							.Where(b => b.BookingDate >= startOfWeek && !b.IsDeleted && b.PaymentStatus)
 							.GroupBy(b => b.BookingDate.Date)
 							.Select(g => new
 							{
@@ -100,7 +100,7 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 			else
 			{
 				revenues = _dbContext.Set<Booking>()
-							.Where(b => b.BookingDate >= startOfWeek && b.IsDeleted == false && b.Court.FacilityID == facilityId)
+							.Where(b => b.BookingDate >= startOfWeek && !b.IsDeleted && b.PaymentStatus && b.Court.FacilityID == facilityId)
 							.GroupBy(b => b.BookingDate.Date)
 							.Select(g => new
 							{
@@ -141,7 +141,7 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 			if (facilityId == Guid.Empty)
 			{
 				revenues = _dbContext.Set<Booking>()
-					.Where(b => b.BookingDate >= startOfMonth && !b.IsDeleted)
+					.Where(b => b.BookingDate >= startOfMonth && !b.IsDeleted && b.PaymentStatus)
 					.GroupBy(b => b.BookingDate.Day)
 					.Select(g => new
 					{
@@ -156,7 +156,7 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 			{
 				revenues = _dbContext.Set<Booking>()
 					.Include(b => b.Court)
-					.Where(b => b.BookingDate >= startOfMonth && !b.IsDeleted && b.Court.FacilityID == facilityId)
+					.Where(b => b.BookingDate >= startOfMonth && !b.IsDeleted && b.PaymentStatus && b.Court.FacilityID == facilityId)
 					.GroupBy(b => b.BookingDate.Day)
 					.Select(g => new
 					{
@@ -197,7 +197,7 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 			if (facilityId == Guid.Empty)
 			{
 				revenues = _dbContext.Set<Booking>()
-					.Where(b => b.BookingDate >= startOfYear && b.BookingDate <= endOfYear && b.IsDeleted == false)
+					.Where(b => b.BookingDate >= startOfYear && b.BookingDate <= endOfYear && !b.IsDeleted && b.PaymentStatus)
 					.GroupBy(b => b.BookingDate.Month)
 					.Select(g => new
 					{
@@ -210,7 +210,7 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 			{
 				revenues = _dbContext.Set<Booking>()
 					.Include(b => b.Court)
-					.Where(b => b.BookingDate >= startOfYear && b.BookingDate <= endOfYear && b.IsDeleted == false && b.Court.FacilityID == facilityId)
+					.Where(b => b.BookingDate >= startOfYear && b.BookingDate <= endOfYear && !b.IsDeleted && b.PaymentStatus && b.Court.FacilityID == facilityId)
 					.GroupBy(b => b.BookingDate.Month)
 					.Select(g => new
 					{

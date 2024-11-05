@@ -17,18 +17,18 @@ namespace Fieldy.BookingYard.Application.Features.Dashboard.Queries.GetRevenueCo
 			var today = DateTime.Today;
 			Expression<Func<Domain.Entities.Booking, bool>> timeBasedExpression = request.typeTimeBased switch
 			{
-				"date" => x => x.BookingDate.Date == today && x.Court.FacilityID == request.facilityId,
+				"date" => x => x.BookingDate.Date == today && x.Court.FacilityID == request.facilityId && x.PaymentStatus,
 				
 				"week" => x => x.BookingDate >= today.AddDays(-(int)today.DayOfWeek) &&
 					  x.BookingDate < today.AddDays(7 - (int)today.DayOfWeek) &&
-					  x.Court.FacilityID == request.facilityId,
+					  x.Court.FacilityID == request.facilityId && x.PaymentStatus,
 				
 				"month" => x => x.BookingDate.Month == today.Month &&
 					  x.BookingDate.Year == today.Year &&
-					  x.Court.FacilityID == request.facilityId,
+					  x.Court.FacilityID == request.facilityId && x.PaymentStatus,
 				
 				"year" => x => x.BookingDate.Year == today.Year &&
-					  x.Court.FacilityID == request.facilityId,
+					  x.Court.FacilityID == request.facilityId && x.PaymentStatus,
 				_ => x => false
 			}; 
 			var bookings = await _bookingRepository.FindAll(expression: timeBasedExpression,
