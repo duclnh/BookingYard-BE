@@ -20,12 +20,12 @@ namespace Fieldy.BookingYard.Application.Features.Dashboard.Queries
 			var endOfWeek = startOfWeek.AddDays(7);
 			Expression<Func<Domain.Entities.Booking, bool>> timeBasedExpression = request.typeTimeBased switch
 			{
-				/*TypeTimeBased.date*/ "date" => x => x.BookingDate.Date == today && x.IsDeleted == false,
+				/*TypeTimeBased.date*/ "date" => x => x.BookingDate.Date == today,
 				/*TypeTimeBased.week*/ "week" => x => x.BookingDate >= startOfWeek &&
-											 x.BookingDate < endOfWeek && x.IsDeleted == false,
+											 x.BookingDate < endOfWeek,
 				/*TypeTimeBased.month*/ "month" => x => x.BookingDate.Month == today.Month &&
-											 x.BookingDate.Year == today.Year && x.IsDeleted == false,
-				/*TypeTimeBased.year*/ "year" => x => x.BookingDate.Year == today.Year && x.IsDeleted == false,
+											 x.BookingDate.Year == today.Year,
+				/*TypeTimeBased.year*/ "year" => x => x.BookingDate.Year == today.Year,
 				_ => x => false
 			};
 			var bookings = await _bookingRepository.FindAll(expression: timeBasedExpression,
@@ -70,6 +70,7 @@ namespace Fieldy.BookingYard.Application.Features.Dashboard.Queries
 					break;
 			}
 			var sportsCounts = bookings
+				.Where(b => b.IsDeleted == false)
 				.GroupBy(b => b.Court.Sport.SportName)
 				.Select(g => new SportCount
 				{
@@ -78,7 +79,7 @@ namespace Fieldy.BookingYard.Application.Features.Dashboard.Queries
 				})
 				.ToList();
 
-			var totalPrice = bookings.Sum(booking => booking.TotalPrice - booking.OwnerPrice);
+			var totalPrice = bookings.Sum(booking => booking.IsDeleted == false ? booking.TotalPrice - booking.OwnerPrice : 0);
 			return new DashboardHome
 			{
 				Revenue = totalPrice,
