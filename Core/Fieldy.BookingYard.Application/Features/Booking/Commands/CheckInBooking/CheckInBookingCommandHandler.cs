@@ -26,6 +26,7 @@ public class CheckInBookingCommandHandler : IRequestHandler<CheckInBookingComman
             throw new NotFoundException(nameof(booking), request.BookingID);
 
         booking.IsCheckin = true;
+        booking.PaymentStatus = true;
         
         _bookingRepository.Update(booking);
 

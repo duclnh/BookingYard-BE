@@ -14,7 +14,7 @@ namespace Fieldy.BookingYard.Application.MappingProfiles
             CreateMap<User, UserDTO>();
             CreateMap<User, ManagerDTO>();
             CreateMap<User, UserAdminDTO>()
-            .ForMember(dest => dest.CreateDate, opt => opt.MapFrom(src => src.CreatedAt.ToString("dd-MM-yyyy hh\\:mm")));
+            .ForMember(dest => dest.CreateDate, opt => opt.MapFrom(src => src.CreatedAt.ToString("dd-MM-yyyy HH:mm")));
 
             CreateMap<GoogleCommand, User>();
             CreateMap<User, UserUpdateDTO>();
