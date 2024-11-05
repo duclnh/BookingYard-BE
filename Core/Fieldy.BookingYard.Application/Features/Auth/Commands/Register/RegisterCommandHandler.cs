@@ -42,6 +42,7 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Register
                 Gender = (Gender)request.Gender,
                 Phone = request.Phone,
                 Role = Role.Customer,
+                ImageUrl = ImageRandom(),
                 PasswordHash = _utility.Hash(request.Password),
                 VerificationToken = _utility.Hash(generationCode),
             };
@@ -67,5 +68,13 @@ namespace Fieldy.BookingYard.Application.Features.Auth.Commands.Register
 
             return "Create new user successfully";
         }
+        private string ImageRandom()
+        {
+            Random random = new Random();
+            int randomNumber = random.Next(1, 12);
+            string imageUrl = $"/{randomNumber}.png";
+            return imageUrl;
+        }
     }
+
 }
