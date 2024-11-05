@@ -31,7 +31,7 @@ public class GetAllFeedbackFacilityQueryHandler : IRequestHandler<GetAllFeedback
             x => x.Images
         );
 
-        var feedbackFacilitiesMapped = _mapper.Map<IList<FeedbackFacilityDetailDTO>>(feedbackFacilities.Results);
+        var feedbackFacilitiesMapped = _mapper.Map<IList<FeedbackFacilityDetailDTO>>(feedbackFacilities.Results.Distinct().ToList());
 
         return PagingResult<FeedbackFacilityDetailDTO>.Create(
             totalCount: feedbackFacilities.TotalCount,
