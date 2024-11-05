@@ -30,7 +30,7 @@ namespace Fieldy.BookingYard.Application.Features.Feedback.Queries.GetAllFeedbac
 			var listFeedback = await _FeedbackRepository.FindAllPaging(
 				currentPage: request.requestParams.CurrentPage,
 				pageSize: request.requestParams.PageSize,
-				expression: x => x.FacilityID == request.facilityID,
+				expression: x => x.FacilityID == request.facilityID && x.TypeFeedback == TypeFeedback.Customer,
 				orderBy: x => x.OrderByDescending(x => x.CreatedAt),
 				cancellationToken: cancellationToken,
 				x => x.Images,

@@ -34,15 +34,15 @@ namespace Fieldy.BookingYard.Application.Features.Feedback.Commands.CreateFeedba
 			if (validationResult.Errors.Any())
 				throw new BadRequestException("Invalid register Feedback", validationResult);
 
-			var booking = await _bookingRepository.FindByIdAsync(request.BookingID, cancellationToken);
+			var booking = await _bookingRepository.FindByIdAsync(request.BookingID, cancellationToken, x => x.Court);
 			if (booking == null)
 				throw new NotFoundException(nameof(booking), request.BookingID);
 
-			if(request.UserID != booking.UserID)
-			 	throw new UnauthorizedAccessException("User does not have permission to access this booking");
+			if (request.UserID != booking.UserID)
+				throw new UnauthorizedAccessException("User does not have permission to access this booking");
 
 			if (booking.IsDeleted)
-				throw new BadRequestException("Booking has not been deleted");		
+				throw new BadRequestException("Booking has not been deleted");
 
 			if (!booking.IsCheckin)
 				throw new BadRequestException("Check-in has not been completed");
@@ -58,6 +58,7 @@ namespace Fieldy.BookingYard.Application.Features.Feedback.Commands.CreateFeedba
 			var feedback = _mapper.Map<Domain.Entities.FeedBack>(request);
 			feedback.IsShow = true;
 			feedback.CreatedAt = DateTime.Now;
+			feedback.FacilityID = booking.Court.FacilityID;
 			feedback.TypeFeedback = TypeFeedback.Customer;
 			booking.IsFeedback = true;
 			_bookingRepository.Update(booking);
