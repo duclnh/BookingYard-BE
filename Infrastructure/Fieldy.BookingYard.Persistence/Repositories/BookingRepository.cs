@@ -2,7 +2,7 @@
 using Fieldy.BookingYard.Domain.Entities;
 using Fieldy.BookingYard.Persistence.DatabaseContext;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
+using System.Threading;
 
 namespace Fieldy.BookingYard.Persistence.Repositories
 {
@@ -30,6 +30,15 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 				.AsEnumerable()
 				.Select(x => (x.Hour, x.TotalRevenue))
 				.ToList();
+
+				var allHours = Enumerable.Range(0, 24)
+								 .Select(hour => new TimeSpan(hour, 0, 0))
+								 .ToHashSet();
+				var existingHours = new HashSet<TimeSpan>(revenues.Select(r => r.Hour));
+				foreach (var missingHour in allHours.Except(existingHours))
+				{
+					revenues.Add((missingHour, 0.00m));
+				}
 			}
 			else
 			{
@@ -40,31 +49,27 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 				.Select(g => new
 				{
 					Hour = g.Key,
-					TotalRevenue = g.Sum(b => b.TotalPrice - b.OwnerPrice)
+					TotalRevenue = g.Sum(b => b.OwnerPrice)
 				})
 				.AsEnumerable()
 				.Select(x => (x.Hour, x.TotalRevenue))
 				.ToList();
-			}
-				/*var revenues = _dbContext.Set<Booking>()
-				.Where(b => b.BookingDate.Date == date.Date && b.IsDeleted == false)
-				.GroupBy(b => b.StartTime)
-				.Select(g => new
+
+				var facility = _dbContext.Set<Facility>().FirstOrDefault(f => f.Id == facilityId);
+
+				/*var allHours = Enumerable.Range(facility.StartTime.Hours, facility.EndTime.Hours)
+								 .Select(hour => new TimeSpan(hour, 0, 0))
+								 .ToHashSet();*/
+				var existingHours = new HashSet<TimeSpan>(revenues.Select(r => r.Hour));
+				HashSet<TimeSpan> timeSet = new HashSet<TimeSpan>();
+				for (TimeSpan currentTime = facility.StartTime; currentTime <= facility.EndTime; currentTime = currentTime.Add(new TimeSpan(1, 0, 0)))
 				{
-					Hour = g.Key,
-					TotalRevenue = g.Sum(b => 0, b.TotalPrice - b.OwnerPrice)
-				})
-				.AsEnumerable()
-				.Select(x => (x.Hour, x.TotalRevenue))
-				.ToList(); */
-			
-			var allHours = Enumerable.Range(0, date.Hour)
-							 .Select(hour => new TimeSpan(hour, 0, 0))
-							 .ToHashSet();
-			var existingHours = new HashSet<TimeSpan>(revenues.Select(r => r.Hour));
-			foreach (var missingHour in allHours.Except(existingHours))
-			{
-				revenues.Add((missingHour, 0.00m));
+					timeSet.Add(currentTime);
+				}
+				foreach (var missingHour in timeSet.Except(existingHours))
+				{
+					revenues.Add((missingHour, 0.00m));
+				}
 			}
 
 			return revenues.OrderBy(r => r.Hour).ToList();
@@ -74,15 +79,14 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 		{
 			var date = DateTime.Now;
 			var startOfWeek = date.Date.AddDays(-(int)date.DayOfWeek + 1);
-			//var endOfWeek = startOfWeek.AddDays(7);
-			var endOfWeek = date.Date;
+			var endOfWeek = startOfWeek.AddDays(7);
 
 			var revenues = new List<(DateOnly Date, decimal TotalRevenue)>();
 			var all = _dbContext.Bookings.ToList();
 			if (facilityId == Guid.Empty)
 			{
 				revenues = _dbContext.Set<Booking>()
-							.Where(b => b.BookingDate >= startOfWeek && b.BookingDate < endOfWeek && b.IsDeleted == false)
+							.Where(b => b.BookingDate >= startOfWeek && b.IsDeleted == false)
 							.GroupBy(b => b.BookingDate.Date)
 							.Select(g => new
 							{
@@ -96,19 +100,19 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 			else
 			{
 				revenues = _dbContext.Set<Booking>()
-							.Where(b => b.BookingDate >= startOfWeek && b.BookingDate < endOfWeek && b.IsDeleted == false && b.Court.FacilityID == facilityId)
+							.Where(b => b.BookingDate >= startOfWeek && b.IsDeleted == false && b.Court.FacilityID == facilityId)
 							.GroupBy(b => b.BookingDate.Date)
 							.Select(g => new
 							{
 								Date = DateOnly.FromDateTime(g.Key),
-								TotalRevenue = g.Sum(b => b.TotalPrice - b.OwnerPrice)
+								TotalRevenue = g.Sum(b => b.OwnerPrice)
 							})
 							.AsEnumerable()
 							.Select(x => (x.Date, x.TotalRevenue))
 							.ToList();
 			}
 			
-			var allDates = Enumerable.Range(0, (endOfWeek - startOfWeek).Days + 1)
+			var allDates = Enumerable.Range(0, (endOfWeek - startOfWeek).Days)
 							 .Select(offset => startOfWeek.AddDays(offset))
 							 .Select(date => DateOnly.FromDateTime(date))
 							 .ToHashSet();
@@ -129,7 +133,7 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 		{
 			var date = DateTime.Now;
 			var startOfMonth = new DateTime(date.Year, date.Month, 1);
-			var now = date.Date;
+			var endOfMonth = startOfMonth.AddMonths(1).AddDays(-1);
 
 			// Use an anonymous type to hold the intermediate results
 			var revenues = new List<(DateOnly Date, decimal TotalRevenue)>();
@@ -137,7 +141,7 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 			if (facilityId == Guid.Empty)
 			{
 				revenues = _dbContext.Set<Booking>()
-					.Where(b => b.BookingDate >= startOfMonth && b.BookingDate <= now && !b.IsDeleted)
+					.Where(b => b.BookingDate >= startOfMonth && !b.IsDeleted)
 					.GroupBy(b => b.BookingDate.Day)
 					.Select(g => new
 					{
@@ -152,19 +156,19 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 			{
 				revenues = _dbContext.Set<Booking>()
 					.Include(b => b.Court)
-					.Where(b => b.BookingDate >= startOfMonth && b.BookingDate <= now && !b.IsDeleted && b.Court.FacilityID == facilityId)
+					.Where(b => b.BookingDate >= startOfMonth && !b.IsDeleted && b.Court.FacilityID == facilityId)
 					.GroupBy(b => b.BookingDate.Day)
 					.Select(g => new
 					{
 						Date = new DateOnly(date.Year, date.Month, g.Key),
-						TotalRevenue = g.Sum(b => b.TotalPrice - b.OwnerPrice)
+						TotalRevenue = g.Sum(b => b.OwnerPrice)
 					})
 					.AsEnumerable()
 					.Select(x => (x.Date, x.TotalRevenue))
 					.ToList();
 			}
 
-			int numberOfDays = (now - startOfMonth).Days + 1;
+			int numberOfDays = (endOfMonth - startOfMonth).Days + 1;
 			var allDates = Enumerable.Range(1, numberOfDays)
 									 .Select(day => new DateOnly(date.Year, date.Month, day))
 									 .ToHashSet();
@@ -186,19 +190,19 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 		{
 			var date = DateTime.Now;
 			var startOfYear = new DateTime(date.Year, 1, 1);
-			var endOfYear = startOfYear.AddYears(1);
+			var endOfYear = new DateTime(date.Year, 12, 31);
 
 			var revenues = new List<dynamic>();
 
 			if (facilityId == Guid.Empty)
 			{
 				revenues = _dbContext.Set<Booking>()
-					.Where(b => b.BookingDate >= startOfYear && b.BookingDate < endOfYear && b.IsDeleted == false)
+					.Where(b => b.BookingDate >= startOfYear && b.BookingDate <= endOfYear && b.IsDeleted == false)
 					.GroupBy(b => b.BookingDate.Month)
 					.Select(g => new
 					{
 						Month = g.Key,
-						TotalRevenue = g.Sum(b => b.TotalPrice - b.OwnerPrice)
+						TotalRevenue = g.Sum(b => b.OwnerPrice)
 					})
 					.ToList<dynamic>();
 			}
@@ -206,7 +210,7 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 			{
 				revenues = _dbContext.Set<Booking>()
 					.Include(b => b.Court)
-					.Where(b => b.BookingDate >= startOfYear && b.BookingDate < endOfYear && b.IsDeleted == false && b.Court.FacilityID == facilityId)
+					.Where(b => b.BookingDate >= startOfYear && b.BookingDate <= endOfYear && b.IsDeleted == false && b.Court.FacilityID == facilityId)
 					.GroupBy(b => b.BookingDate.Month)
 					.Select(g => new
 					{
@@ -216,7 +220,7 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 					.ToList<dynamic>();
 			}
 
-			for (int i = 1; i <= date.Month; i++)
+			for (int i = 1; i <= endOfYear.Month; i++)
 			{
 				if (!revenues.Any(r => r.Month == i))
 				{
