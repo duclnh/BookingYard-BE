@@ -84,7 +84,7 @@ namespace Fieldy.BookingYard.Application.Features.Dashboard.Queries.GetRevenueCo
 				})
 				.ToList();
 
-			var totalPrice = bookings.Sum(booking => booking.IsDeleted == false ? booking.OwnerPrice : 0);
+			var totalPrice = bookings.Sum(booking => !booking.IsDeleted ? booking.OwnerPrice : 0);
 			return new DashboardCourtOwner
 			{
 				Revenue = totalPrice,

@@ -3,6 +3,7 @@ using Fieldy.BookingYard.Domain.Entities;
 using Fieldy.BookingYard.Domain.Enums;
 using MediatR;
 using System.Linq.Expressions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Fieldy.BookingYard.Application.Features.Dashboard.Queries
 {
@@ -16,7 +17,7 @@ namespace Fieldy.BookingYard.Application.Features.Dashboard.Queries
 		public async Task<DashboardHome> Handle(GetRevenueQuery request, CancellationToken cancellationToken)
 		{
 			var today = DateTime.Today;
-			var startOfWeek = today.AddDays(-(int)today.DayOfWeek + 1);
+			var startOfWeek = today.Date.AddDays(-(int)today.DayOfWeek + 1);
 			var endOfWeek = startOfWeek.AddDays(7);
 			Expression<Func<Domain.Entities.Booking, bool>> timeBasedExpression = request.typeTimeBased switch
 			{
@@ -79,7 +80,7 @@ namespace Fieldy.BookingYard.Application.Features.Dashboard.Queries
 				})
 				.ToList();
 
-			var totalPrice = bookings.Sum(booking => booking.IsDeleted == false ? booking.TotalPrice - booking.OwnerPrice : 0);
+			var totalPrice = bookings.Sum(booking => !booking.IsDeleted ? booking.TotalPrice - booking.OwnerPrice : 0);
 			return new DashboardHome
 			{
 				Revenue = totalPrice,
