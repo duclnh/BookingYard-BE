@@ -48,8 +48,8 @@ namespace Fieldy.BookingYard.Application.MappingProfiles
 				.ForMember(dest => dest.FacilityImage, opt => opt.MapFrom(src => src.Court != null ? (src.Court.Facility != null ? src.Court.Facility.Image : null) : null))
 				.ForMember(dest => dest.FacilityName, opt => opt.MapFrom(src => src.Court != null ? (src.Court.Facility != null ? src.Court.Facility.Name : null) : null))
 				.ForMember(dest => dest.PaymentStatus, opt => opt.MapFrom(src => src.PaymentStatus))
-				.ForMember(dest => dest.StartTime, opt => opt.MapFrom(src => src.StartTime.ToString("HH:mm")))
-				.ForMember(dest => dest.EndTime, opt => opt.MapFrom(src => src.EndTime.ToString("HH:mm")))
+				.ForMember(dest => dest.StartTime, opt => opt.MapFrom(src => src.StartTime.ToString(@"hh\:mm")))
+				.ForMember(dest => dest.EndTime, opt => opt.MapFrom(src => src.EndTime.ToString(@"hh\:mm")))
 				.ForMember(dest => dest.PlayDate, opt => opt.MapFrom(src => src.BookingDate.ToString("dd-MM-yyyy")))
 				.ForMember(dest => dest.BookingDate, opt => opt.MapFrom(src => src.CreatedAt.ToString("dd-MM-yyyy")))
 				.ForMember(dest => dest.IsCheckIn, opt => opt.MapFrom(src => src.IsCheckin));
