@@ -48,8 +48,7 @@ public class GetAllFeedbackAdminQueryHandler : IRequestHandler<GetAllFeedbackAdm
             orderBy: x => x.OrderByDescending(q => q.CreatedAt),
             cancellationToken: cancellationToken,
             x => x.Facility,
-            x => x.User,
-            x => x.Images
+            x => x.User
         );
 
         return PagingResult<FeedbackAdminDTO>.Create(
