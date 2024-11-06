@@ -15,22 +15,27 @@ namespace Fieldy.BookingYard.Application.Features.Dashboard.Queries.GetRevenueCo
 		public async Task<DashboardCourtOwner> Handle(GetRevenueCourtOwnerQuery request, CancellationToken cancellationToken)
 		{
 			var today = DateTime.Today;
-			Expression<Func<Domain.Entities.Booking, bool>> timeBasedExpression = request.typeTimeBased switch
+			Expression<Func<Domain.Entities.Booking, bool>> timeBasedExpression = request.TypeTimeBased switch
 			{
-				"date" => x => x.BookingDate.Date == today && x.Court.FacilityID == request.facilityId && x.PaymentStatus,
-				
+				"date" => x => x.BookingDate.Date == today && x.Court.FacilityID == request.FacilityId && x.PaymentStatus,
+
 				"week" => x => x.BookingDate >= today.AddDays(-(int)today.DayOfWeek) &&
 					  x.BookingDate < today.AddDays(7 - (int)today.DayOfWeek) &&
-					  x.Court.FacilityID == request.facilityId && x.PaymentStatus,
-				
+					  x.Court.FacilityID == request.FacilityId && x.PaymentStatus,
+
 				"month" => x => x.BookingDate.Month == today.Month &&
 					  x.BookingDate.Year == today.Year &&
-					  x.Court.FacilityID == request.facilityId && x.PaymentStatus,
-				
+					  x.Court.FacilityID == request.FacilityId && x.PaymentStatus,
+
 				"year" => x => x.BookingDate.Year == today.Year &&
-					  x.Court.FacilityID == request.facilityId && x.PaymentStatus,
+					  x.Court.FacilityID == request.FacilityId && x.PaymentStatus,
+				"from" => x => x.BookingDate.Date > request.FromDate.GetValueOrDefault().Date && x.PaymentStatus,
+				"to" => x => x.BookingDate.Date < request.FromDate.GetValueOrDefault().Date && x.PaymentStatus,
+				"both" => x => x.BookingDate.Date > request.FromDate.GetValueOrDefault().Date
+				   && x.BookingDate.Date < request.ToDate.GetValueOrDefault().Date
+				   && x.PaymentStatus,
 				_ => x => false
-			}; 
+			};
 			var bookings = await _bookingRepository.FindAll(expression: timeBasedExpression,
 															includes: new Expression<Func<Domain.Entities.Booking, object>>[] {
 																x => x.Court,
@@ -39,10 +44,10 @@ namespace Fieldy.BookingYard.Application.Features.Dashboard.Queries.GetRevenueCo
 															});
 
 			var revenueDetail = new RevenueDetail();
-			switch (request.typeTimeBased)
+			switch (request.TypeTimeBased)
 			{
 				case "date":
-					var revenueByHour = _bookingRepository.GetRevenueByHour(request.facilityId);
+					var revenueByHour = _bookingRepository.GetRevenueByHour(request.FacilityId);
 					revenueDetail.HourlyDetails = revenueByHour?.Select(r => new HourlyRevenue
 					{
 						Hour = r.Hour,
@@ -50,7 +55,7 @@ namespace Fieldy.BookingYard.Application.Features.Dashboard.Queries.GetRevenueCo
 					}).ToList();
 					break;
 				case "week":
-					var revenueByWeek = _bookingRepository.GetRevenueByWeek(request.facilityId);
+					var revenueByWeek = _bookingRepository.GetRevenueByWeek(request.FacilityId);
 					revenueDetail.DayOfWeekDetails = revenueByWeek?.Select(r => new DayOfWeekRevenue
 					{
 						Day = r.Date,
@@ -58,15 +63,39 @@ namespace Fieldy.BookingYard.Application.Features.Dashboard.Queries.GetRevenueCo
 					}).ToList();
 					break;
 				case "month":
-					var revenueByDay = _bookingRepository.GetRevenueByDay(request.facilityId);
+					var revenueByDay = _bookingRepository.GetRevenueByDay(request.FacilityId, null, null);
 					revenueDetail.DailyDetails = revenueByDay?.Select(r => new DailyRevenue
 					{
 						Day = r.Date,
 						Amount = r.TotalRevenue
 					}).ToList();
 					break;
+				case /*TypeTimeBased.month*/ "from":
+					var revenueByFrom = _bookingRepository.GetRevenueByDay(Guid.Empty, request.FromDate, null);
+					revenueDetail.DailyDetails = revenueByFrom?.Select(r => new DailyRevenue
+					{
+						Day = r.Date,
+						Amount = r.TotalRevenue
+					}).ToList();
+					break;
+				case /*TypeTimeBased.month*/ "to":
+					var revenueByTo = _bookingRepository.GetRevenueByDay(Guid.Empty, null, request.ToDate);
+					revenueDetail.DailyDetails = revenueByTo?.Select(r => new DailyRevenue
+					{
+						Day = r.Date,
+						Amount = r.TotalRevenue
+					}).ToList();
+					break;
+				case /*TypeTimeBased.month*/ "both":
+					var revenueByTBoth = _bookingRepository.GetRevenueByDay(Guid.Empty, request.FromDate, request.ToDate);
+					revenueDetail.DailyDetails = revenueByTBoth?.Select(r => new DailyRevenue
+					{
+						Day = r.Date,
+						Amount = r.TotalRevenue
+					}).ToList();
+					break;
 				case "year":
-					var revenueByMonth = _bookingRepository.GetRevenueByMonth(request.facilityId);
+					var revenueByMonth = _bookingRepository.GetRevenueByMonth(request.FacilityId);
 					revenueDetail.MonthlyDetails = revenueByMonth?.Select(r => new MonthlyRevenue
 					{
 						Month = r.Month,
