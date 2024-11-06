@@ -6,7 +6,7 @@ namespace Fieldy.BookingYard.Domain.Abstractions.Repositories
 	{
 		List<(TimeSpan Hour, decimal TotalRevenue)> GetRevenueByHour(Guid facilityId);
 		List<(string Date, decimal TotalRevenue)> GetRevenueByWeek(Guid facilityId);
-		List<(DateOnly Date, decimal TotalRevenue)> GetRevenueByDay(Guid facilityId);
+		List<(DateOnly Date, decimal TotalRevenue)> GetRevenueByDay(Guid facilityId, DateTime? fromDate, DateTime? toDate);
 		List<(int Month, decimal TotalRevenue)> GetRevenueByMonth(Guid facilityId);
 		//List<(TimeSpan Hour, decimal TotalRevenue)> GetRevenueByHour(Guid facilityId);
 	}

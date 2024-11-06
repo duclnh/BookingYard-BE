@@ -111,7 +111,7 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 							.Select(x => (x.Date, x.TotalRevenue))
 							.ToList();
 			}
-			
+
 			var allDates = Enumerable.Range(0, (endOfWeek - startOfWeek).Days)
 							 .Select(offset => startOfWeek.AddDays(offset))
 							 .Select(date => DateOnly.FromDateTime(date))
@@ -129,23 +129,32 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 			return convertedList;
 		}
 
-		public List<(DateOnly Date, decimal TotalRevenue)> GetRevenueByDay(Guid facilityId)
+		public List<(DateOnly Date, decimal TotalRevenue)> GetRevenueByDay(Guid facilityId, DateTime? fromDate, DateTime? toDate)
 		{
 			var date = DateTime.Now;
+
 			var startOfMonth = new DateTime(date.Year, date.Month, 1);
 			var endOfMonth = startOfMonth.AddMonths(1).AddDays(-1);
+			if (fromDate != null)
+			{
+				startOfMonth = new DateTime(fromDate.GetValueOrDefault().Year, fromDate.GetValueOrDefault().Month, fromDate.GetValueOrDefault().Day);
+			}
 
+			if (toDate != null)
+			{
+				endOfMonth = toDate.GetValueOrDefault().AddDays(1);
+			}
 			// Use an anonymous type to hold the intermediate results
 			var revenues = new List<(DateOnly Date, decimal TotalRevenue)>();
 
 			if (facilityId == Guid.Empty)
 			{
 				revenues = _dbContext.Set<Booking>()
-					.Where(b => b.BookingDate >= startOfMonth && !b.IsDeleted && b.PaymentStatus)
+					.Where(b => b.BookingDate.Date > startOfMonth.Date && b.BookingDate.Date < endOfMonth.Date && !b.IsDeleted && b.PaymentStatus)
 					.GroupBy(b => b.BookingDate.Day)
 					.Select(g => new
 					{
-						Date = new DateOnly(date.Year, date.Month, g.Key),
+						Date = DateOnly.FromDateTime(g.First().BookingDate),
 						TotalRevenue = g.Sum(b => b.TotalPrice - b.OwnerPrice)
 					})
 					.AsEnumerable()
@@ -156,22 +165,28 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 			{
 				revenues = _dbContext.Set<Booking>()
 					.Include(b => b.Court)
-					.Where(b => b.BookingDate >= startOfMonth && !b.IsDeleted && b.PaymentStatus && b.Court.FacilityID == facilityId)
+					.Where(b => b.BookingDate > startOfMonth.Date && b.BookingDate < endOfMonth.Date && !b.IsDeleted && b.PaymentStatus && b.Court.FacilityID == facilityId)
 					.GroupBy(b => b.BookingDate.Day)
 					.Select(g => new
 					{
-						Date = new DateOnly(date.Year, date.Month, g.Key),
+						Date = DateOnly.FromDateTime(g.First().BookingDate),
 						TotalRevenue = g.Sum(b => b.OwnerPrice)
 					})
 					.AsEnumerable()
 					.Select(x => (x.Date, x.TotalRevenue))
 					.ToList();
 			}
-
+			if (fromDate != null || toDate != null)
+			{
+				return revenues.OrderBy(x => x.Date).ToList();
+			}
+			
 			int numberOfDays = (endOfMonth - startOfMonth).Days + 1;
 			var allDates = Enumerable.Range(1, numberOfDays)
 									 .Select(day => new DateOnly(date.Year, date.Month, day))
 									 .ToHashSet();
+
+
 
 			var existingDates = new HashSet<DateOnly>(revenues.Select(r => r.Date));
 			var missingDates = allDates.Except(existingDates);

@@ -1,9 +1,11 @@
-﻿using Fieldy.BookingYard.Domain.Enums;
-using MediatR;
+﻿using MediatR;
 
 namespace Fieldy.BookingYard.Application.Features.Dashboard.Queries
 {
-	public record GetRevenueQuery(string typeTimeBased, CancellationToken cancellationToken) : IRequest<DashboardHome>
+	public class GetRevenueQuery : IRequest<DashboardHome>
 	{
+		public string? TypeTimeBased { get; set; }
+		public DateTime? FromDate { get; set; }
+		public DateTime? ToDate { get; set; }
 	}
 }
