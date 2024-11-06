@@ -63,7 +63,7 @@ namespace Fieldy.BookingYard.Application.Features.Dashboard.Queries.GetRevenueCo
 					}).ToList();
 					break;
 				case "month":
-					var revenueByDay = _bookingRepository.GetRevenueByDay(request.FacilityId, request.FromDate, request.ToDate);
+					var revenueByDay = _bookingRepository.GetRevenueByDay(request.FacilityId, null, null);
 					revenueDetail.DailyDetails = revenueByDay?.Select(r => new DailyRevenue
 					{
 						Day = r.Date,
