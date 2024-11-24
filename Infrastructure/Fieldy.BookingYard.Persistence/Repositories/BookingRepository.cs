@@ -180,7 +180,7 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 			{
 				return revenues.OrderBy(x => x.Date).ToList();
 			}
-			
+
 			int numberOfDays = (endOfMonth - startOfMonth).Days + 1;
 			var allDates = Enumerable.Range(1, numberOfDays)
 									 .Select(day => new DateOnly(date.Year, date.Month, day))
@@ -217,7 +217,7 @@ namespace Fieldy.BookingYard.Persistence.Repositories
 					.Select(g => new
 					{
 						Month = g.Key,
-						TotalRevenue = g.Sum(b => b.OwnerPrice)
+						TotalRevenue = g.Sum(b => b.TotalPrice - b.OwnerPrice)
 					})
 					.ToList<dynamic>();
 			}

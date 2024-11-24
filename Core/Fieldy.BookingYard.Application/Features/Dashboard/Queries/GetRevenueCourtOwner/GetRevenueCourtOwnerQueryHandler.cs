@@ -71,7 +71,7 @@ namespace Fieldy.BookingYard.Application.Features.Dashboard.Queries.GetRevenueCo
 					}).ToList();
 					break;
 				case /*TypeTimeBased.month*/ "from":
-					var revenueByFrom = _bookingRepository.GetRevenueByDay(Guid.Empty, request.FromDate, null);
+					var revenueByFrom = _bookingRepository.GetRevenueByDay(request.FacilityId, request.FromDate, null);
 					revenueDetail.DailyDetails = revenueByFrom?.Select(r => new DailyRevenue
 					{
 						Day = r.Date,
@@ -79,7 +79,7 @@ namespace Fieldy.BookingYard.Application.Features.Dashboard.Queries.GetRevenueCo
 					}).ToList();
 					break;
 				case /*TypeTimeBased.month*/ "to":
-					var revenueByTo = _bookingRepository.GetRevenueByDay(Guid.Empty, null, request.ToDate);
+					var revenueByTo = _bookingRepository.GetRevenueByDay(request.FacilityId, null, request.ToDate);
 					revenueDetail.DailyDetails = revenueByTo?.Select(r => new DailyRevenue
 					{
 						Day = r.Date,
@@ -87,7 +87,7 @@ namespace Fieldy.BookingYard.Application.Features.Dashboard.Queries.GetRevenueCo
 					}).ToList();
 					break;
 				case /*TypeTimeBased.month*/ "both":
-					var revenueByTBoth = _bookingRepository.GetRevenueByDay(Guid.Empty, request.FromDate, request.ToDate);
+					var revenueByTBoth = _bookingRepository.GetRevenueByDay(request.FacilityId, request.FromDate, request.ToDate);
 					revenueDetail.DailyDetails = revenueByTBoth?.Select(r => new DailyRevenue
 					{
 						Day = r.Date,
